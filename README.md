@@ -263,7 +263,7 @@ sequenceDiagram
 <summary style="font-size: 1.5em; font-weight: bold">Flow Chart</summary>
 
 ```mermaid
-    flowchart LR
+    flowchart TD
     ConcertView[콘서트 조회] --> ConcertSelect[콘서트 선택] 
     ConcertSelect --> CheckWaiting1{현재 대기 순서인가?}
     CheckWaiting1 --> |Yes| ConcertDateView[예약 가능한 날짜 조회]
