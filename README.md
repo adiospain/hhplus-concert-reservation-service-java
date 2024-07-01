@@ -263,29 +263,38 @@ sequenceDiagram
 <summary style="font-size: 1.5em; font-weight: bold">Flow Chart</summary>
 
 ```mermaid
-    flowchart LR
+    flowchart TD
     ConcertView[콘서트 조회] --> ConcertSelect[콘서트 선택] 
-    ConcertSelect --> CheckWaiting1{현재 대기 순서인가?}
+    ConcertSelect --> CheckWaiting1{대기번호가 활성 상태 인가?}
     CheckWaiting1 --> |Yes| ConcertDateView[예약 가능한 날짜 조회]
-    CheckWaiting1 --> |No| Wait1[대기] --> CheckWaiting1
+    CheckWaiting1 --> |No| CheckExpire1{토큰이 만료 되었는가?}
+    CheckExpire1 --> |Yes| RenewToken1[토큰 재발급] --> ConcertSelect
+    CheckExpire1 --> |No| CheckWaiting1
     
     ConcertDateView[예약 가능한 날짜 조회] --> ConcertDateSelect[콘서트 예약 날짜 선택]
     ConcertDateSelect --> CheckWaiting2-1{예약 가능한 날짜인가?}
-    CheckWaiting2-1 --> |Yes| CheckWaiting2-2{현재 대기 순서인가?}
+    CheckWaiting2-1 --> |Yes| CheckWaiting2-2{대기번호가 활성 상태 인가?}
     CheckWaiting2-1 --> |No| ConcertDateSelect
+    CheckExpire2{토큰이 만료 되었는가?} --> |Yes| RenewToken2[토큰 재발급] --> ConcertDateSelect
+    CheckExpire2 --> |No| CheckWaiting2-2
     CheckWaiting2-2 --> |Yes| ConcertSeatView[예약 가능한 좌석 조회]
-    CheckWaiting2-2 --> |No| Wait2[대기] --> CheckWaiting2-2
-    
+    CheckWaiting2-2 --> |No| CheckExpire2
+
     ConcertSeatView --> ConcertSeatSelect[콘서트 임시 배정 좌석 선택]
     ConcertSeatSelect --> CheckWaiting3-1{임시 배정되지 않은 좌석인가?}
-    CheckWaiting3-1 --> |Yes| CheckWaiting3-2{현재 대기 순서인가?}
+    CheckWaiting3-1 --> |Yes| CheckWaiting3-2{대기번호가 활성 상태 인가?}
     CheckWaiting3-1 --> |No| ConcertSeatSelect
+    CheckExpire3{토큰이 만료 되었는가?} --> |Yes| RenewToken3[토큰 재발급]--> ConcertSeatSelect
+    CheckExpire3{토큰이 만료 되었는가?} --> |No| CheckWaiting3-2
     CheckWaiting3-2 --> |Yes| createPayment[결제]
-    CheckWaiting3-2 --> |No| Wait3[대기] --> CheckWaiting3-2
+    CheckWaiting3-2 --> |No| CheckExpire3
     
     createPayment --> checkPayment1{유저 잔액 >= 콘서트 좌석 비용 ?}
     checkPayment1 --> |Yes| completePayment[결제 완료]
     checkPayment1 --> |No| exceptionPayment[잔액부족]
+    
+    exceptionPayment --> chargePoint[잔액 충전]
+    chargePoint --> CheckWaiting3-2
 ```
 
 </details>
