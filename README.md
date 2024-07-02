@@ -262,29 +262,40 @@ sequenceDiagram
 <details>
 <summary style="font-size: 1.5em; font-weight: bold">Flow Chart</summary>
 
+- 유저가 콘서트를 조회하는 과정에서부터 결제 완료에 이르기까지의 흐름입니다.
+- 콘서트, 날짜, 그리고 좌석 선택 전 유저에게 고민할 시간을 보장하기 위해 토큰 만료 시간을 갱신하며
+    유저의 세션이 유효하도록 유지합니다.
+- 각 구간별로 토큰 만료 시간을 차이를 두어 트래픽을 분배하고
+    사용자가 모든 절차를 원활하게 진행할 수 있도록 보장합니다.
+
 ```mermaid
     flowchart TD
     ConcertView[콘서트 조회] --> ConcertSelect[콘서트 선택] 
-    ConcertSelect --> CheckWaiting1{대기번호가 활성 상태 인가?}
+    ConcertSelect --> ValidConcert{예약 가능한 콘서트인가?}
+    ValidConcert --> |Yes| CheckWaiting1
+    ValidConcert --> |No| ConcertSelect
+    CheckWaiting1{대기번호가 활성 상태 인가?}
     CheckWaiting1 --> |Yes| ConcertDateView[예약 가능한 날짜 조회]
     CheckWaiting1 --> |No| CheckExpire1{토큰이 만료 되었는가?}
     CheckExpire1 --> |Yes| RenewToken1[토큰 재발급] --> ConcertSelect
     CheckExpire1 --> |No| CheckWaiting1
     
-    ConcertDateView[예약 가능한 날짜 조회] --> ConcertDateSelect[콘서트 예약 날짜 선택]
+    ConcertDateView[예약 가능한 날짜 조회] --> RenewTokenTime1[토큰 만료 시간 갱신]
+    RenewTokenTime1--> ConcertDateSelect[콘서트 예약 날짜 선택]
     ConcertDateSelect --> CheckWaiting2-1{예약 가능한 날짜인가?}
     CheckWaiting2-1 --> |Yes| CheckWaiting2-2{대기번호가 활성 상태 인가?}
     CheckWaiting2-1 --> |No| ConcertDateSelect
-    CheckExpire2{토큰이 만료 되었는가?} --> |Yes| RenewToken2[토큰 재발급] --> ConcertDateSelect
+    CheckExpire2{토큰이 만료 되었는가?} --> |Yes| RenewToken2[토큰 재발급] --> ConcertSelect
     CheckExpire2 --> |No| CheckWaiting2-2
     CheckWaiting2-2 --> |Yes| ConcertSeatView[예약 가능한 좌석 조회]
     CheckWaiting2-2 --> |No| CheckExpire2
 
-    ConcertSeatView --> ConcertSeatSelect[콘서트 임시 배정 좌석 선택]
+    ConcertSeatView --> RenewTokenTime2[토큰 만료 시간 갱신]
+    RenewTokenTime2[토큰 만료 시간 갱신] --> ConcertSeatSelect[콘서트 임시 배정 좌석 선택]
     ConcertSeatSelect --> CheckWaiting3-1{임시 배정되지 않은 좌석인가?}
     CheckWaiting3-1 --> |Yes| CheckWaiting3-2{대기번호가 활성 상태 인가?}
     CheckWaiting3-1 --> |No| ConcertSeatSelect
-    CheckExpire3{토큰이 만료 되었는가?} --> |Yes| RenewToken3[토큰 재발급]--> ConcertSeatSelect
+    CheckExpire3{토큰이 만료 되었는가?} --> |Yes| RenewToken3[토큰 재발급]--> ConcertSelect
     CheckExpire3{토큰이 만료 되었는가?} --> |No| CheckWaiting3-2
     CheckWaiting3-2 --> |Yes| createPayment[결제]
     CheckWaiting3-2 --> |No| CheckExpire3
