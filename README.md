@@ -263,7 +263,7 @@ sequenceDiagram
 <summary style="font-size: 1.5em; font-weight: bold">Flow Chart</summary>
 
 - 콘서트 날짜 테이블 행에 비관적 락을 걸며 수용 인원을 확인하여 예약 가능한 날짜인지 확인 합니다.
-- 수용 인원 수만큼 대기열을 진입하게 하고 수용 인원을 감소 합니다.
+- 수용 인원 수만큼 대기열을 진입하게 하고 수용 인원을 감소해줍니다.
 - 이미 예약된 좌석을 선택한 유저의 수를 합산하여 수용 인원에 더해줍니다. 
 
 ```mermaid
