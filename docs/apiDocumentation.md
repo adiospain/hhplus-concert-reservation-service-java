@@ -241,6 +241,7 @@
     - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID
     - 401: Unauthorized. 유효하지 않거나 만료된 토큰
     - 403: Forbidden: 허가되지 않은 접근
+    - 409: Conflict: 이미 예약된 좌석
 </details>
 </details>
 
