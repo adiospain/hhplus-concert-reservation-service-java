@@ -51,14 +51,11 @@
     - 403: Forbidden: 허가되지 않은 접근
 </details>
 <details style="margin-left: 30px;">
-<summary>POST /api/users/{userId}/charge - 유저 잔액 충전</summary>
+<summary>PATCH /api/users/{userId}/charge - 유저 잔액 충전</summary>
 
 - Request
 ```
 [
-	header{
-		"token": string
-	}
 	body{
 		"amount": number
 	}
@@ -69,7 +66,6 @@
 [
 	{
 		"point": number
-		"status": boolean
 	}
 ]
 ```
