@@ -27,14 +27,6 @@
 <details style="margin-left: 30px;">
 <summary>GET /api/users/{userId}/point - 유저 잔액 조회</summary>
 
-- Request
-```
-[
-	header{
-		"token" : string
-	}
-]
-```
 - Response
 ```
 [
