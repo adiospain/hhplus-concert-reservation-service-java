@@ -255,7 +255,7 @@
 <details style="margin-left: 20px;">
 <summary style="font-size: 1em; font-weight: bold">Payment</summary>
 <details style="margin-left: 30px;">
-<summary style="font-size: 1em; font-weight: bold">POST /api/payments?concertId={concertId}&concertScheduleId={concertScheduleId}&seatId={seatId} - 결제</summary>
+<summary style="font-size: 1em; font-weight: bold">POST /api/payments - 결제</summary>
 
 - Request
 ```
@@ -264,7 +264,7 @@
 		"token": string
 	}
 	body{
-		"price": number
+		"reservationId": number
 	}
 ]
 ```
@@ -274,7 +274,6 @@
 [
 	{
 		"paymentId": number,
-		"status": enum, //예외 케이스 처리 (잔액 부족)
 		"price": number,
 		"point": number
 	}
@@ -282,7 +281,7 @@
 ```
 - Status code
     - 200: OK. 결제 완료
-    - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID / 결제금액
+    - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID / 결제금액 / 잔액부족
     - 401: Unauthorized. 유효하지 않거나 만료된 토큰
     - 403: Forbidden: 허가되지 않은 접근
 </details>
