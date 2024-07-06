@@ -219,7 +219,7 @@
 <details style="margin-left: 20px;">
 <summary style="font-size: 1em; font-weight: bold">Reservation</summary>
 <details style="margin-left: 30px;">
-<summary style="font-size: 1em; font-weight: bold">POST /api/reservation - 좌석 예약</summary>
+<summary style="font-size: 1em; font-weight: bold">POST /api/reservations - 좌석 예약</summary>
 
 - Request
 ```
