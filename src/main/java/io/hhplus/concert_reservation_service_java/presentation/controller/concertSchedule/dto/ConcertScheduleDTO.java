@@ -1,7 +1,6 @@
-package io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto;
+package io.hhplus.concert_reservation_service_java.presentation.controller.concertSchedule.dto;
 
 import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertSchedule;
-import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertScheduleId;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
