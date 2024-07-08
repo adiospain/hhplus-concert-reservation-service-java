@@ -24,12 +24,12 @@ import lombok.Data;
 @Entity
 @Data
 @Table (name = "concert_schedule")
-@SequenceGenerator(name = "concert_schedule_seq", sequenceName = "concert_schedule_id_seq", allocationSize = 1)
 @IdClass(ConcertScheduleId.class)
 public class ConcertSchedule {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "concert_schedule_id_seq")
+  @SequenceGenerator(name = "concert_schedule_id_seq", sequenceName = "concert_schedule_id_seq", allocationSize = 1)
   @Column (name = "id")
   private Long id;
 
@@ -47,27 +47,12 @@ public class ConcertSchedule {
   @Column(name = "capacity")
   private int capacity;
 
-  @OneToMany(mappedBy = "concertSchedule")
-  private Set<Seat> seats;
-
   public ConcertSchedule() {
 
   }
 
-//  @PrePersist
-//  public void prePersist() {
-//    if (this.id.getId() == null) {
-//      this.id.setId(generateId());
-//    }
-//  }
-
-//  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "concert_schedule_seq")
-//  private Long generateId() {
-//    // 이 메서드는 실제로 호출되지 않지만, JPA가 시퀀스를 사용하도록 지시합니다.
-//    return null;
-//  }
-
   public ConcertSchedule (Concert concert, LocalDateTime startAt, int capacity){
+    this.id =
     this.concertId = concert.getId();
     this.concert = concert;
     this.startAt = startAt;
