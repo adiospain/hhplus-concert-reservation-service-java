@@ -46,8 +46,7 @@ sequenceDiagram
     TokenService ->>- User: 토큰 반환
 ```
 </details>
-
-<details>
+ 
   <summary style="font-size: 1em;margin-left: 20px;">getTokenDetail - 대기열 토큰 조회 </summary>
 
 유저가 대기열의 대기순서 및 잔여시간을 확인한다.
@@ -608,4 +607,7 @@ erDiagram
 
 </details>
 
+</details>
+<details>
+  <summary style="font-size: 1.5em; font-weight: bold">Swagger</summary>
 </details>
