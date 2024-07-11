@@ -22,9 +22,9 @@ public class ReservationController {
   private final CreateReservationUseCase createReservationUseCase;
 
   @PostMapping
-  @Operation(summary = "좌석 예약", description = "콘서트 좌석을 예약하고, 유저에게 임시 배정 합니다.")
-  @ApiResponse(responseCode = "200", description = "예약 성공")
-  @ApiResponse(responseCode = "409", description = "이미 예약된 좌석")
+  @Operation(summary = "좌석 예약" , description = "콘서트 좌석을 예약하고, 유저에게 임시 배정 합니다.")
+  @ApiResponse(responseCode = "200" , description = "예약 성공")
+  @ApiResponse(responseCode = "409" , description = "이미 예약된 좌석")
   public ResponseEntity<CreateReservationAPIResponse> createReservation(
       @RequestBody CreateReservationAPIRequest request) {
 

@@ -34,7 +34,7 @@ public class ReserverController {
   private final ChargePointUseCase chargePointUseCase;
 
   @PostMapping("/{userId}/token")
-  @Operation(summary = "유저 토큰 발급", description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
+  @Operation(summary = "유저 토큰 발급" , description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
   public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long userId){
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
         .userId(userId)
@@ -44,7 +44,7 @@ public class ReserverController {
   }
 
   @GetMapping("/{userId}/point")
-  @Operation(summary = "유저 잔액 조회", description = "지정된 사용자 ID의 현재 포인트 잔액을 조회합니다.")
+  @Operation(summary = "유저 잔액 조회" , description = "지정된 사용자 ID의 현재 포인트 잔액을 조회합니다.")
   public ResponseEntity<GetPointAPIResponse> getPoint (@PathVariable long userId){
     GetPointCommand command = GetPointCommand.builder()
         .userId(userId)
@@ -54,7 +54,7 @@ public class ReserverController {
   }
 
   @PatchMapping("/{userId}/charge")
-  @Operation(summary = "유저 잔액 충전", description = "지정된 사용자 ID의 계정에 포인트를 충전합니다. 충전 후 업데이트된 총 포인트 잔액을 반환합니다.")
+  @Operation(summary = "유저 잔액 충전" , description = "지정된 사용자 ID의 계정에 포인트를 충전합니다. 충전 후 업데이트된 총 포인트 잔액을 반환합니다.")
   public ResponseEntity<ChargePointAPIResponse> chargePoint (@PathVariable long userId,
       @RequestBody ChargePointAPIRequest request){
 
