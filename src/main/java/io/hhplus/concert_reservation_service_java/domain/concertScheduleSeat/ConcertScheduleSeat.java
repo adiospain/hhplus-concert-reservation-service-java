@@ -31,21 +31,21 @@ import lombok.Data;
 public class ConcertScheduleSeat {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private  Long id;
 
   @ManyToOne
   @JoinColumn(name = "concert_schedule_id", nullable = false)
-  private ConcertSchedule concertSchedule;
+  private  ConcertSchedule concertSchedule;
 
   @ManyToOne
-  @JoinColumn(name = "seat_id", nullable = false)
-  private Seat seat;
+  @JoinColumn(name = "seat_id" , nullable = false)
+  private  Seat seat;
 
   @Column(name = "price")
-  private Integer price;
+  private  Integer price;
 
 
-  public ConcertScheduleSeat() {
+  public  ConcertScheduleSeat() {
 
   }
 }
