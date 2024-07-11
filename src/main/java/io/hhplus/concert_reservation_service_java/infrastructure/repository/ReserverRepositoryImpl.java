@@ -18,4 +18,14 @@ public class ReserverRepositoryImpl implements ReserverRepository {
   public Optional<Reserver> findById(long reserverId) {
     return reserverRepository.findById(reserverId);
   }
+
+  @Override
+  public Reserver save(Reserver reserver) {
+    return reserverRepository.save(reserver);
+  }
+
+  @Override
+  public Optional<Reserver> findByIdWithPessimisticLock(long reserverId) {
+    return reserverRepository.findByIdWithPessimisticLock(reserverId);
+  }
 }

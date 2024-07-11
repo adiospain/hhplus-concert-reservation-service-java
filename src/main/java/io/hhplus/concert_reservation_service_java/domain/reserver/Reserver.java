@@ -38,7 +38,6 @@ public class Reserver {
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .createdAt(LocalDateTime.now())
-        .reservedDate(concertScheduleSeat.getConcertSchedule().getStartAt())
         .reservedPrice(concertScheduleSeat.getPrice())
         .build();
   }

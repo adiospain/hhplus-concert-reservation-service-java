@@ -5,6 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation
 import io.hhplus.concert_reservation_service_java.infrastructure.repository.jpa.ReservationJpaRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,11 @@ public class ReservationRepositoryImpl implements ReservationRepository {
   @Override
   public Reservation save(Reservation reservation) {
     return reservationRepository.save(reservation);
+  }
+
+  @Override
+  public Optional<Reservation> findById(long reservationId) {
+    return Optional.empty();
   }
 
 

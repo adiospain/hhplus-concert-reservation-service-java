@@ -3,6 +3,8 @@ import io.hhplus.concert_reservation_service_java.domain.concertScheduleSeat.Con
 import io.hhplus.concert_reservation_service_java.domain.reserver.Reserver;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,21 +30,22 @@ public class Reservation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private Reserver reserver;
+
   @Column(name = "concert_schedule_id", nullable = false)
   private Long concertScheduleId;
 
   @Column(name = "seat_id", nullable = false)
   private Long seatId;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private Reserver reserver;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ReservationStatus status;
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
-
-  @Column(name = "reserved_date")
-  private LocalDateTime reservedDate;
 
   @Column(name = "reserved_price")
   private Integer reservedPrice;
