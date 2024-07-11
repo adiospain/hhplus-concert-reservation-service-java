@@ -27,14 +27,6 @@
 <details style="margin-left: 30px;">
 <summary>GET /api/users/{userId}/point - 유저 잔액 조회</summary>
 
-- Request
-```
-[
-	header{
-		"token" : string
-	}
-]
-```
 - Response
 ```
 [
@@ -51,14 +43,11 @@
     - 403: Forbidden: 허가되지 않은 접근
 </details>
 <details style="margin-left: 30px;">
-<summary>POST /api/users/{userId}/charge - 유저 잔액 충전</summary>
+<summary>PATCH /api/users/{userId}/charge - 유저 잔액 충전</summary>
 
 - Request
 ```
 [
-	header{
-		"token": string
-	}
 	body{
 		"amount": number
 	}
@@ -69,7 +58,6 @@
 [
 	{
 		"point": number
-		"status": boolean
 	}
 ]
 ```
@@ -223,7 +211,7 @@
 <details style="margin-left: 20px;">
 <summary style="font-size: 1em; font-weight: bold">Reservation</summary>
 <details style="margin-left: 30px;">
-<summary style="font-size: 1em; font-weight: bold">POST /api/reservation - 좌석 예약</summary>
+<summary style="font-size: 1em; font-weight: bold">POST /api/reservations - 좌석 예약</summary>
 
 - Request
 ```
@@ -253,13 +241,14 @@
     - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID
     - 401: Unauthorized. 유효하지 않거나 만료된 토큰
     - 403: Forbidden: 허가되지 않은 접근
+    - 409: Conflict: 이미 예약된 좌석
 </details>
 </details>
 
 <details style="margin-left: 20px;">
 <summary style="font-size: 1em; font-weight: bold">Payment</summary>
 <details style="margin-left: 30px;">
-<summary style="font-size: 1em; font-weight: bold">POST /api/payments?concertId={concertId}&concertScheduleId={concertScheduleId}&seatId={seatId} - 결제</summary>
+<summary style="font-size: 1em; font-weight: bold">POST /api/payments - 결제</summary>
 
 - Request
 ```
@@ -268,7 +257,7 @@
 		"token": string
 	}
 	body{
-		"price": number
+		"reservationId": number
 	}
 ]
 ```
@@ -278,7 +267,6 @@
 [
 	{
 		"paymentId": number,
-		"status": enum, //예외 케이스 처리 (잔액 부족)
 		"price": number,
 		"point": number
 	}
@@ -286,7 +274,7 @@
 ```
 - Status code
     - 200: OK. 결제 완료
-    - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID / 결제금액
+    - 400: Bad Request. 유효하지 않은 유저ID / 콘서트 관련 ID / 결제금액 / 잔액부족
     - 401: Unauthorized. 유효하지 않거나 만료된 토큰
     - 403: Forbidden: 허가되지 않은 접근
 </details>
