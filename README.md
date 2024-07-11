@@ -46,7 +46,7 @@ sequenceDiagram
     TokenService ->>- User: 토큰 반환
 ```
 </details>
- 
+ <details>
   <summary style="font-size: 1em;margin-left: 20px;">getTokenDetail - 대기열 토큰 조회 </summary>
 
 유저가 대기열의 대기순서 및 잔여시간을 확인한다.
@@ -610,4 +610,32 @@ erDiagram
 </details>
 <details>
   <summary style="font-size: 1.5em; font-weight: bold">Swagger</summary>
+	<img style="width:1500px" src="https://github.com/user-attachments/assets/09b28415-6b43-47a8-a993-a9a117fe2eeb"/>
+
+ <img style="width:1500px" src="https://github.com/user-attachments/assets/9e881887-01fc-4c97-b001-e9b83f6070a4"/>
+ 
+<img style="width:1500px" src="https://github.com/user-attachments/assets/ee52bff1-714f-460c-b309-8d29bab88fac"/>
+
+<img style="width:1500px" src="https://github.com/user-attachments/assets/1049ffdb-45f6-432e-93a4-d7d93bf71acd"/>
+<img style="width:1500px" src="https://github.com/user-attachments/assets/6f8f2d3f-5020-4ba6-bd0f-ec4da7728d0d"/>
+<img style="width:1500px" src="https://github.com/user-attachments/assets/3e2cef66-564b-47d4-b491-eb3c7d8831ad"/>
+
+<img style="width:1500px" src="https://github.com/user-attachments/assets/c591fec0-97ba-484e-bd87-4ed1dde9c094"/>
+
+
+
+
+
+
+<img style="width:1500px" src="https://github.com/user-attachments/assets/06b5b679-ee64-4822-b7d2-fdea4a3f8a98"/>
+<img style="width:1500px" src="https://github.com/user-attachments/assets/6a714b29-febf-4a6a-a95a-b4382dbbf75a"/>
+
+
+
+
+
+
+<img style="width:1500px" src="https://github.com/user-attachments/assets/874c4887-ec69-4fb4-8568-24e2a45021bd"/>
+
+
 </details>
