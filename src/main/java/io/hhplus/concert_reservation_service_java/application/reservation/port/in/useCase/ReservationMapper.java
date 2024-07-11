@@ -9,6 +9,7 @@ public class ReservationMapper {
   public ReservationDTO from(Reservation reservation) {
     return ReservationDTO.builder()
         .id(reservation.getId())
+        .createdAt(reservation.getCreatedAt())
         .expireAt(reservation.getCreatedAt().plusMinutes(5))
         .build();
   }
