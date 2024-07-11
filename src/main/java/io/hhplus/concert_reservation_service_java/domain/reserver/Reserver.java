@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.domain.reserver;
 
-import io.hhplus.concert_reservation_service_java.application.reservation.port.in.CreateReservationCommand;
 import io.hhplus.concert_reservation_service_java.domain.concertScheduleSeat.ConcertScheduleSeat;
 import io.hhplus.concert_reservation_service_java.domain.payment.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation;
@@ -39,6 +38,7 @@ public class Reserver {
         .reserver(this)
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
+        .status(ReservationStatus.OCCUPIED)
         .createdAt(LocalDateTime.now())
         .reservedPrice(concertScheduleSeat.getPrice())
         .build();

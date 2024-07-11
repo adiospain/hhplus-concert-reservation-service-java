@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @UseCase
 public class GetPointUseCaseImpl implements GetPointUseCase {
 
-  private ReserverRepository reserverRepository;
+  private final ReserverRepository reserverRepository;
 
   public int execute(GetPointCommand command) {
     Reserver reserver = reserverRepository.findById(command.getUserId())
