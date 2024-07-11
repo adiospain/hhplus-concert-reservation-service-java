@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class GetConcertScheduleCommand {
+public class GetAvailableConcertSchedulesCommand {
   private long concertId;
-  private boolean available;
 }

@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface ConcertScheduleRepository {
 
-  List<ConcertSchedule> findByConcertId(Long concertId);
+  List<ConcertSchedule> findAllByConcertId(long concertId);
 }
