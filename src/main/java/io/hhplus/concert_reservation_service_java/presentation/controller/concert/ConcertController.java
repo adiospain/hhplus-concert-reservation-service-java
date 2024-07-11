@@ -47,6 +47,7 @@ public class ConcertController {
   }
 
   @GetMapping("/{concertId}")
+  @Operation(summary = "콘서트 상세 조회", description = "지정된 ID의 콘서트 상세 정보를 조회합니다.")
   public ResponseEntity<GetConcertDetailAPIResponse> getConcertDetail(
       @PathVariable Long concertId) {
     GetConcertDetailCommand command = GetConcertDetailCommand.builder()
@@ -57,6 +58,7 @@ public class ConcertController {
   }
 
   @GetMapping("/{concertId}/schedules/available")
+  @Operation( summary = "콘서트 예약 가능 날짜 조회", description = "지정된 콘서트의 예약 가능한 모든 날짜를 조회합니다.")
   public ResponseEntity<GetConcertScheduleAPIRespose> getAvailableConcertSchedules(
       @PathVariable Long concertId) {
 
@@ -67,7 +69,9 @@ public class ConcertController {
     return ResponseEntity.ok(GetConcertScheduleAPIRespose.from(result));
   }
 
+
   @GetMapping("/{concertId}/schedules/{concertScheduleId}/seats/available")
+  @Operation(summary = "콘서트 예약 가능 좌석 조회", description = "지정된 콘서트 일정에 대해 예약 가능한 모든 좌석을 조회합니다")
   public ResponseEntity<GetSeatAPIRespose> getAvailableSeats(
       @PathVariable Long concertId,
       @PathVariable Long concertScheduleId) {

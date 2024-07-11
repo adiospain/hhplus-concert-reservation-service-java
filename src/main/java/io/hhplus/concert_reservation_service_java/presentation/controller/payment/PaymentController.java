@@ -5,6 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUs
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.CreatePaymentAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.CreatePaymentAPIResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ public class PaymentController {
   private final CreatePaymentUseCase createPaymentUseCase;
 
   @PostMapping
+  @Operation(summary = "결제", description = "새로운 결제를 생성합니다. 예약자 ID와 예약 ID를 받아 결제를 처리하고 결제 정보를 반환합니다.")
   public ResponseEntity<CreatePaymentAPIResponse> createPayment(
       @RequestBody CreatePaymentAPIRequest request) {
     CreatePaymentCommand command = CreatePaymentCommand.builder()

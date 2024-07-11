@@ -5,9 +5,9 @@ import io.hhplus.concert_reservation_service_java.application.reserver.port.in.G
 
 import io.hhplus.concert_reservation_service_java.application.token.port.in.IssueTokenUseCommand;
 
-import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.IssueTokenUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reserver.ChargePointUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reserver.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.ChargePointAPIResponse;

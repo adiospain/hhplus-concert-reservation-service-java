@@ -15,10 +15,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Entity
 @Table(name = "reserver")
 @AllArgsConstructor
+@Getter
 public class Reserver {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,5 +62,9 @@ public class Reserver {
           .build();
     }
     return null;
+  }
+
+  public void chargePoint(int amount) {
+    this.point += amount;
   }
 }
