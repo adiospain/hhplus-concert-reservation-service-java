@@ -5,4 +5,8 @@ import java.util.Optional;
 public interface ReserverRepository {
 
   Optional<Reserver> findById(long reserverId);
+
+  Reserver save(Reserver reserver);
+
+  Optional<Reserver> findByIdWithPessimisticLock(long reserverId);
 }
