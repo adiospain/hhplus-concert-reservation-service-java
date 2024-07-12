@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.hhplus.concert_reservation_service_java.application.payment.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.application.payment.useCase.CreatePaymentUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.application.payment.useCase.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.Payment;
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentRepository;
@@ -15,12 +17,8 @@ import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 class CreatePaymentUseCaseTest {
 
