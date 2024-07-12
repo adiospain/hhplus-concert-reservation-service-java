@@ -20,7 +20,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
   private final ConcertJpaRepository concertRepository;
   private final ConcertScheduleJpaRepository concertScheduleRepository;
-  private final ConcertScheduleSeatJpaRepository concertScheduleSeatJpaRepository;
+  private final ConcertScheduleSeatJpaRepository concertScheduleSeatRepository;
 
   @Override
   public List<Concert> findAll() {
@@ -39,12 +39,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
   @Override
   public List<Long> findSeatIdsByConcertScheduleId(long concertScheduleId) {
-    return concertScheduleSeatJpaRepository.findSeatIdsByConcertScheduleId(concertScheduleId);
+    return concertScheduleSeatRepository.findSeatIdsByConcertScheduleId(concertScheduleId);
   }
 
   @Override
   public List<Seat> findSeatsByConcertScheduleId(long concertScheduleId) {
-    return concertScheduleSeatJpaRepository.findSeatsByConcertScheduleId(concertScheduleId);
+    return concertScheduleSeatRepository.findSeatsByConcertScheduleId(concertScheduleId);
   }
 
   @Override
@@ -55,7 +55,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   @Override
   public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(
       long concertScheduleId, long seatId) {
-    return concertScheduleSeatJpaRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);
+    return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);
   }
 
   @Override

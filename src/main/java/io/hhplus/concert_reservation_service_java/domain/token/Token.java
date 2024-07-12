@@ -33,11 +33,9 @@ public class Token {
   @Column(name = "expire_at", nullable = false)
   private LocalDateTime expireAt;
 
-  // 생성 시간 추가 (옵션)
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  // 업데이트 시간 추가 (옵션)
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
