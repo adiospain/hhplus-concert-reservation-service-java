@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.reservation.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.reservation.useCase;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.concertScheduleSeat.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.concertScheduleSeat.useCase;
 
 import io.hhplus.concert_reservation_service_java.application.concertScheduleSeat.port.in.GetAvailableSeatsCommand;
 

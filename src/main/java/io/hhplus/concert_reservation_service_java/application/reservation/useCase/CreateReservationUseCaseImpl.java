@@ -1,7 +1,8 @@
-package io.hhplus.concert_reservation_service_java.application.reservation.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.reservation.useCase;
 
 
 import io.hhplus.concert_reservation_service_java.application.reservation.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.application.token.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concertScheduleSeat.ConcertScheduleSeat;
@@ -10,6 +11,8 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.reserver.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverRepository;
+import io.hhplus.concert_reservation_service_java.domain.token.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
@@ -24,13 +27,22 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   private final ReservationRepository reservationRepository;
   private final ConcertRepository concertRepository;
   private final ReservationMapper reservationMapper;
+  private final TokenService tokenService;
 
   @Override
   @Transactional
   public ReservationDTO execute(CreateReservationCommand command) {
     Reserver reserver = findReserver(command.getReserverId());
+
+    TokenWithPosition tokenWithPosition = tokenService.getToken(command.getReserverId());
+
+    if (tokenWithPosition.getQueuePosition() == 1){
+
+    }
+
     ConcertScheduleSeat concertScheduleSeat = findConcertScheduleSeat(command);
     Reservation reservation = reserver.createReservation(concertScheduleSeat);
+
     Reservation savedReservation = saveReservation(reservation, command);
     return reservationMapper.from(savedReservation);
   }
