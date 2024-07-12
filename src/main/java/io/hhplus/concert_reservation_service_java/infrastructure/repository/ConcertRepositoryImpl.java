@@ -20,7 +20,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
   private final ConcertJpaRepository concertRepository;
   private final ConcertScheduleJpaRepository concertScheduleRepository;
-  private final ConcertScheduleSeatJpaRepository concertScheduleSeatJpaRepository;
+  private final ConcertScheduleSeatJpaRepository concertScheduleSeatJpaRepository; 
 
   @Override
   public List<Concert> findAll() {
