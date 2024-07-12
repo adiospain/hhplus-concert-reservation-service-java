@@ -12,27 +12,27 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ConcertScheduleMapper {
+  @Component
+  public class ConcertScheduleMapper {
 
-  public ConcertScheduleDTO from(ConcertSchedule concertSchedule) {
-    if (concertSchedule == null) {
-      throw new CustomException(ErrorCode.CONCERT_SCHEDULE_NOT_FOUND);
+    public ConcertScheduleDTO from(ConcertSchedule concertSchedule) {
+      if (concertSchedule == null) {
+        throw new CustomException(ErrorCode.CONCERT_SCHEDULE_NOT_FOUND);
+      }
+
+      return ConcertScheduleDTO.builder()
+          .id(concertSchedule.getId())
+          .startAt(concertSchedule.getStartAt())
+          .capacity(concertSchedule.getCapacity())
+          .build();
     }
 
-    return ConcertScheduleDTO.builder()
-        .id(concertSchedule.getId())
-        .startAt(concertSchedule.getStartAt())
-        .capacity(concertSchedule.getCapacity())
-        .build();
-  }
-
-  public List<ConcertScheduleDTO> from(List<ConcertSchedule> concertSchedules) {
-    if (concertSchedules == null) {
-      return Collections.emptyList();
+    public List<ConcertScheduleDTO> from(List<ConcertSchedule> concertSchedules) {
+      if (concertSchedules == null) {
+        return Collections.emptyList();
+      }
+      return concertSchedules.stream()
+          .map(this::from)
+          .collect(Collectors.toList());
     }
-    return concertSchedules.stream()
-        .map(this::from)
-        .collect(Collectors.toList());
   }
-}

@@ -9,19 +9,19 @@ import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
-@Component
-public class PaymentMapper {
+  @Component
+  public class PaymentMapper {
 
-  public PaymentDTO of(Payment savedPayment, Reservation reservation) {
-    if (savedPayment == null){
-      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+    public PaymentDTO of(Payment savedPayment, Reservation reservation) {
+      if (savedPayment == null){
+        throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+      }
+
+      return PaymentDTO.builder()
+          .id(savedPayment.getId())
+          .reservationId(reservation.getId())
+          .price(reservation.getReservedPrice())
+          .createdAt(savedPayment.getCreatedAt())
+          .build();
     }
-
-    return PaymentDTO.builder()
-        .id(savedPayment.getId())
-        .reservationId(reservation.getId())
-        .price(reservation.getReservedPrice())
-        .createdAt(savedPayment.getCreatedAt())
-        .build();
   }
-}
