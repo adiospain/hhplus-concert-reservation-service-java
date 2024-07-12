@@ -1,12 +1,12 @@
 package io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.useCase;
 
-import io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.GetAvailableConcertSchedulesCommand;
-import io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase.ConcertScheduleMapper;
-import io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase.GetAvailableConcertSchedulesUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.Concert;
-import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
-import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertSchedule;
-import io.hhplus.concert_reservation_service_java.domain.concertSchedule.GetAvailableConcertSchedulesUseCase;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleMapper;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableConcertSchedulesUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableConcertSchedulesUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -3,16 +3,16 @@ package io.hhplus.concert_reservation_service_java.application.payment.port.in.u
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import io.hhplus.concert_reservation_service_java.application.payment.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.application.payment.useCase.CreatePaymentUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.application.payment.useCase.PaymentMapper;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.useCase.CreatePaymentUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.payment.Payment;
-import io.hhplus.concert_reservation_service_java.domain.payment.PaymentRepository;
-import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation;
-import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.reserver.Reserver;
-import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverRepository;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
+import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
+import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;

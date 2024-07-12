@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.reservation;
 
-import io.hhplus.concert_reservation_service_java.application.reservation.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.port.in.CreateReservationCommand;
 import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.req.CreateReservationAPIRequest;

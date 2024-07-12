@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res;
 
-import io.hhplus.concert_reservation_service_java.domain.concert.Concert;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import java.util.List;
 import org.springframework.data.domain.Page;

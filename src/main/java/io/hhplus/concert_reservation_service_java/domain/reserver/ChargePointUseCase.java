@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.reserver;
 
-import io.hhplus.concert_reservation_service_java.application.reserver.port.in.ChargePointCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.ChargePointCommand;
 
 public interface ChargePointUseCase {
 

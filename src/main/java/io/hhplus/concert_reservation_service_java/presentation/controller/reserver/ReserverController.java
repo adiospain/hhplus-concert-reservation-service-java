@@ -1,11 +1,11 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.reserver;
 
-import io.hhplus.concert_reservation_service_java.application.reserver.port.in.ChargePointCommand;
-import io.hhplus.concert_reservation_service_java.application.reserver.port.in.GetPointCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.ChargePointCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.GetPointCommand;
 
-import io.hhplus.concert_reservation_service_java.application.token.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.IssueTokenUseCommand;
 
-import io.hhplus.concert_reservation_service_java.application.token.port.in.GetTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.reserver.ChargePointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
@@ -39,9 +39,9 @@ public class ReserverController {
 
   @PostMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 발급" , description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
-  public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long reserverId){
+  public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long userId){
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
-        .reserverId(reserverId)
+        .reserverId(userId)
         .build();
     TokenDTO token = issueTokenUseCase.execute(command);
     return ResponseEntity.ok(IssueTokenAPIResponse.from(token));
@@ -49,9 +49,9 @@ public class ReserverController {
 
   @GetMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 조회" , description = "현재 대기열 순번과 토큰 잔여시간을 제공됩니다.")
-  public ResponseEntity<GetTokenAPIResponse> getToken (@PathVariable long reserverId){
+  public ResponseEntity<GetTokenAPIResponse> getToken (@PathVariable long userId){
     GetTokenUseCommand command = GetTokenUseCommand.builder()
-        .reserverId(reserverId)
+        .reserverId(userId)
         .build();
     TokenDTO token = getTokenUseCase.execute(command);
     return ResponseEntity.ok(GetTokenAPIResponse.from(token));

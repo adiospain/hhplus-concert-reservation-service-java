@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.payment;
 
-import io.hhplus.concert_reservation_service_java.application.payment.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.CreatePaymentAPIRequest;

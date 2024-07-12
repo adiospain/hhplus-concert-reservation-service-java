@@ -3,17 +3,18 @@ package io.hhplus.concert_reservation_service_java.application.token.useCase;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-import io.hhplus.concert_reservation_service_java.application.token.port.in.IssueTokenUseCommand;
-import io.hhplus.concert_reservation_service_java.application.token.service.TokenWithPosition;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.token.application.port.out.TokenMapper;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.IssueTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class IssueTokenUseCaseTest {

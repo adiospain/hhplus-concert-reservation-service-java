@@ -1,13 +1,12 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.concert;
 
-import io.hhplus.concert_reservation_service_java.application.concert.port.in.GetConcertDetailCommand;
-import io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.GetAvailableConcertSchedulesCommand;
-import io.hhplus.concert_reservation_service_java.application.concertScheduleSeat.port.in.GetAvailableSeatsCommand;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
-import io.hhplus.concert_reservation_service_java.domain.concertSchedule.GetAvailableConcertSchedulesUseCase;
-import io.hhplus.concert_reservation_service_java.domain.concertScheduleSeat.GetAvailableSeatsUseCae;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.ConcertController;
+import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableConcertSchedulesUseCase;
+import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableSeatsUseCae;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleSeatDTO;
@@ -16,11 +15,9 @@ import io.hhplus.concert_reservation_service_java.presentation.controller.concer
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res.GetConcertsAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res.GetSeatAPIRespose;
 import java.util.ArrayList;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

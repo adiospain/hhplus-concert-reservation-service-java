@@ -1,7 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token;
 
-import io.hhplus.concert_reservation_service_java.application.token.service.TokenWithPosition;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
+import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import java.time.LocalDateTime;
 import java.util.List;
 

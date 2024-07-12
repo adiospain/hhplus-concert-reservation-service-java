@@ -7,10 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import io.hhplus.concert_reservation_service_java.application.concert.useCase.ConcertMapper;
-import io.hhplus.concert_reservation_service_java.application.concert.useCase.GetConcertsUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.Concert;
-import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertsUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import java.util.Arrays;

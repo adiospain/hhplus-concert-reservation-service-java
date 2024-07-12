@@ -24,6 +24,7 @@ public enum ErrorCode {
   CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND(NOT_FOUND, "콘서트 날짜/좌석을 찾을 수 없습니다"),
   RESERVATION_NOT_FOUND(NOT_FOUND, "예약을 찾을 수 없습니다"),
   PAYMENT_NOT_FOUND(NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
+  TOKEN_NOT_FOUND(NOT_FOUND, "토큰이 존재하지 않습니다"),
 
   //409
   ALREADY_RESERVED(CONFLICT, "해당 좌석은 이미 예약 되었습니다"),
