@@ -5,12 +5,15 @@ import io.hhplus.concert_reservation_service_java.application.reserver.port.in.G
 
 import io.hhplus.concert_reservation_service_java.application.token.port.in.IssueTokenUseCommand;
 
+import io.hhplus.concert_reservation_service_java.application.token.port.in.GetTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.reserver.ChargePointUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reserver.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.ChargePointAPIResponse;
+import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.GetTokenAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.IssueTokenAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.GetPointAPIResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,17 +33,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReserverController {
 
   private final IssueTokenUseCase issueTokenUseCase;
+  private final GetTokenUseCase getTokenUseCase;
   private final GetPointUseCase getPointUseCase;
   private final ChargePointUseCase chargePointUseCase;
 
   @PostMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 발급" , description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
-  public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long userId){
+  public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long reserverId){
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
-        .userId(userId)
+        .reserverId(reserverId)
         .build();
     TokenDTO token = issueTokenUseCase.execute(command);
     return ResponseEntity.ok(IssueTokenAPIResponse.from(token));
+  }
+
+  @GetMapping("/{userId}/token")
+  @Operation(summary = "유저 토큰 조회" , description = "현재 대기열 순번과 토큰 잔여시간을 제공됩니다.")
+  public ResponseEntity<GetTokenAPIResponse> getToken (@PathVariable long reserverId){
+    GetTokenUseCommand command = GetTokenUseCommand.builder()
+        .reserverId(reserverId)
+        .build();
+    TokenDTO token = getTokenUseCase.execute(command);
+    return ResponseEntity.ok(GetTokenAPIResponse.from(token));
   }
 
   @GetMapping("/{userId}/point")
