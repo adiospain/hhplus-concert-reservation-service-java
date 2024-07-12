@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase;
 
 import io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.GetAvailableConcertSchedulesCommand;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
@@ -8,9 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.concertSchedule.Concert
 import io.hhplus.concert_reservation_service_java.domain.concertSchedule.GetAvailableConcertSchedulesUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

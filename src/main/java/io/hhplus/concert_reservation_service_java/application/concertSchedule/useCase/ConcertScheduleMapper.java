@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase;
 
 import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
