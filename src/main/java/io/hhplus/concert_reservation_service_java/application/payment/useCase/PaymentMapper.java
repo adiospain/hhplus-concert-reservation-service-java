@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.payment.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.payment.useCase;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation;

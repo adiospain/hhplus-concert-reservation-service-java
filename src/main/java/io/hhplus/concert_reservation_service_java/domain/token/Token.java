@@ -1,55 +1,53 @@
-package io.hhplus.concert_reservation_service_java.domain.token;
+  package io.hhplus.concert_reservation_service_java.domain.token;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+  import jakarta.persistence.*;
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Getter;
+  import lombok.NoArgsConstructor;
+  import lombok.Setter;
 
-import java.time.LocalDateTime;
+  import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "token")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Token {
+  @Entity
+  @Table(name = "token")
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public class Token {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-  @Column(name = "user_id", nullable = false)
-  private Long userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "status", nullable = false)
-  private TokenStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private TokenStatus status;
 
-  @Column(name = "expire_at", nullable = false)
-  private LocalDateTime expireAt;
+    @Column(name = "expire_at", nullable = false)
+    private LocalDateTime expireAt;
 
-  // 생성 시간 추가 (옵션)
-  @Column(name = "created_at", nullable = false)
-  private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-  // 업데이트 시간 추가 (옵션)
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-  @PrePersist
-  protected void onCreate() {
-    createdAt = LocalDateTime.now();
+    @PrePersist
+    protected void onCreate() {
+      createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+      updatedAt = LocalDateTime.now();
+    }
   }
 
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
-  }
-}
-
-// TokenStatus enum
+  // TokenStatus enum
