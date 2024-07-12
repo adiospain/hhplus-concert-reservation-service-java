@@ -1,6 +1,6 @@
-  package io.hhplus.concert_reservation_service_java.domain.token;
+package io.hhplus.concert_reservation_service_java.domain.token;
 
-  public interface TouchExpiredTokenUseCase {
+public interface TouchExpiredTokenUseCase {
 
-    void execute();
-  }
+  void execute();
+}
