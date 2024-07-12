@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.hhplus.concert_reservation_service_java.application.concert.port.in.GetConcertDetailCommand;
+import io.hhplus.concert_reservation_service_java.application.concert.useCase.ConcertMapper;
+import io.hhplus.concert_reservation_service_java.application.concert.useCase.GetConcertDetailUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
@@ -23,8 +25,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
