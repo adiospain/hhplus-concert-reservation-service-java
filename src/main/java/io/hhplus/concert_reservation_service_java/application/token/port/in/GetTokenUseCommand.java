@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class IssueTokenUseCommand {
+public class GetTokenUseCommand {
   long reserverId;
-
 }
