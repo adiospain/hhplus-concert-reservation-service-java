@@ -1,6 +1,8 @@
 package io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.useCase;
 
 import io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.GetAvailableConcertSchedulesCommand;
+import io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase.ConcertScheduleMapper;
+import io.hhplus.concert_reservation_service_java.application.concertSchedule.useCase.GetAvailableConcertSchedulesUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertSchedule;
@@ -8,7 +10,6 @@ import io.hhplus.concert_reservation_service_java.domain.concertSchedule.GetAvai
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

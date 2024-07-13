@@ -1,6 +1,8 @@
 package io.hhplus.concert_reservation_service_java.application.reservation.port.in.useCase;
 
 import io.hhplus.concert_reservation_service_java.application.reservation.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.application.reservation.useCase.CreateReservationUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.application.reservation.useCase.ReservationMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concertSchedule.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.domain.concertScheduleSeat.ConcertScheduleSeat;
@@ -9,11 +11,14 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation
 import io.hhplus.concert_reservation_service_java.domain.reserver.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
+import io.hhplus.concert_reservation_service_java.domain.token.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -24,12 +29,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CreateReservationUseCaseImplTest {
+class CreateReservationUseCaseTest {
 
   private ReserverRepository reserverRepository;
   private ReservationRepository reservationRepository;
   private ConcertRepository concertRepository;
   private ReservationMapper reservationMapper;
+  private TokenService tokenService;
   private CreateReservationUseCaseImpl createReservationUseCase;
 
   @BeforeEach
@@ -38,8 +44,9 @@ class CreateReservationUseCaseImplTest {
     reservationRepository = Mockito.mock(ReservationRepository.class);
     concertRepository = Mockito.mock(ConcertRepository.class);
     reservationMapper = Mockito.mock(ReservationMapper.class);
+    tokenService = Mockito.mock(TokenService.class);
     createReservationUseCase = new CreateReservationUseCaseImpl(
-        reserverRepository, reservationRepository, concertRepository, reservationMapper);
+        reserverRepository, reservationRepository, concertRepository, reservationMapper, tokenService);
   }
 
   @Test
