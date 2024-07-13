@@ -608,7 +608,7 @@ erDiagram
 </details>
 
 </details>
-<details>
+<details open>
   <summary style="font-size: 1.5em; font-weight: bold">Swagger</summary>
 	<img style="width:1500px" src="https://github.com/user-attachments/assets/f57eb5ea-bc4e-423e-a33c-5410d0e91659"/>
 
