@@ -1,6 +1,7 @@
 package io.hhplus.concert_reservation_service_java.domain.concert;
 
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 
 
@@ -9,5 +10,5 @@ import java.util.List;
 
 public interface GetAvailableSeatsUseCae {
 
-  List<ConcertScheduleSeatDTO> execute(GetAvailableSeatsCommand command);
+  List<ConcertScheduleSeatDomain> execute(GetAvailableSeatsCommand command);
 }

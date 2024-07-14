@@ -7,12 +7,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableConcertSchedulesUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableConcertSchedulesUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
@@ -58,7 +59,7 @@ class GetConcertScheduleUseCaseTest {
         .concertId(concertId)
         .build();
 
-    List<ConcertScheduleDTO> result = getAvailableConcertSchedulesUseCase.execute(command);
+    List<ConcertScheduleDomain> result = getAvailableConcertSchedulesUseCase.execute(command);
 
     assertThat(result).isNotNull();
     assertThat(result).hasSize(5);
@@ -83,7 +84,7 @@ class GetConcertScheduleUseCaseTest {
         .concertId(concertId)
         .build();
 
-    List<ConcertScheduleDTO> result = getAvailableConcertSchedulesUseCase.execute(command);
+    List<ConcertScheduleDomain> result = getAvailableConcertSchedulesUseCase.execute(command);
 
     assertThat(result).isNotNull();
     assertThat(result).isEmpty();
@@ -102,7 +103,7 @@ class GetConcertScheduleUseCaseTest {
     GetAvailableConcertSchedulesCommand command = GetAvailableConcertSchedulesCommand.builder()
         .concertId(concertId)
         .build();
-    List<ConcertScheduleDTO> result = getAvailableConcertSchedulesUseCase.execute(command);
+    List<ConcertScheduleDomain> result = getAvailableConcertSchedulesUseCase.execute(command);
 
 
     assertThat(result).isNotNull().isEmpty();

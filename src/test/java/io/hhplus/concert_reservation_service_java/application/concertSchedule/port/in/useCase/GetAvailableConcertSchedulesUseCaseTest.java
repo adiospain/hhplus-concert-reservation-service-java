@@ -1,11 +1,12 @@
 package io.hhplus.concert_reservation_service_java.application.concertSchedule.port.in.useCase;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableConcertSchedulesUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableConcertSchedulesUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ class GetAvailableConcertSchedulesUseCaseTest {
         .concertId(concertId).build();
 
     List<ConcertSchedule> concertSchedules = new ArrayList<>();
-    List<ConcertScheduleDTO> concertScheduleDTOs = new ArrayList<>();
+    List<ConcertScheduleDomain> concertScheduleDomains = new ArrayList<>();
     Concert concert = new Concert(concertId, "국립국악원 정기공연");
     for (int j=1; j <= 5; ++j){
       ConcertSchedule concertSchedule = new ConcertSchedule();
@@ -45,19 +46,19 @@ class GetAvailableConcertSchedulesUseCaseTest {
       concertSchedule.setStartAt(now.plusDays(j));
       concertSchedule.setCapacity(j);
       concertSchedules.add(concertSchedule);
-      concertScheduleDTOs.add(new ConcertScheduleDTO(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
+      concertScheduleDomains.add(new ConcertScheduleDomain(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
     }
 
 
 
     when(concertRepository.findUpcomingConcertSchedules(any(long.class), any(LocalDateTime.class))).thenReturn(concertSchedules);
-    when(concertScheduleMapper.from(concertSchedules)).thenReturn(concertScheduleDTOs);
+    when(concertScheduleMapper.from(concertSchedules)).thenReturn(concertScheduleDomains);
 
     // When
-    List<ConcertScheduleDTO> result = useCase.execute(command);
+    List<ConcertScheduleDomain> result = useCase.execute(command);
 
     // Then
-    assertThat(result).isNotNull().hasSize(5).isEqualTo(concertScheduleDTOs);
+    assertThat(result).isNotNull().hasSize(5).isEqualTo(concertScheduleDomains);
 
     verify(concertRepository).findUpcomingConcertSchedules(eq(concertId), any(LocalDateTime.class));
     verify(concertScheduleMapper).from(concertSchedules);
@@ -76,7 +77,7 @@ class GetAvailableConcertSchedulesUseCaseTest {
     when(concertScheduleMapper.from(Collections.emptyList())).thenReturn(Collections.emptyList());
 
     // When
-    List<ConcertScheduleDTO> result = useCase.execute(command);
+    List<ConcertScheduleDomain> result = useCase.execute(command);
 
     // Then
     assertThat(result).isNotNull().isEmpty();

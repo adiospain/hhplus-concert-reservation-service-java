@@ -1,5 +1,8 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.concert;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
@@ -48,9 +51,9 @@ class ConcertControllerTest {
   @Test
   @DisplayName("콘서트 조회 - Paging 10")
   void getConcerts_ShouldReturnListOf10Concerts() {
-    List<ConcertDTO> concerts = new ArrayList<>();
+    List<ConcertDomain> concerts = new ArrayList<>();
     for (int i = 1; i <= 15; i++) {
-      concerts.add(new ConcertDTO((long) i, "Concert " + i, null));
+      concerts.add(new ConcertDomain((long) i, "Concert " + i, null));
     }
     when(getConcertsUseCase.execute()).thenReturn(concerts);
 
@@ -59,7 +62,7 @@ class ConcertControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
 
-    Page<ConcertDTO> resultPage = response.getBody().concerts();
+    Page<ConcertDomain> resultPage = response.getBody().concerts();
     assertThat(resultPage.getContent()).hasSize(10);
     assertThat(resultPage.getTotalElements()).isEqualTo(15);
     assertThat(resultPage.getTotalPages()).isEqualTo(2);
@@ -73,13 +76,13 @@ class ConcertControllerTest {
   void getConcertDetail_ShouldReturnConcertDetail() {
     // Given
     Long concertId = 1L;
-    List<ConcertScheduleDTO> schedules = Arrays.asList(
-        new ConcertScheduleDTO(1L, LocalDateTime.now().plusDays(1), 0),
-        new ConcertScheduleDTO(2L, LocalDateTime.now().plusDays(2), 0)
+    List<ConcertScheduleDomain> schedules = Arrays.asList(
+        new ConcertScheduleDomain(1L, LocalDateTime.now().plusDays(1), 0),
+        new ConcertScheduleDomain(2L, LocalDateTime.now().plusDays(2), 0)
     );
-    ConcertDTO concertDTO = new ConcertDTO(concertId, "Concert 1", schedules);
+    ConcertDomain concertDomain = new ConcertDomain(concertId, "Concert 1", schedules);
 
-    when(getConcertDetailUseCase.execute(any(GetConcertDetailCommand.class))).thenReturn(concertDTO);
+    when(getConcertDetailUseCase.execute(any(GetConcertDetailCommand.class))).thenReturn(concertDomain);
 
     // When
     ResponseEntity<GetConcertDetailAPIResponse> response = concertController.getConcertDetail(concertId);
@@ -105,9 +108,9 @@ class ConcertControllerTest {
     // Given
     Long concertId = 1L;
     LocalDateTime now = LocalDateTime.now();
-    List<ConcertScheduleDTO> schedules = Arrays.asList(
-        new ConcertScheduleDTO(1L, now, 100),
-        new ConcertScheduleDTO(2L, now.plusDays(1), 150)
+    List<ConcertScheduleDomain> schedules = Arrays.asList(
+        new ConcertScheduleDomain(1L, now, 100),
+        new ConcertScheduleDomain(2L, now.plusDays(1), 150)
     );
     when(getAvailableConcertSchedulesUseCase.execute(any(GetAvailableConcertSchedulesCommand.class)))
         .thenReturn(schedules);
@@ -123,12 +126,12 @@ class ConcertControllerTest {
     assertThat(apiResponse.concertSchedules()).isNotNull();
     assertThat(apiResponse.concertSchedules()).hasSize(2);
 
-    ConcertScheduleDTO firstSchedule = apiResponse.concertSchedules().get(0);
+    ConcertScheduleDomain firstSchedule = apiResponse.concertSchedules().get(0);
     assertThat(firstSchedule.getId()).isEqualTo(1L);
     assertThat(firstSchedule.getStartAt()).isEqualTo(now);
     assertThat(firstSchedule.getCapacity()).isEqualTo(100);
 
-    ConcertScheduleDTO secondSchedule = apiResponse.concertSchedules().get(1);
+    ConcertScheduleDomain secondSchedule = apiResponse.concertSchedules().get(1);
     assertThat(secondSchedule.getId()).isEqualTo(2L);
     assertThat(secondSchedule.getStartAt()).isEqualTo(now.plusDays(1));
     assertThat(secondSchedule.getCapacity()).isEqualTo(150);
@@ -141,9 +144,9 @@ class ConcertControllerTest {
   void getAvailableSeats_ShouldReturnAvailableSeats() {
     Long concertId = 1L;
     Long concertScheduleId = 1L;
-    List<ConcertScheduleSeatDTO> seats = Arrays.asList(
-        new ConcertScheduleSeatDTO(1L, 1),
-        new ConcertScheduleSeatDTO(2L, 2)
+    List<ConcertScheduleSeatDomain> seats = Arrays.asList(
+        new ConcertScheduleSeatDomain(1L, 1),
+        new ConcertScheduleSeatDomain(2L, 2)
     );
     when(getAvailableSeatsUseCae.execute(any(GetAvailableSeatsCommand.class))).thenReturn(seats);
 

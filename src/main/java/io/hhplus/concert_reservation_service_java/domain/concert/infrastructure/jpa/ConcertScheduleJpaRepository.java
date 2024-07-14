@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

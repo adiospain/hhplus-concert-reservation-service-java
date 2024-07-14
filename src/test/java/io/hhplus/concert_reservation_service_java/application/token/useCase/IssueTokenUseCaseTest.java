@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.IssueTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
-import io.hhplus.concert_reservation_service_java.domain.token.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.out.TokenMapper;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.IssueTokenUseCaseImpl;

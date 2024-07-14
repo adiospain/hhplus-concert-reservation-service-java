@@ -1,10 +1,10 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.application.port.out;
 
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertScheduleSeat;
-import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
+import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleSeatDTO;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,17 +13,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConcertScheduleSeatMapper {
 
-  public ConcertScheduleSeatDTO from (ConcertScheduleSeat concertScheduleSeat){
+  public ConcertScheduleSeatDomain from (ConcertScheduleSeat concertScheduleSeat){
     if (concertScheduleSeat == null){
       throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
     }
-    return ConcertScheduleSeatDTO.builder()
+    return ConcertScheduleSeatDomain.builder()
         .id(concertScheduleSeat.getId())
         .seatNumber(concertScheduleSeat.getSeat().getSeatNumber())
         .build();
   }
 
-  public List<ConcertScheduleSeatDTO> from (List<ConcertScheduleSeat> concertScheduleSeat){
+  public List<ConcertScheduleSeatDomain> from (List<ConcertScheduleSeat> concertScheduleSeat){
     if (concertScheduleSeat == null || concertScheduleSeat.isEmpty()){
       throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
     }
@@ -32,14 +32,14 @@ public class ConcertScheduleSeatMapper {
         .collect(Collectors.toList());
   }
 
-  public ConcertScheduleSeatDTO from (Seat seat){
-    return ConcertScheduleSeatDTO.builder()
+  public ConcertScheduleSeatDomain from (Seat seat){
+    return ConcertScheduleSeatDomain.builder()
         .id(seat.getId())
         .seatNumber(seat.getSeatNumber())
         .build();
   }
 
-  public List<ConcertScheduleSeatDTO> AvailableSeatsFrom(List<Seat> allSeats, Set<Long> reservedSeatIds) {
+  public List<ConcertScheduleSeatDomain> AvailableSeatsFrom(List<Seat> allSeats, Set<Long> reservedSeatIds) {
     return allSeats.stream()
         .filter(seat -> !reservedSeatIds.contains(seat.getId()))
         .map(this::from)

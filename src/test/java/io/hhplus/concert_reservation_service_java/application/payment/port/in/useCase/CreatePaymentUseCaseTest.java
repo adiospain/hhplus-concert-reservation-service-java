@@ -7,15 +7,15 @@ import io.hhplus.concert_reservation_service_java.domain.payment.application.por
 import io.hhplus.concert_reservation_service_java.domain.payment.application.useCase.CreatePaymentUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.Payment;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.model.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,18 +47,18 @@ class CreatePaymentUseCaseTest {
     Reservation reservation = mock(Reservation.class);
     Payment payment = mock(Payment.class);
     Payment savedPayment = mock(Payment.class);
-    PaymentDTO paymentDTO = mock(PaymentDTO.class);
+    PaymentDomain paymentDomain = mock(PaymentDomain.class);
 
     when(reserverRepository.findByIdWithPessimisticLock(reserverId)).thenReturn(Optional.of(reserver));
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
     when(reserver.createPayment(reservation)).thenReturn(payment);
     when(paymentRepository.save(payment)).thenReturn(savedPayment);
-    when(paymentMapper.of(savedPayment, reservation)).thenReturn(paymentDTO);
+    when(paymentMapper.of(savedPayment, reservation)).thenReturn(paymentDomain);
 
-    PaymentDTO result = createPaymentUseCase.execute(command);
+    PaymentDomain result = createPaymentUseCase.execute(command);
 
     assertNotNull(result);
-    assertEquals(paymentDTO, result);
+    assertEquals(paymentDomain, result);
 
     verify(reserverRepository).findByIdWithPessimisticLock(reserverId);
     verify(reservationRepository).findById(reservationId);

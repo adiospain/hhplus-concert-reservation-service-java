@@ -4,11 +4,11 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.application
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.useCase.CreateReservationUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.port.out.ReservationMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertScheduleSeat;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.model.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;

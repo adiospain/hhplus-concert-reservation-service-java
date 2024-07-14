@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.application.token.useCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.domain.reserver.GetTokenUseCase;
-import io.hhplus.concert_reservation_service_java.domain.token.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.out.TokenMapper;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.GetTokenUseCaseImpl;

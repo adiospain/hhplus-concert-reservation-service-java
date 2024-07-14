@@ -1,9 +1,9 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository;
 
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertScheduleSeat;
-import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
+import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

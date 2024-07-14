@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa;
+package io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

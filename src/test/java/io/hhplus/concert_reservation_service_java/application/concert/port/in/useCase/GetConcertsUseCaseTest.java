@@ -7,9 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertsUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
@@ -36,21 +37,21 @@ class GetConcertsUseCaseTest {
         new Concert(1L, "Concert 1"),
         new Concert(2L, "Concert 2")
     );
-    List<ConcertDTO> expectedDTOs = Arrays.asList(
-        new ConcertDTO(1L, "Concert 1", null),
-        new ConcertDTO(2L, "Concert 2", null)
+    List<ConcertDomain> expectedDomains = Arrays.asList(
+        new ConcertDomain(1L, "Concert 1", null),
+        new ConcertDomain(2L, "Concert 2", null)
     );
 
     when(concertRepository.findAll())
         .thenReturn(concerts);
     when(concertMapper.WithoutConcertScheduleFrom(concerts))
-        .thenReturn(expectedDTOs);
+        .thenReturn(expectedDomains);
 
     // When
-    List<ConcertDTO> result = useCase.execute();
+    List<ConcertDomain> result = useCase.execute();
 
     // Then
-    assertThat(result).isNotNull().hasSize(2).isEqualTo(expectedDTOs);
+    assertThat(result).isNotNull().hasSize(2).isEqualTo(expectedDomains);
 
     verify(concertRepository).findAll();
     verify(concertMapper).WithoutConcertScheduleFrom(concerts);
@@ -64,7 +65,7 @@ class GetConcertsUseCaseTest {
     when(concertMapper.WithoutConcertScheduleFrom(Collections.emptyList())).thenReturn(Collections.emptyList());
 
     // When
-    List<ConcertDTO> result = useCase.execute();
+    List<ConcertDomain> result = useCase.execute();
 
     // Then
     assertThat(result).isNotNull().isEmpty();

@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.application.useCase;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleSeatMapper;
@@ -7,10 +8,9 @@ import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableSeatsUseCae;
-import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
+import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleSeatDTO;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +27,7 @@ public class GetAvailableSeatsUseCaseImpl implements GetAvailableSeatsUseCae {
   private final ConcertScheduleSeatMapper concertScheduleSeatMapper;
 
   @Override
-  public List<ConcertScheduleSeatDTO> execute(GetAvailableSeatsCommand command) {
+  public List<ConcertScheduleSeatDomain> execute(GetAvailableSeatsCommand command) {
     try{
       CompletableFuture<List<Seat>> seatsFuture = CompletableFuture.supplyAsync(() ->
           concertRepository.findSeatsByConcertScheduleId(command.getConcertScheduleId()));

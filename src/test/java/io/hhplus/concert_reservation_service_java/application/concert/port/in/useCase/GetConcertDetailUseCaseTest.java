@@ -6,13 +6,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertDetailUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.Concert;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
@@ -63,7 +65,7 @@ class GetConcertDetailUseCaseTest {
     LocalDateTime fixedDateTime = LocalDateTime.now().plusYears(1);
 
     List<ConcertSchedule> concertSchedules = new ArrayList<>();
-    List<ConcertScheduleDTO> concertScheduleDTOs = new ArrayList<>();
+    List<ConcertScheduleDomain> concertScheduleDomains = new ArrayList<>();
     Concert concert = new Concert(concertId, "국립국악원 정기공연");
     for (int j=0; j <5; ++j){
       ConcertSchedule concertSchedule = new ConcertSchedule();
@@ -71,22 +73,22 @@ class GetConcertDetailUseCaseTest {
       concertSchedule.setStartAt(fixedDateTime.plusDays(j));
       concertSchedule.setCapacity(j);
       concertSchedules.add(concertSchedule);
-      concertScheduleDTOs.add(new ConcertScheduleDTO(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
+      concertScheduleDomains.add(new ConcertScheduleDomain(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
     }
 
 
-    ConcertDTO concertDTO = new ConcertDTO(concert.getId(), concert.getName(), concertScheduleDTOs);
+    ConcertDomain concertDomain = new ConcertDomain(concert.getId(), concert.getName(), concertScheduleDomains);
 
     when(concertRepository.findAllConcertSchedulesByConcertId(any(Long.class))).thenReturn(concertSchedules);
-    when(concertMapper.WithConcertScheduleFrom(concertSchedules)).thenReturn(concertDTO);
+    when(concertMapper.WithConcertScheduleFrom(concertSchedules)).thenReturn(concertDomain);
     GetConcertDetailCommand command = GetConcertDetailCommand.builder().concertId(concerts.get(0).getId()).build();
-    ConcertDTO result = getConcertDetailUseCase.execute(command);
+    ConcertDomain result = getConcertDetailUseCase.execute(command);
 
     assertThat(result.getId()).isEqualTo(concert.getId());
     assertThat(result.getName()).isEqualTo(concert.getName());
-    assertThat(result.getSchedules().get(0).getId()).isEqualTo(concertScheduleDTOs.get(0).getId());
-    assertThat(result.getSchedules().get(0).getStartAt()).isEqualTo(concertScheduleDTOs.get(0).getStartAt());
-    assertThat(result.getSchedules().get(0).getCapacity()).isEqualTo(concertScheduleDTOs.get(0).getCapacity());
+    assertThat(result.getSchedules().get(0).getId()).isEqualTo(concertScheduleDomains.get(0).getId());
+    assertThat(result.getSchedules().get(0).getStartAt()).isEqualTo(concertScheduleDomains.get(0).getStartAt());
+    assertThat(result.getSchedules().get(0).getCapacity()).isEqualTo(concertScheduleDomains.get(0).getCapacity());
     verify(concertRepository).findAllConcertSchedulesByConcertId(concerts.get(0).getId());
     verify(concertMapper).WithConcertScheduleFrom(concertSchedules);
   }

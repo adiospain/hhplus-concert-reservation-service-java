@@ -1,5 +1,8 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.concert;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableConcertSchedulesCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
@@ -42,7 +45,7 @@ public class ConcertController {
   public ResponseEntity<GetConcertsAPIResponse> getConcerts(
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize) {
-      List<ConcertDTO> result = getConcertsUseCase.execute();
+      List<ConcertDomain> result = getConcertsUseCase.execute();
     return ResponseEntity.ok(GetConcertsAPIResponse.from(result, page, pageSize));
   }
 
@@ -53,7 +56,7 @@ public class ConcertController {
     GetConcertDetailCommand command = GetConcertDetailCommand.builder()
         .concertId(concertId)
         .build();
-    ConcertDTO result = getConcertDetailUseCase.execute(command);
+    ConcertDomain result = getConcertDetailUseCase.execute(command);
     return ResponseEntity.ok(GetConcertDetailAPIResponse.from(result));
   }
 
@@ -65,7 +68,7 @@ public class ConcertController {
     GetAvailableConcertSchedulesCommand command = GetAvailableConcertSchedulesCommand.builder()
         .concertId(concertId)
         .build();
-    List<ConcertScheduleDTO> result = getAvailableConcertSchedulesUseCase.execute(command);
+    List<ConcertScheduleDomain> result = getAvailableConcertSchedulesUseCase.execute(command);
     return ResponseEntity.ok(GetConcertScheduleAPIRespose.from(result));
   }
 
@@ -80,7 +83,7 @@ public class ConcertController {
         .concertId(concertId)
         .concertScheduleId(concertScheduleId)
         .build();
-    List<ConcertScheduleSeatDTO> result = getAvailableSeatsUseCae.execute(command);
+    List<ConcertScheduleSeatDomain> result = getAvailableSeatsUseCae.execute(command);
     return ResponseEntity.ok(GetSeatAPIRespose.from(result));
   }
 }

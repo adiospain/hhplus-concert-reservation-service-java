@@ -6,6 +6,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
+
+import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleSeatMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableSeatsUseCaseImpl;
@@ -51,10 +53,10 @@ class GetAvailableSeatsUseCaseTest {
     }
     Set<Long> reservedSeatIds = new HashSet<>(Arrays.asList(2L, 45L, 3L));
 
-    List<ConcertScheduleSeatDTO> expectedDTOs = Arrays.asList(
-        new ConcertScheduleSeatDTO(2L, 2),
-        new ConcertScheduleSeatDTO(45L, 45),
-        new ConcertScheduleSeatDTO(3L, 3)
+    List<ConcertScheduleSeatDomain> expectedDomains = Arrays.asList(
+        new ConcertScheduleSeatDomain(2L, 2),
+        new ConcertScheduleSeatDomain(45L, 45),
+        new ConcertScheduleSeatDomain(3L, 3)
     );
 
     when(concertRepository.findSeatsByConcertScheduleId(concertScheduleId))
@@ -62,11 +64,11 @@ class GetAvailableSeatsUseCaseTest {
     when(reservationRepository.findSeatIdByconcertScheduleId(concertScheduleId))
         .thenReturn(Arrays.asList(2L, 45L, 3L));
     when(concertScheduleSeatMapper.AvailableSeatsFrom(allSeats, reservedSeatIds))
-        .thenReturn(expectedDTOs);
+        .thenReturn(expectedDomains);
 
-    List<ConcertScheduleSeatDTO> result = useCase.execute(command);
+    List<ConcertScheduleSeatDomain> result = useCase.execute(command);
 
-    assertThat(result).isNotNull().hasSize(3).isEqualTo(expectedDTOs);
+    assertThat(result).isNotNull().hasSize(3).isEqualTo(expectedDomains);
 
     verify(concertRepository).findSeatsByConcertScheduleId(concertScheduleId);
     verify(reservationRepository).findSeatIdByconcertScheduleId(concertScheduleId);
@@ -91,17 +93,17 @@ class GetAvailableSeatsUseCaseTest {
       reservedSeatIds.add(seatId);
     }
 
-    List<ConcertScheduleSeatDTO> expectedDTOs = Collections.emptyList();
+    List<ConcertScheduleSeatDomain> expectedDomains = Collections.emptyList();
 
     when(concertRepository.findSeatsByConcertScheduleId(concertScheduleId))
         .thenReturn(allSeats);
     when(reservationRepository.findSeatIdByconcertScheduleId(concertScheduleId))
         .thenReturn(new ArrayList<>(reservedSeatIds));
     when(concertScheduleSeatMapper.AvailableSeatsFrom(allSeats, reservedSeatIds))
-        .thenReturn(expectedDTOs);
+        .thenReturn(expectedDomains);
 
     // When
-    List<ConcertScheduleSeatDTO> result = useCase.execute(command);
+    List<ConcertScheduleSeatDomain> result = useCase.execute(command);
 
     // Then
     assertThat(result).isNotNull().hasSize(0);
