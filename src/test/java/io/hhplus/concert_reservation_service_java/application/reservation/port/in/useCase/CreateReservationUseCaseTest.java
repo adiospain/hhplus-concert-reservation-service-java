@@ -7,14 +7,18 @@ import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.reserver.application.model.Reserver;
+import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -71,11 +75,22 @@ class CreateReservationUseCaseTest {
     concertScheduleSeat.setSeat(seat);
     concertScheduleSeat.setPrice(25000);
 
-    Reservation reservation = reserver.createReservation(concertScheduleSeat);
-    reservation.setId(1L);
+    Token token = new Token();
+    TokenWithPosition tokenWithPosition = new TokenWithPosition (token, 1);
+
+    Reservation reservation = Reservation.builder()
+        .id(1L)
+        .reserver(reserver)
+        .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
+        .seatId(concertScheduleSeat.getSeat().getId())
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now())
+        .reservedPrice(concertScheduleSeat.getPrice())
+        .build();
     ReservationDomain reservationDomain = new ReservationDomain(reservation.getId(), reservation.getCreatedAt(), reservation.getCreatedAt().plusMinutes(5));
 
     when(reserverRepository.findById(reserverId)).thenReturn(Optional.of(reserver));
+    when(tokenService.getToken(1L)).thenReturn(tokenWithPosition);
     when(concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId))
         .thenReturn(Optional.of(concertScheduleSeat));
     when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
