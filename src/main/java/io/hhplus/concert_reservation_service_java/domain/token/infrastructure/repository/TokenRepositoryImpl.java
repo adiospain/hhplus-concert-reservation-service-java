@@ -1,7 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository;
 
-import io.hhplus.concert_reservation_service_java.domain.token.Token;
-import io.hhplus.concert_reservation_service_java.domain.token.TokenRepository;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;

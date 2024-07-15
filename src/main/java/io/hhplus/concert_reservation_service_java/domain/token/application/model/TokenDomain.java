@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto;
+package io.hhplus.concert_reservation_service_java.domain.token.application.model;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class TokenDTO {
+public class TokenDomain {
   private long id;
   private LocalDateTime expiredAt;
   private long order;

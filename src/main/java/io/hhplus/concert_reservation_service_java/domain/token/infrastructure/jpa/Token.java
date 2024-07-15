@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.token;
+package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

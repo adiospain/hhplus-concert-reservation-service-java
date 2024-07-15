@@ -10,7 +10,7 @@ import io.hhplus.concert_reservation_service_java.domain.reserver.ChargePointUse
 import io.hhplus.concert_reservation_service_java.domain.reserver.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.GetPointUseCase;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.ChargePointAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.res.GetTokenAPIResponse;
@@ -43,7 +43,7 @@ public class ReserverController {
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
         .reserverId(userId)
         .build();
-    TokenDTO token = issueTokenUseCase.execute(command);
+    TokenDomain token = issueTokenUseCase.execute(command);
     return ResponseEntity.ok(IssueTokenAPIResponse.from(token));
   }
 
@@ -53,7 +53,7 @@ public class ReserverController {
     GetTokenUseCommand command = GetTokenUseCommand.builder()
         .reserverId(userId)
         .build();
-    TokenDTO token = getTokenUseCase.execute(command);
+    TokenDomain token = getTokenUseCase.execute(command);
     return ResponseEntity.ok(GetTokenAPIResponse.from(token));
   }
 

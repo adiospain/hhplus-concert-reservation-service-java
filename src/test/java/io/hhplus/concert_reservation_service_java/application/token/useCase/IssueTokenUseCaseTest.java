@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.IssueTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
-import io.hhplus.concert_reservation_service_java.domain.token.application.model.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.out.TokenMapper;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.IssueTokenUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -32,17 +32,17 @@ class IssueTokenUseCaseTest {
     Token token = new Token();
     int queuePosition = 5;
     TokenWithPosition tokenWithPosition = new TokenWithPosition(token, queuePosition);
-    TokenDTO expectedTokenDTO = new TokenDTO();
+    TokenDomain expectedTokenDomain = new TokenDomain();
 
     when(tokenService.upsertToken(reserverId)).thenReturn(tokenWithPosition);
-    when(tokenMapper.from(token, queuePosition)).thenReturn(expectedTokenDTO);
+    when(tokenMapper.from(token, queuePosition)).thenReturn(expectedTokenDomain);
 
     // Act
-    TokenDTO result = useCase.execute(command);
+    TokenDomain result = useCase.execute(command);
 
     // Assert
     assertNotNull(result);
-    assertEquals(expectedTokenDTO, result);
+    assertEquals(expectedTokenDomain, result);
     verify(tokenService).upsertToken(reserverId);
     verify(tokenMapper).from(token, queuePosition);
   }

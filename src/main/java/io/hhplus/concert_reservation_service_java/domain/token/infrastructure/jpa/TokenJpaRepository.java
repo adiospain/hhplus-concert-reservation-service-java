@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa;
 
-import io.hhplus.concert_reservation_service_java.domain.token.Token;
 import jakarta.persistence.QueryHint;
 import java.time.LocalDateTime;
 import java.util.List;

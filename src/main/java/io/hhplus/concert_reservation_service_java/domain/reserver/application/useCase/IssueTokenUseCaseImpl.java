@@ -6,7 +6,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.application.port.
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reserver.dto.TokenDTO;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -17,7 +17,7 @@ public class IssueTokenUseCaseImpl implements IssueTokenUseCase {
   private final TokenMapper tokenMapper;
 
   @Override
-  public TokenDTO execute(IssueTokenUseCommand command) {
+  public TokenDomain execute(IssueTokenUseCommand command) {
     TokenWithPosition tokenWithPosition = tokenService.upsertToken(command.getReserverId());
     return tokenMapper.from(tokenWithPosition.getToken(), tokenWithPosition.getQueuePosition());
   }

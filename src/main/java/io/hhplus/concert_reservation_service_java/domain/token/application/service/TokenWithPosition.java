@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token.application.service;
 
-import io.hhplus.concert_reservation_service_java.domain.token.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 
 public class TokenWithPosition {
   private final Token token;

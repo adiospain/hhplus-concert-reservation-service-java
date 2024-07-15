@@ -50,7 +50,7 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
     }
   }
 
-  private Reservation createReservation(Reserver reserver, ConcertScheduleSeat concertScheduleSeat) {
+  public Reservation createReservation(Reserver reserver, ConcertScheduleSeat concertScheduleSeat) {
     return Reservation.builder()
         .reserver(reserver)
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
