@@ -1,12 +1,12 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.res;
 
-import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 
 public record CreateReservationAPIResponse
-    (ReservationDTO reservation)
+    (ReservationDomain reservation)
 {
 
-  public static CreateReservationAPIResponse from(ReservationDTO reservation) {
+  public static CreateReservationAPIResponse from(ReservationDomain reservation) {
     return new CreateReservationAPIResponse(reservation);
   }
 }

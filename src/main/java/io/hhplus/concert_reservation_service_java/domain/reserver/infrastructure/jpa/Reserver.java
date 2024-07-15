@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa;
 
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertScheduleSeat;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;

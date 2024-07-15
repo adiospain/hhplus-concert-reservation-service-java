@@ -1,8 +1,8 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.reservation;
 
-import io.hhplus.concert_reservation_service_java.domain.reservation.application.port.in.CreateReservationCommand;
-import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.CreateReservationUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.req.CreateReservationAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.res.CreateReservationAPIResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,7 @@ public class ReservationController {
         .seatId(request.seatId())
         .build();
 
-    ReservationDTO reservation = createReservationUseCase.execute(command);
+    ReservationDomain reservation = createReservationUseCase.execute(command);
 
     return ResponseEntity.ok(CreateReservationAPIResponse.from(reservation));
   }

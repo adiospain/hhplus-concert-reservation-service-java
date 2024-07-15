@@ -1,21 +1,23 @@
-package io.hhplus.concert_reservation_service_java.domain.reservation.application.useCase;
+package io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase;
 
 
-import io.hhplus.concert_reservation_service_java.domain.reservation.application.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreateReservationCommand;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.ConcertScheduleSeat;
-import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
+import io.hhplus.concert_reservation_service_java.domain.reserver.CreateReservationUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.reservation.application.port.out.ReservationMapper;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.out.ReservationMapper;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.reservation.dto.ReservationDTO;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,20 +33,32 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
 
   @Override
   @Transactional
-  public ReservationDTO execute(CreateReservationCommand command) {
+  public ReservationDomain execute(CreateReservationCommand command) {
     Reserver reserver = findReserver(command.getReserverId());
 
     TokenWithPosition tokenWithPosition = tokenService.getToken(command.getReserverId());
 
     if (tokenWithPosition.getQueuePosition() == 1){
-
+      ConcertScheduleSeat concertScheduleSeat = findConcertScheduleSeat(command);
+      Reservation reservation = createReservation(reserver, concertScheduleSeat);
+      Reservation savedReservation = saveReservation(reservation, command);
+      return reservationMapper.from(savedReservation);
     }
+    else {
+      //waiting Queue logic
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
+    }
+  }
 
-    ConcertScheduleSeat concertScheduleSeat = findConcertScheduleSeat(command);
-    Reservation reservation = reserver.createReservation(concertScheduleSeat);
-
-    Reservation savedReservation = saveReservation(reservation, command);
-    return reservationMapper.from(savedReservation);
+  private Reservation createReservation(Reserver reserver, ConcertScheduleSeat concertScheduleSeat) {
+    return Reservation.builder()
+        .reserver(reserver)
+        .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
+        .seatId(concertScheduleSeat.getSeat().getId())
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now())
+        .reservedPrice(concertScheduleSeat.getPrice())
+        .build();
   }
 
   private Reserver findReserver(long reserverId) {
@@ -85,6 +99,5 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
               "콘서트 날짜 ID: " + command.getConcertScheduleId() +
               ", 좌석 ID: " + command.getSeatId());
     }
-
   }
 }

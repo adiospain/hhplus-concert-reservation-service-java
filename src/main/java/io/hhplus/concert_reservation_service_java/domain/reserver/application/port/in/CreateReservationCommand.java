@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.reservation.application.port.in;
+package io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in;
 
 import lombok.Builder;
 import lombok.Getter;
