@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto;
+package io.hhplus.concert_reservation_service_java.domain.payment.application.model;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class PaymentDTO {
+public class PaymentDomain {
   private long id;
   private long reservationId;
   private int price;
+  private int pointAfter;
   private LocalDateTime createdAt;
+
 }

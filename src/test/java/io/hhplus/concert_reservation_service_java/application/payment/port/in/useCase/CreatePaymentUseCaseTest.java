@@ -7,7 +7,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.application.por
 import io.hhplus.concert_reservation_service_java.domain.payment.application.useCase.CreatePaymentUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.Payment;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;

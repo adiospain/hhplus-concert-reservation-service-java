@@ -1,18 +1,18 @@
-package io.hhplus.concert_reservation_service_java.domain.payment.application.useCase;
+package io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
-import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reserver.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.port.out.PaymentMapper;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.PaymentDTO;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
 
   @Override
-  public PaymentDTO execute(CreatePaymentCommand command) {
+  public PaymentDomain execute(CreatePaymentCommand command) {
     Reserver reserver = findReserverWithLock(command.getReserverId());
     Reservation reservation = findReservation(command.getReservationId());
 
@@ -37,7 +37,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     reserverRepository.save(reserver);
     Payment savedPayment = paymentRepository.save(payment);
 
-    return paymentMapper.of(savedPayment, reservation);
+    return paymentMapper.of(savedPayment, reservation, reserver);
   }
   private Reserver findReserverWithLock(long reserverId) {
     return reserverRepository.findByIdWithPessimisticLock(reserverId)
