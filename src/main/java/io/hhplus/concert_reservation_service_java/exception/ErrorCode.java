@@ -29,6 +29,7 @@ public enum ErrorCode {
   //409
   ALREADY_RESERVED(CONFLICT, "해당 좌석은 이미 예약 되었습니다"),
   CONCERT_SCHEDULE_FULL(CONFLICT, "콘서트 날짜의 예약 인원이 다 찼습니다."),
+  TOKEN_AND_USER_NOT_MATCHED(CONFLICT, "유저와 토큰이 일치하지 않습니다."),
 
   //500
   RESERVATION_FAILED(INTERNAL_SERVER_ERROR,"예약 중 오류가 발생했습니다"),

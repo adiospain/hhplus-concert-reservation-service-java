@@ -68,7 +68,7 @@ public class ReserverController {
   @Operation(summary = "유저 잔액 조회" , description = "지정된 사용자 ID의 현재 포인트 잔액을 조회합니다.")
   public ResponseEntity<GetPointAPIResponse> getPoint (@PathVariable long userId){
     GetPointCommand command = GetPointCommand.builder()
-        .userId(userId)
+        .reserverId(userId)
         .build();
     int point = getPointUseCase.execute(command);
     return ResponseEntity.ok(GetPointAPIResponse.from(point));

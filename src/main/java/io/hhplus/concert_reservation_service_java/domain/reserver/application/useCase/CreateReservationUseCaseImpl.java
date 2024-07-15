@@ -36,9 +36,9 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   public ReservationDomain execute(CreateReservationCommand command) {
     Reserver reserver = findReserver(command.getReserverId());
 
-    TokenWithPosition tokenWithPosition = tokenService.getToken(command.getReserverId());
+    TokenWithPosition tokenWithPosition = tokenService.upsertToken(command.getReserverId());
 
-    if (tokenWithPosition.getQueuePosition() == 1){
+    if (tokenWithPosition.getQueuePosition() == 0){
       ConcertScheduleSeat concertScheduleSeat = findConcertScheduleSeat(command);
       Reservation reservation = createReservation(reserver, concertScheduleSeat);
       Reservation savedReservation = saveReservation(reservation, command);

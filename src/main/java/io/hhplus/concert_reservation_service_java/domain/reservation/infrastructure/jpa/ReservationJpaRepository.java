@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReservationJpaRepository extends JpaRepository<Reservation, Long> {
 
-  @Query("SELECT r.seatId FROM Reservation r WHERE r.concertScheduleId = :concertScheduleId")
-  List<Long> findAllSeatIdByConcertScheduleId(@Param("concertScheduleId") long concertScheduleId);
+  @Query("SELECT r.seatId FROM Reservation r WHERE r.concertScheduleId = :concertScheduleId AND (r.status = 'OCCUPIED' OR r.status = 'PAID')")
+  List<Long> findOccupiedSeatIdByconcertScheduleId(long concertScheduleId);
 }

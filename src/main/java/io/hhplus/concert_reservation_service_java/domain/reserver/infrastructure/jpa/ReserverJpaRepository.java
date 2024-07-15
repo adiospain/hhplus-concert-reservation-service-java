@@ -14,5 +14,5 @@ public interface ReserverJpaRepository extends JpaRepository<Reserver, Long> {
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT r FROM Reserver r WHERE r.id = :reserverId")
-  Optional<Reserver> findByIdWithPessimisticLock(long reserverId);
+  Optional<Reserver> findByIdWithPessimisticLock(@Param("reserverId")long reserverId);
 }

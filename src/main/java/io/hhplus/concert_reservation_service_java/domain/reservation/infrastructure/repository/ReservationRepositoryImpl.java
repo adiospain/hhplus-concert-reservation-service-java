@@ -25,7 +25,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
 
   @Override
   public Optional<Reservation> findById(long reservationId) {
-    return Optional.empty();
+    return reservationRepository.findById(reservationId);
   }
 
 
