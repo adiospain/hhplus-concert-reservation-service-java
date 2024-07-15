@@ -17,7 +17,7 @@ public class GetPointUseCaseImpl implements GetPointUseCase {
   private final ReserverRepository reserverRepository;
 
   public int execute(GetPointCommand command) {
-    Reserver reserver = reserverRepository.findById(command.getUserId())
+    Reserver reserver = reserverRepository.findByIdWithPessimisticLock(command.getUserId())
         .orElseThrow(()->new CustomException(ErrorCode.RESERVER_NOT_FOUND));
     return reserver.getPoint();
   }

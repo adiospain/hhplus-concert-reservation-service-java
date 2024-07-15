@@ -14,6 +14,7 @@ import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @UseCase
@@ -27,6 +28,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
 
   @Override
+  @Transactional
   public PaymentDomain execute(CreatePaymentCommand command) {
     Reserver reserver = findReserverWithLock(command.getReserverId());
     Reservation reservation = findReservation(command.getReservationId());

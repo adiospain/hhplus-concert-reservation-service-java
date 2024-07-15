@@ -18,7 +18,7 @@ public class ChargePointUseCaseImpl implements ChargePointUseCase {
   @Override
   @Transactional
   public int execute(ChargePointCommand command) {
-    Reserver reserver = reserverRepository.findById(command.getUserId())
+    Reserver reserver = reserverRepository.findByIdWithPessimisticLock(command.getUserId())
         .orElseThrow(() -> new CustomException(ErrorCode.RESERVER_NOT_FOUND));
 
     if (command.getAmount() <= 0) {
