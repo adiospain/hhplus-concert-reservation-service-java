@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,8 +40,11 @@ public class ReserverController {
 
   @PostMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 발급" , description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
-  public ResponseEntity<IssueTokenAPIResponse> issueToken (@PathVariable long userId){
+  public ResponseEntity<IssueTokenAPIResponse> issueToken (
+      @RequestHeader(value = "Authorization", required =false) String accessKey,
+      @PathVariable long userId){
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+        .accessKey(accessKey)
         .reserverId(userId)
         .build();
     TokenDomain token = issueTokenUseCase.execute(command);
@@ -49,8 +53,11 @@ public class ReserverController {
 
   @GetMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 조회" , description = "현재 대기열 순번과 토큰 잔여시간을 제공됩니다.")
-  public ResponseEntity<GetTokenAPIResponse> getToken (@PathVariable long userId){
+  public ResponseEntity<GetTokenAPIResponse> getToken (
+      @RequestHeader(value = "Authorization", required =false) String accessKey,
+      @PathVariable long userId){
     GetTokenUseCommand command = GetTokenUseCommand.builder()
+        .accessKey(accessKey)
         .reserverId(userId)
         .build();
     TokenDomain token = getTokenUseCase.execute(command);

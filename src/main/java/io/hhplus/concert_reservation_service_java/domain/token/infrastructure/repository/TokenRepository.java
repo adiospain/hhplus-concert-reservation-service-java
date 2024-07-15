@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TokenRepository {
 
-  Optional<Token> findByUserId(long userId);
+  Optional<Token> findByReserverId(long reserverId);
 
   Token save(Token token);
 
@@ -21,4 +21,6 @@ public interface TokenRepository {
   List<Token> findExpiredTokens(LocalDateTime now);
 
   void activateNextToken(Long tokenId, LocalDateTime expireAt);
+
+  Optional<Token> findByAccessKey(String accessKey);
 }

@@ -1,6 +1,7 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +24,11 @@ public class Token {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "user_id", nullable = false)
-  private Long userId;
+  @Column(name = "reserver_id", nullable = false)
+  private Long reserverId;
+
+  @Column(name = "access_key")
+  private String accessKey;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
@@ -47,6 +51,14 @@ public class Token {
   @PreUpdate
   protected void onUpdate() {
     updatedAt = LocalDateTime.now();
+  }
+
+  public Token renew() {
+    this.accessKey = UUID.randomUUID().toString();
+    this.status = TokenStatus.WAIT;
+    this.expireAt = LocalDateTime.now().plusMinutes(5);
+    this.updatedAt = LocalDateTime.now();
+    return this;
   }
 }
 

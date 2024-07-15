@@ -16,6 +16,7 @@ public class TokenMapper {
     }
     return TokenDomain.builder()
         .id(token.getId())
+        .accessKey(token.getAccessKey())
         .expiredAt(token.getExpireAt())
         .order(order)
         .build();

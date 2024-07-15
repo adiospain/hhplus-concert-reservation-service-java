@@ -15,8 +15,13 @@ public class TokenRepositoryImpl implements TokenRepository {
   private final TokenJpaRepository tokenRepository;
 
   @Override
-  public Optional<Token> findByUserId(long userId) {
-    return tokenRepository.findByUserId(userId);
+  public Optional<Token> findByAccessKey(String accessKey){
+    return tokenRepository.findByAccessKey(accessKey);
+  }
+
+  @Override
+  public Optional<Token> findByReserverId(long reserverId) {
+    return tokenRepository.findByReserverId(reserverId);
   }
 
   @Override

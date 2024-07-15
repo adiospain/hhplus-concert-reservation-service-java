@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface TokenService {
   TokenWithPosition upsertToken(long userId);
-  TokenWithPosition getToken(long userId);
+
+  TokenWithPosition getToken(long reserverId, String accessKey);
 
   List<Token> findActiveExpiredTokens();
 
@@ -16,4 +17,6 @@ public interface TokenService {
   List<Token> getExpiredTokens();
 
   void activateNextToken(Long id, LocalDateTime localDateTime);
+
+  void activateNextToken();
 }

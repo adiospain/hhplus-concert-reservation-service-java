@@ -14,6 +14,7 @@ erDiagram
 	token {
 		bigint id PK "토큰 id"
 		bigint user_id FK "소유자 id"
+		string access_key "대기열 토큰 UUID"
 		string status "상태(WAIT, ACTIVE, EXPIRED)"
 		datetime expire_at "만료 시간"
 	}

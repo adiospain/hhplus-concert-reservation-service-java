@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TokenDomain {
   private long id;
+  private String accessKey;
   private LocalDateTime expiredAt;
   private long order;
 }

@@ -34,9 +34,22 @@ CREATE TABLE IF NOT EXISTS concert_schedule_seat (
     FOREIGN KEY (seat_id) REFERENCES seat(id)
     );
 
+CREATE TABLE IF NOT EXISTS reservation (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT,
+      concert_schedule_id BIGINT NOT NULL,
+      seat_id BIGINT NOT NULL,
+      status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP,
+    reserved_price INTEGER,
+    FOREIGN KEY (user_id) REFERENCES reserver(id),
+    UNIQUE (concert_schedule_id, seat_id)
+);
+
 CREATE TABLE IF NOT EXISTS token (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       user_id BIGINT NOT NULL,
+                       reserver_id BIGINT NOT NULL,
+                       access_key VARCHAR(255) NOT NULL,
                        status VARCHAR(255) NOT NULL,
                        expire_at TIMESTAMP NOT NULL,
                        created_at TIMESTAMP NOT NULL,

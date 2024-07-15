@@ -14,9 +14,10 @@ import lombok.RequiredArgsConstructor;
 public class GetTokenUseCaseImpl implements GetTokenUseCase {
   private final TokenService tokenService;
   private final TokenMapper tokenMapper;
+
   @Override
   public TokenDomain execute(GetTokenUseCommand command) {
-    TokenWithPosition tokenWithPosition = tokenService.getToken(command.getReserverId());
+    TokenWithPosition tokenWithPosition = tokenService.getToken(command.getReserverId() ,command.getAccessKey());
     return tokenMapper.from(tokenWithPosition.getToken(), tokenWithPosition.getQueuePosition());
   }
 }

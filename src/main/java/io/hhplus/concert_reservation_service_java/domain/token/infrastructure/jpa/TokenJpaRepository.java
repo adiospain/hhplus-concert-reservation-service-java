@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.QueryHints;
 
 public interface TokenJpaRepository extends JpaRepository<Token, Long> {
 
-  Optional<Token> findByUserId(long userId);
+  @Query("SELECT t FROM Token t WHERE t.accessKey = :accessKey")
+  Optional<Token> findByAccessKey(String accessKey);
+
 
   @Query("SELECT MIN(t.id) FROM Token t WHERE t.status = 'ACTIVE'")
   Optional<Long> findSmallestActiveTokenId();
@@ -34,4 +36,6 @@ public interface TokenJpaRepository extends JpaRepository<Token, Long> {
         "WHERE id = :tokenId AND status = 'WAIT' " +
         "ORDER BY created_at ASC LIMIT 1)", nativeQuery = true)
   void activateNextToken(Long tokenId, LocalDateTime expireAt);
+
+  Optional<Token> findByReserverId(long reserverId);
 }
