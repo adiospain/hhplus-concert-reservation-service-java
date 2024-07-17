@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.application.useCase;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
@@ -15,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 @UseCase
 public class GetConcertDetailUseCaseImpl implements GetConcertDetailUseCase {
 
-  private final ConcertRepository concertRepository;
+  private final ConcertService concertService;
   private final ConcertMapper concertMapper;
 
   @Override
   public ConcertDomain execute(GetConcertDetailCommand command) {
-    List<ConcertSchedule> concertSchedules = concertRepository.findAllConcertSchedulesByConcertId(command.getConcertId());
+    List<ConcertSchedule> concertSchedules = concertService.getAllConcertSchedulesByConcertId(command.getConcertId());
     return concertMapper.WithConcertScheduleFrom(concertSchedules);
   }
 }

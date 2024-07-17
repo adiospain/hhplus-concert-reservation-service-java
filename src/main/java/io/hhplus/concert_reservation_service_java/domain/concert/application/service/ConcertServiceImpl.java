@@ -37,4 +37,9 @@ public class ConcertServiceImpl implements ConcertService {
   public List<Concert> getAll() {
     return concertRepository.findAll();
   }
+
+  @Override
+  public List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId) {
+    return concertRepository.findAllConcertSchedulesByConcertId(concertId);
+  }
 }

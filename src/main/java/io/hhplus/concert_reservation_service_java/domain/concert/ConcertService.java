@@ -13,4 +13,6 @@ public interface ConcertService {
   List<Seat> getSeatsByConcertScheduleId(long concertScheduleId);
 
   List<Concert> getAll();
+
+  List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId);
 }
