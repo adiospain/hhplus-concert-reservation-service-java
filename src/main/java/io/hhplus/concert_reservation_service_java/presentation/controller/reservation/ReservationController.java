@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,10 +27,12 @@ public class ReservationController {
   @ApiResponse(responseCode = "200" , description = "예약 성공")
   @ApiResponse(responseCode = "409" , description = "이미 예약된 좌석")
   public ResponseEntity<CreateReservationAPIResponse> createReservation(
+      @RequestHeader(value = "Authorization", required =false) String accessKey,
       @RequestBody CreateReservationAPIRequest request) {
 
     CreateReservationCommand command = CreateReservationCommand.builder()
-        .reserverId(request.userId())
+        .accessKey(accessKey)
+        .userId(request.userId())
         .concertScheduleId(request.concertScheduleId())
         .seatId(request.seatId())
         .build();

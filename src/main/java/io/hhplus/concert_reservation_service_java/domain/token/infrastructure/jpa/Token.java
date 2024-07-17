@@ -13,11 +13,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "token")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class  Token {
+public class Token {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,12 +52,25 @@ public class  Token {
     updatedAt = LocalDateTime.now();
   }
 
-  public Token renew() {
-    this.accessKey = UUID.randomUUID().toString();
+  public void renew() {
     this.status = TokenStatus.WAIT;
-    this.expireAt = LocalDateTime.now().plusMinutes(5);
-    this.updatedAt = LocalDateTime.now();
-    return this;
+    this.accessKey = UUID.randomUUID().toString();
+    LocalDateTime now = LocalDateTime.now();
+    this.expireAt = now.plusMinutes(5);
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
+  public static Token createWaitingToken(Long reserverId) {
+    return Token.builder()
+        .reserverId(reserverId)
+        .accessKey(UUID.randomUUID().toString())
+        .status(TokenStatus.WAIT)
+        .expireAt(LocalDateTime.now().plusMinutes(5))
+        .build();
+  }
+
+  public void  turnActive() {
+    this.status = TokenStatus.ACTIVE;
   }
 }
 
