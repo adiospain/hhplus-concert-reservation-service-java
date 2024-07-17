@@ -3,94 +3,92 @@ package io.hhplus.concert_reservation_service_java.application.payment.port.in.u
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.useCase.CreatePaymentUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.port.out.PaymentMapper;
-import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
+import static org.assertj.core.api.Assertions.*;
+
+import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
+import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
+import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverService;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.CreatePaymentUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.out.PaymentMapper;
+import io.hhplus.concert_reservation_service_java.domain.reserver.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
+
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
+
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
-import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class CreatePaymentUseCaseTest {
 
 
-  private final ReserverRepository reserverRepository = Mockito.mock(ReserverRepository.class);
+  private final ReserverService reserverService = Mockito.mock(ReserverService.class);
 
-  private final ReservationRepository reservationRepository = Mockito.mock(ReservationRepository.class);
+  private final ReservationService reservationService = Mockito.mock(ReservationService.class);
 
-  private final PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+  private final PaymentService paymentService = Mockito.mock(PaymentService.class);
   private final PaymentMapper paymentMapper = Mockito.mock(PaymentMapper.class);
 
-  private final CreatePaymentUseCase createPaymentUseCase = new CreatePaymentUseCaseImpl(reserverRepository, paymentRepository, reservationRepository , paymentMapper);
+  private final CreatePaymentUseCase createPaymentUseCase = new CreatePaymentUseCaseImpl(reserverService, reservationService, paymentService , paymentMapper);
 
+  private CreatePaymentCommand command;
+  private Reservation reservation;
+  private Reserver reserver;
+  private Payment payment;
+  private PaymentDomain paymentDomain;
+
+
+  @BeforeEach
+  void setUp() {
+    command = CreatePaymentCommand.builder()
+        .reserverId(1L)
+        .reservationId(1L)
+        .build();
+    reservation = mock(Reservation.class);
+    reserver = mock(Reserver.class);
+    payment = mock(Payment.class);
+    paymentDomain = mock(PaymentDomain.class);
+  }
 
   @Test
+  @DisplayName("결제 성공")
   void execute_SuccessfulPayment() {
-    // Arrange
-    long reserverId = 1L;
-    long reservationId = 1L;
-    CreatePaymentCommand command = CreatePaymentCommand.builder()
-        .reserverId(reserverId)
-        .reservationId(reservationId)
-        .build();
+    // Given
+    when(reservationService.getById(1L)).thenReturn(reservation);
+    doNothing().when(reservation).validateForPayment();
+    when(reserverService.getReserverWithLock(1L)).thenReturn(reserver);
+    when(reservation.getReservedPrice()).thenReturn(1000);
+    when(reservation.createPayment(reserver)).thenReturn(payment);
+    when(paymentService.save(payment)).thenReturn(payment);
+    when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);
 
-    Reserver reserver = mock(Reserver.class);
-    Reservation reservation = mock(Reservation.class);
-    Payment payment = mock(Payment.class);
-    Payment savedPayment = mock(Payment.class);
-    PaymentDomain paymentDomain = mock(PaymentDomain.class);
-
-    when(reserverRepository.findByIdWithPessimisticLock(reserverId)).thenReturn(Optional.of(reserver));
-    when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
-    when(reserver.createPayment(reservation)).thenReturn(payment);
-    when(paymentRepository.save(payment)).thenReturn(savedPayment);
-    when(paymentMapper.of(savedPayment, reservation)).thenReturn(paymentDomain);
-
+    // When
     PaymentDomain result = createPaymentUseCase.execute(command);
 
-    assertNotNull(result);
-    assertEquals(paymentDomain, result);
-
-    verify(reserverRepository).findByIdWithPessimisticLock(reserverId);
-    verify(reservationRepository).findById(reservationId);
-    verify(reserver).createPayment(reservation);
-    verify(reservationRepository).save(reservation);
-    verify(reserverRepository).save(reserver);
-    verify(paymentRepository).save(payment);
-    verify(paymentMapper).of(savedPayment, reservation);
+    // Then
+    assertThat(result).isEqualTo(paymentDomain);
+    verify(reservationService).getById(1L);
+    verify(reservation).validateForPayment();
+    verify(reserverService).getReserverWithLock(1L);
+    verify(reserver).usePoint(1000);
+    verify(reservation).createPayment(reserver);
+    verify(paymentService).save(payment);
+    verify(reservationService).save(reservation);
+    verify(reserverService).save(reserver);
+    verify(paymentMapper).of(payment, reservation, reserver);
   }
 
   @Test
-  void execute_ReserverNotFound() {
-    // Arrange
-    long reserverId = 1L;
-    long reservationId = 1L;
-    CreatePaymentCommand command = CreatePaymentCommand.builder()
-        .reserverId(reserverId)
-        .reservationId(reservationId)
-            .build();
-
-    when(reserverRepository.findByIdWithPessimisticLock(reserverId)).thenReturn(Optional.empty());
-
-    // Act & Assert
-    assertThrows(CustomException.class, () -> createPaymentUseCase.execute(command));
-    verify(reserverRepository).findByIdWithPessimisticLock(reserverId);
-    verifyNoInteractions(reservationRepository, paymentRepository, paymentMapper);
-  }
-
-  @Test
+  @DisplayName("예약을 찾을 수 없음")
   void execute_ReservationNotFound() {
     // Arrange
-    long reserverId = 1L;
+    long reserverId = 89L;
     long reservationId = 1L;
     CreatePaymentCommand command = CreatePaymentCommand.builder()
         .reserverId(reserverId)
@@ -99,38 +97,53 @@ class CreatePaymentUseCaseTest {
 
     Reserver reserver = mock(Reserver.class);
 
-    when(reserverRepository.findByIdWithPessimisticLock(reserverId)).thenReturn(Optional.of(reserver));
-    when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
+    when(reservationService.getById(reservationId)).thenThrow(new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    when(reserverService.getReserverWithLock(reserverId)).thenReturn(reserver);
+
 
     // Act & Assert
     assertThrows(CustomException.class, () -> createPaymentUseCase.execute(command));
-    verify(reserverRepository).findByIdWithPessimisticLock(reserverId);
-    verify(reservationRepository).findById(reservationId);
-    verifyNoInteractions(paymentRepository, paymentMapper);
+    verify(reserverService, never()).getReserverWithLock(any(long.class));
   }
 
   @Test
-  void execute_PaymentCreationFails() {
-    // Arrange
-    long reserverId = 1L;
-    long reservationId = 1L;
-    CreatePaymentCommand command = CreatePaymentCommand.builder()
-        .reserverId(reserverId)
-        .reservationId(reservationId)
-        .build();
+  @DisplayName("유효하지 않은 예약")
+  void execute_WhenReservationValidationFails_ShouldThrowException() {
+    // Given
+    when(reservationService.getById(1L)).thenReturn(reservation);
+    doThrow(new CustomException(ErrorCode.INVALID_RESERVATION_STATUS))
+        .when(reservation).validateForPayment();
 
-    Reserver reserver = mock(Reserver.class);
-    Reservation reservation = mock(Reservation.class);
+    // When & Then
+    assertThatThrownBy(() -> createPaymentUseCase.execute(command))
+        .isInstanceOf(CustomException.class)
+        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_RESERVATION_STATUS);
 
-    when(reserverRepository.findByIdWithPessimisticLock(reserverId)).thenReturn(Optional.of(reserver));
-    when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
-    when(reserver.createPayment(reservation)).thenThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT));
+    verify(reservationService).getById(1L);
+    verify(reservation).validateForPayment();
+    verifyNoInteractions(reserverService, paymentService, paymentMapper);
+  }
 
-    // Act & Assert
-    assertThrows(CustomException.class, () -> createPaymentUseCase.execute(command));
-    verify(reserverRepository).findByIdWithPessimisticLock(reserverId);
-    verify(reservationRepository).findById(reservationId);
-    verify(reserver).createPayment(reservation);
-    verifyNoInteractions(paymentRepository, paymentMapper);
+  @Test
+  @DisplayName("충분하지 않은 포인트")
+  void execute_WhenNotEnoughPoints_ShouldThrowException() {
+    // Given
+    when(reservationService.getById(1L)).thenReturn(reservation);
+    doNothing().when(reservation).validateForPayment();
+    when(reserverService.getReserverWithLock(1L)).thenReturn(reserver);
+    when(reservation.getReservedPrice()).thenReturn(1000);
+    doThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT))
+        .when(reserver).usePoint(1000);
+
+    // When & Then
+    assertThatThrownBy(() -> createPaymentUseCase.execute(command))
+        .isInstanceOf(CustomException.class)
+        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_ENOUGH_POINT);
+
+    verify(reservationService).getById(1L);
+    verify(reservation).validateForPayment();
+    verify(reserverService).getReserverWithLock(1L);
+    verify(reserver).usePoint(1000);
+    verifyNoInteractions(paymentService, paymentMapper);
   }
 }
