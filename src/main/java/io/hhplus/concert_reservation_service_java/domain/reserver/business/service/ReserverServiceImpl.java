@@ -15,6 +15,12 @@ public class ReserverServiceImpl implements ReserverService {
   private final ReserverRepository reserverRepository;
 
   @Override
+  public Reserver getReserver(long reserverId) {
+    return reserverRepository.findById(reserverId)
+        .orElseThrow(() -> new CustomException(ErrorCode.RESERVER_NOT_FOUND));
+  }
+
+  @Override
   @Transactional
   public Reserver getReserverWithLock(long reserverId) {
     return reserverRepository.findByIdWithPessimisticLock(reserverId)
@@ -37,7 +43,17 @@ public class ReserverServiceImpl implements ReserverService {
   }
 
   @Override
+  public Reserver usePoint(long reserverId, Integer price) {
+    Reserver reserver = this.getReserverWithLock(reserverId);
+    reserver.usePoint(price);
+    Reserver savedReserver = reserverRepository.save(reserver);
+    return savedReserver;
+  }
+
+  @Override
   public Reserver save(Reserver reserver) {
     return reserverRepository.save(reserver);
   }
+
+
 }

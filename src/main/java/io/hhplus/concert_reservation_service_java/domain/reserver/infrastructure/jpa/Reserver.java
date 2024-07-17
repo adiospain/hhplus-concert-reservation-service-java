@@ -39,29 +39,8 @@ public class Reserver {
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .status(ReservationStatus.OCCUPIED)
-        .createdAt(LocalDateTime.now())
         .reservedPrice(concertScheduleSeat.getPrice())
         .build();
-  }
-
-  public Payment createPayment(Reservation reservation) {
-    if (reservation.getReservedPrice() > this.point){
-      throw new CustomException(ErrorCode.NOT_ENOUGH_POINT);
-    }
-    if (reservation.getStatus() != ReservationStatus.OCCUPIED){
-      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
-    }
-    LocalDateTime now = LocalDateTime.now();
-    if (reservation.getCreatedAt().plusMinutes(5).isBefore(LocalDateTime.now())){
-      this.point -= reservation.getReservedPrice();
-      reservation.setStatus(ReservationStatus.PAID);
-      return Payment.builder()
-          .reserver(this)
-          .reservation(reservation)
-          .createdAt(now)
-          .build();
-    }
-    return null;
   }
 
   public void usePoint(int price) {

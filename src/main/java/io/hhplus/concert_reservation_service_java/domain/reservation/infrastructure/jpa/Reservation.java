@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Table(name = "reservation",
@@ -51,6 +52,9 @@ public class Reservation {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
+  @Column(name = "paid_at")
+  private LocalDateTime paidAt;
+
   @Column(name = "reserved_price")
   private Integer reservedPrice;
 
@@ -65,21 +69,11 @@ public class Reservation {
   }
 
 
-  public void validateForPayment() {
-    if (this.status != ReservationStatus.OCCUPIED) {
-      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
-    }
-    if (this.createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
+  public void completeReservation() {
+    if (this.status == ReservationStatus.EXPIRED){
       throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
     }
-  }
-
-  public Payment createPayment(Reserver reserver) {
     this.status = ReservationStatus.PAID;
-    return Payment.builder()
-        .reserver(reserver)
-        .reservation(this)
-        .createdAt(LocalDateTime.now())
-        .build();
+    this.paidAt = LocalDateTime.now();
   }
 }

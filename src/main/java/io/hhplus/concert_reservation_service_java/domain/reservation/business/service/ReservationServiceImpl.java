@@ -25,13 +25,13 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   @Override
+  @Transactional (readOnly = true)
   public Reservation getById(long reservationId) {
     return reservationRepository.findById(reservationId)
         .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
   }
 
   @Override
-  @Transactional
   public Reservation getReservationToPay(long reservationId) {
     Reservation reservation = this.getById(reservationId);
     if (reservation.getStatus() != ReservationStatus.OCCUPIED) {
@@ -44,8 +44,8 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   @Override
-  public Reservation save(Reservation reservation){
-    reservation.setCreatedAt(LocalDateTime.now());
+  public Reservation saveToPay(Reservation reservation){
+    reservation.completeReservation();
     try {
       return reservationRepository.save(reservation);
     } catch (DataIntegrityViolationException e) {

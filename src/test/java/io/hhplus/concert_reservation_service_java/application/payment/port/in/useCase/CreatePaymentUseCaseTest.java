@@ -61,10 +61,10 @@ class CreatePaymentUseCaseTest {
   void execute_SuccessfulPayment() {
     // Given
     when(reservationService.getById(1L)).thenReturn(reservation);
-    doNothing().when(reservation).validateForPayment();
+
     when(reserverService.getReserverWithLock(1L)).thenReturn(reserver);
     when(reservation.getReservedPrice()).thenReturn(1000);
-    when(reservation.createPayment(reserver)).thenReturn(payment);
+
     when(paymentService.save(payment)).thenReturn(payment);
     when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);
 
@@ -74,10 +74,10 @@ class CreatePaymentUseCaseTest {
     // Then
     assertThat(result).isEqualTo(paymentDomain);
     verify(reservationService).getById(1L);
-    verify(reservation).validateForPayment();
+
     verify(reserverService).getReserverWithLock(1L);
     verify(reserver).usePoint(1000);
-    verify(reservation).createPayment(reserver);
+
     verify(paymentService).save(payment);
     verify(reservationService).save(reservation);
     verify(reserverService).save(reserver);
@@ -111,8 +111,7 @@ class CreatePaymentUseCaseTest {
   void execute_WhenReservationValidationFails_ShouldThrowException() {
     // Given
     when(reservationService.getById(1L)).thenReturn(reservation);
-    doThrow(new CustomException(ErrorCode.INVALID_RESERVATION_STATUS))
-        .when(reservation).validateForPayment();
+    doThrow(new CustomException(ErrorCode.INVALID_RESERVATION_STATUS));
 
     // When & Then
     assertThatThrownBy(() -> createPaymentUseCase.execute(command))
@@ -120,7 +119,6 @@ class CreatePaymentUseCaseTest {
         .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_RESERVATION_STATUS);
 
     verify(reservationService).getById(1L);
-    verify(reservation).validateForPayment();
     verifyNoInteractions(reserverService, paymentService, paymentMapper);
   }
 
@@ -129,7 +127,7 @@ class CreatePaymentUseCaseTest {
   void execute_WhenNotEnoughPoints_ShouldThrowException() {
     // Given
     when(reservationService.getById(1L)).thenReturn(reservation);
-    doNothing().when(reservation).validateForPayment();
+
     when(reserverService.getReserverWithLock(1L)).thenReturn(reserver);
     when(reservation.getReservedPrice()).thenReturn(1000);
     doThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT))
@@ -141,7 +139,7 @@ class CreatePaymentUseCaseTest {
         .hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_ENOUGH_POINT);
 
     verify(reservationService).getById(1L);
-    verify(reservation).validateForPayment();
+
     verify(reserverService).getReserverWithLock(1L);
     verify(reserver).usePoint(1000);
     verifyNoInteractions(paymentService, paymentMapper);
