@@ -1,11 +1,9 @@
 package io.hhplus.concert_reservation_service_java.application.reserver.port.in.useCase;
 
-import io.hhplus.concert_reservation_service_java.domain.reserver.ChargePointUseCase;
-import io.hhplus.concert_reservation_service_java.domain.reserver.GetPointUseCase;
-import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverService;
-import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.GetPointCommand;
-import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.ChargePointUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase.GetPointUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
+import io.hhplus.concert_reservation_service_java.domain.user.UserService;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.GetPointCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.GetPointUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +18,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 class GetPointUseCaseTest {
-  private final ReserverService reserverService = Mockito.mock(ReserverService.class);
-  private final GetPointUseCase useCase = new GetPointUseCaseImpl(reserverService);
+  private final UserService userService = Mockito.mock(UserService.class);
+  private final GetPointUseCase useCase = new GetPointUseCaseImpl(userService);
 
   @Test
   @DisplayName("유저 포인트 조회 성공")
@@ -32,14 +30,14 @@ class GetPointUseCaseTest {
     GetPointCommand command = GetPointCommand.builder()
             .reserverId(reserverId)
               .build();
-    when(reserverService.getPoint(reserverId)).thenReturn(expectedPoint);
+    when(userService.getPoint(reserverId)).thenReturn(expectedPoint);
 
     // When
     int result = useCase.execute(command);
 
     // Then
     assertEquals(expectedPoint, result);
-    verify(reserverService).getPoint(reserverId);
+    verify(userService).getPoint(reserverId);
   }
 
   @Test
@@ -51,7 +49,7 @@ class GetPointUseCaseTest {
     GetPointCommand command = GetPointCommand.builder()
         .reserverId(reserverId)
         .build();
-    when(reserverService.getPoint(reserverId)).thenThrow(new CustomException(ErrorCode.RESERVER_NOT_FOUND));
+    when(userService.getPoint(reserverId)).thenThrow(new CustomException(ErrorCode.RESERVER_NOT_FOUND));
 
     // When
     assertThatThrownBy(() -> useCase.execute(command))
@@ -62,6 +60,6 @@ class GetPointUseCaseTest {
         });
 
     // Then
-    verify(reserverService).getPoint(reserverId);
+    verify(userService).getPoint(reserverId);
   }
 }

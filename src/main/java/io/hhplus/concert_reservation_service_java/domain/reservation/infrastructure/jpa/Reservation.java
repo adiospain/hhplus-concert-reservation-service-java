@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
+import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import jakarta.persistence.Column;
@@ -21,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 @Entity
 @Table(name = "reservation",
@@ -37,7 +35,7 @@ public class Reservation {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private Reserver reserver;
+  private User user;
 
   @Column(name = "concert_schedule_id", nullable = false)
   private Long concertScheduleId;

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.useCase.user;
+package io.hhplus.concert_reservation_service_java.application.reserver.port.in.useCase;
 
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
@@ -7,7 +7,6 @@ import io.hhplus.concert_reservation_service_java.domain.user.application.useCas
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.*;
@@ -22,9 +21,12 @@ class ChargePointUseCaseTest {
 
 
 
+  @BeforeEach
+  void setUp() {
+
+  }
 
   @Test
-  @DisplayName("잔액 충전 후 금액 반환")
   void execute_ShouldChargePointsAndReturnUpdatedBalance() {
     User reserver = new User(1L, 500);
     ChargePointCommand command = ChargePointCommand.builder()
@@ -44,7 +46,6 @@ class ChargePointUseCaseTest {
   }
 
   @Test
-  @DisplayName("충전하는 유저를 찾을 수 없음 - 404 에외처리")
   void execute_WhenUserNotFound_ShouldThrowException() {
     // Given
     ChargePointCommand command = ChargePointCommand.builder()
@@ -60,7 +61,6 @@ class ChargePointUseCaseTest {
   }
 
   @Test
-  @DisplayName("충전 금액이 음수 - 예외처리")
   void execute_WhenAmountIsNegative_ShouldThrowException() {
     // Given
     ChargePointCommand invalidCommand = ChargePointCommand.builder()
@@ -76,7 +76,6 @@ class ChargePointUseCaseTest {
   }
 
   @Test
-  @DisplayName("충전 금액이 0 - 예외처리")
   void execute_WhenAmountIsZero_ShouldThrowException() {
     // Given
     ChargePointCommand invalidCommand = ChargePointCommand.builder()

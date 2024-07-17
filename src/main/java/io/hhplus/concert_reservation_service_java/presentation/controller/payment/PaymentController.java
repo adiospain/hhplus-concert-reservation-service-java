@@ -1,13 +1,13 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.payment;
 
 
-import io.hhplus.concert_reservation_service_java.domain.reserver.CreatePaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.user.CreatePaymentUseCase;
 
 
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.CreatePaymentAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.CreatePaymentAPIResponse;
-import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class PaymentController {
   public ResponseEntity<CreatePaymentAPIResponse> createPayment(
       @RequestBody CreatePaymentAPIRequest request) {
     CreatePaymentCommand command = CreatePaymentCommand.builder()
-        .reserverId(request.reserverId())
+        .userId(request.userId())
         .reservationId(request.reservationId())
         .build();
     PaymentDomain payment = createPaymentUseCase.execute(command);
