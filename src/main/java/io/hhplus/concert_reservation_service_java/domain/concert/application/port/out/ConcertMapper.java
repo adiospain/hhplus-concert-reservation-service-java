@@ -22,7 +22,7 @@ public class ConcertMapper {
   }
 
   public List<ConcertDomain> WithoutConcertScheduleFrom (List<Concert> concerts){
-    if (concerts == null || concerts.isEmpty()){
+    if (concerts == null){
       throw new CustomException(ErrorCode.CONCERT_NOT_FOUND);
     }
     return concerts.stream()

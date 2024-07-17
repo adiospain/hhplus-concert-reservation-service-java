@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleMapper;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
@@ -30,5 +31,10 @@ public class ConcertServiceImpl implements ConcertService {
   public List<Seat> getSeatsByConcertScheduleId(long concertScheduleId) {
     List<Seat> seats = concertRepository.findSeatsByConcertScheduleId(concertScheduleId);
     return seats;
+  }
+
+  @Override
+  public List<Concert> getAll() {
+    return concertRepository.findAll();
   }
 }
