@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "token")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

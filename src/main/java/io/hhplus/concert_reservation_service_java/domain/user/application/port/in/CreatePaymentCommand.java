@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CreatePaymentCommand {
+  String accessKey;
   long userId;
   long reservationId;
 }

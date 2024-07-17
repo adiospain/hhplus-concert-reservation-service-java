@@ -1,7 +1,5 @@
 package io.hhplus.concert_reservation_service_java.domain.token.business.service;
 
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
@@ -22,27 +20,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenServiceImpl implements TokenService {
   private final TokenRepository tokenRepository;
 
+
   @Override
   @Transactional
-  public TokenDomain upsertToken(long reserverId) {
+  public TokenDomain upsertToken(long reserverId, String accessKey) {
 
     Token token = tokenRepository.findByUserId(reserverId)
         .map(existingToken -> {
           // 기존 토큰 업데이트
-          existingToken.setStatus(TokenStatus.WAIT);
-          existingToken.setAccessKey(UUID.randomUUID().toString());
-          existingToken.setExpireAt(LocalDateTime.now().plusMinutes(5));
-          existingToken.setUpdatedAt(LocalDateTime.now());
+          if (existingToken.getStatus() == TokenStatus.DONE |
+              existingToken.getStatus() == TokenStatus.DISCONNECTED |
+              existingToken.getStatus() == TokenStatus.EXPIRED)
+          {
+            existingToken.renew();
+          }
           return existingToken;
         })
         .orElseGet(() -> {
           // 새 토큰 생성
-          return Token.builder()
-              .reserverId(reserverId)
-              .accessKey(UUID.randomUUID().toString())
-              .status(TokenStatus.WAIT)
-              .expireAt(LocalDateTime.now().plusMinutes(5))
-              .build();
+          return Token.createWaitingToken(reserverId);
         });
     Token savedToken = tokenRepository.save(token);
 
@@ -50,7 +46,7 @@ public class TokenServiceImpl implements TokenService {
     long queuePosition = (savedToken.getId() - smallestActiveTokenId);
 
     if (queuePosition == 0) {
-      savedToken.setStatus(TokenStatus.ACTIVE);
+      savedToken.turnActive();
       tokenRepository.save(savedToken);
     }
     return new TokenDomain(token, queuePosition);
@@ -68,7 +64,7 @@ public class TokenServiceImpl implements TokenService {
     Long smallestActiveTokenId = tokenRepository.findSmallestActiveTokenId().orElse(token.getId());
     long queuePosition = (token.getId() - smallestActiveTokenId);
     if (queuePosition == 0) {
-      token.setStatus(TokenStatus.ACTIVE);
+      token.turnActive();
       tokenRepository.save(token);
     }
     return new TokenDomain(token, queuePosition);
@@ -113,6 +109,4 @@ public class TokenServiceImpl implements TokenService {
     this.setTokenStatusToDone(id);
     this.activateNextToken(id);
   }
-
-
 }
