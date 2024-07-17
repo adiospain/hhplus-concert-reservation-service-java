@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   //400
   NOT_ENOUGH_POINT(BAD_REQUEST, "포인트가 부족 합니다."),
+  INVALID_AMOUNT(BAD_REQUEST, "충전할 수 없는 금액 입니다."),
   INVALID_RESERVATION_STATUS(BAD_REQUEST, "결제할 수 없는 예약 상태입니다."),
   //401
   INVALID_TOKEN(UNAUTHORIZED, "유효하지 않은 토큰 입니다."),

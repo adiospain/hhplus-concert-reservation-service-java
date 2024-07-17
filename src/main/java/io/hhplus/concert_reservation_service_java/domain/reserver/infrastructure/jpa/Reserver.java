@@ -65,6 +65,9 @@ public class Reserver {
   }
 
   public void chargePoint(int amount) {
+    if (amount <= 0) {
+      throw new CustomException(ErrorCode.INVALID_AMOUNT);
+    }
     this.point += amount;
   }
 }
