@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TokenService {
-  TokenDomain upsertToken(long userId);
 
+  TokenDomain upsertToken(long reserverId, String accessKey);
   TokenDomain getToken(long reserverId, String accessKey);
 
   int bulkUpdateExpiredTokens();

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.payment.application.service;
+package io.hhplus.concert_reservation_service_java.domain.payment.business.service;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;

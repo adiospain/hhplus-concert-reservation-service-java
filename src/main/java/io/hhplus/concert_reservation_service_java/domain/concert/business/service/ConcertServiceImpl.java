@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.concert.application.service;
+package io.hhplus.concert_reservation_service_java.domain.concert.business.service;
 
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.token.application.service;
+package io.hhplus.concert_reservation_service_java.domain.token.business.service;
 
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
@@ -55,6 +55,7 @@ public class TokenServiceImpl implements TokenService {
     }
     return new TokenDomain(token, queuePosition);
   }
+
 
   @Override
   @Transactional(readOnly = true)

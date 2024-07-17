@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.reserver.application.service;
+package io.hhplus.concert_reservation_service_java.domain.reserver.business.service;
 
 import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverService;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
