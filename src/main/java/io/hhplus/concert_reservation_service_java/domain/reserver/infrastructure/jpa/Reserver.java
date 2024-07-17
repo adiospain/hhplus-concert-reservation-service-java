@@ -64,6 +64,13 @@ public class Reserver {
     return null;
   }
 
+  public void usePoint(int price) {
+    if (price > this.point){
+      throw new CustomException(ErrorCode.NOT_ENOUGH_POINT);
+    }
+    this.point -= price;
+  }
+
   public void chargePoint(int amount) {
     if (amount <= 0) {
       throw new CustomException(ErrorCode.INVALID_AMOUNT);

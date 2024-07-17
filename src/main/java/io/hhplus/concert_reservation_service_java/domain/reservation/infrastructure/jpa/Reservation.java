@@ -1,5 +1,8 @@
 package io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -61,4 +64,22 @@ public class Reservation {
     createdAt = LocalDateTime.now();
   }
 
+
+  public void validateForPayment() {
+    if (this.status != ReservationStatus.OCCUPIED) {
+      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
+    }
+    if (this.createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
+      throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+    }
+  }
+
+  public Payment createPayment(Reserver reserver) {
+    this.status = ReservationStatus.PAID;
+    return Payment.builder()
+        .reserver(reserver)
+        .reservation(this)
+        .createdAt(LocalDateTime.now())
+        .build();
+  }
 }

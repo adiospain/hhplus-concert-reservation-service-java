@@ -1,6 +1,10 @@
 package io.hhplus.concert_reservation_service_java.domain.reserver.application.useCase;
 
+import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
+import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
+import io.hhplus.concert_reservation_service_java.domain.reserver.ReserverService;
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.reserver.CreatePaymentUseCase;
@@ -13,6 +17,7 @@ import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
-  private final ReserverRepository reserverRepository;
-  private final PaymentRepository paymentRepository;
-  private final ReservationRepository reservationRepository;
+  private final ReserverService reserverService;
+  private final ReservationService reservationService;
+  private final PaymentService paymentService;
   private final PaymentMapper paymentMapper;
 
 
@@ -30,26 +35,18 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   @Override
   @Transactional
   public PaymentDomain execute(CreatePaymentCommand command) {
-    Reserver reserver = findReserverWithLock(command.getReserverId());
-    Reservation reservation = findReservation(command.getReservationId());
+    Reservation reservation = reservationService.getById(command.getReservationId());
+    reservation.validateForPayment();
+
+    Reserver reserver = reserverService.getReserverWithLock(command.getReserverId());
+    reserver.usePoint(reservation.getReservedPrice());
 
     Payment payment = reserver.createPayment(reservation);
+    Payment savedPayment = paymentService.save(payment);
 
-    reservationRepository.save(reservation);
-    reserverRepository.save(reserver);
-    Payment savedPayment = paymentRepository.save(payment);
+    reservationService.save(reservation);
+    reserverService.save(reserver);
 
     return paymentMapper.of(savedPayment, reservation, reserver);
   }
-  private Reserver findReserverWithLock(long reserverId) {
-    return reserverRepository.findByIdWithPessimisticLock(reserverId)
-        .orElseThrow(() -> new CustomException(ErrorCode.RESERVER_NOT_FOUND));
-  }
-
-  private Reservation findReservation(long reservationId) {
-    return reservationRepository.findById(reservationId)
-        .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-  }
-
-
 }
