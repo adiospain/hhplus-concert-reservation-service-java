@@ -14,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class TouchExpiredTokenUseCaseImpl implements TouchExpiredTokenUseCase {
   private final TokenService tokenService;
 
+  @Override
   @Transactional
   public void execute(){
-    LocalDateTime now = LocalDateTime.now();
     int updatedCount = tokenService.bulkUpdateExpiredTokens();
 
     if (updatedCount > 0){
       List<Token> expiredTokens = tokenService.getExpiredTokens();
 
       for (Token token : expiredTokens){
-        tokenService.activateNextToken(token.getId(), now.plusMinutes(5));
+        tokenService.activateNextToken(token.getId());
       }
     }
 

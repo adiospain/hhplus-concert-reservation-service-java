@@ -3,6 +3,7 @@ package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.j
 public enum TokenStatus {
   WAIT,
   ACTIVE,
+  DISCONNECTED,
   DONE,
-  EXPIRED
+  EXPIRED,
 }

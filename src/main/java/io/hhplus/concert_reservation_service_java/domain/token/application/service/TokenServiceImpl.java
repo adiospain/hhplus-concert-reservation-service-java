@@ -2,16 +2,16 @@ package io.hhplus.concert_reservation_service_java.domain.token.application.serv
 
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverJpaRepository;
-import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,14 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
-  private final ReserverRepository reserverRepository;
   private final TokenRepository tokenRepository;
 
   @Override
   @Transactional
-  public TokenWithPosition upsertToken(long reserverId) {
-    Reserver reserver = reserverRepository.findById(reserverId)
-        .orElseThrow(()->new CustomException(ErrorCode.RESERVER_NOT_FOUND));
+  public TokenDomain upsertToken(long reserverId) {
+
     Token token = tokenRepository.findByReserverId(reserverId)
         .map(existingToken -> {
           // 기존 토큰 업데이트
@@ -55,16 +53,12 @@ public class TokenServiceImpl implements TokenService {
       savedToken.setStatus(TokenStatus.ACTIVE);
       tokenRepository.save(savedToken);
     }
-    return new TokenWithPosition(token, queuePosition);
-  }
-
-  private Token updateExistingToken(Token token){
-    return token.renew();
+    return new TokenDomain(token, queuePosition);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public TokenWithPosition getToken(long reserverId, String accessKey) {
+  public TokenDomain getToken(long reserverId, String accessKey) {
     Token token = tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND)); //토큰이 존재하지 않는다면 예외처리
     if (token.getReserverId() != reserverId){
@@ -76,18 +70,18 @@ public class TokenServiceImpl implements TokenService {
       token.setStatus(TokenStatus.ACTIVE);
       tokenRepository.save(token);
     }
-    return new TokenWithPosition(token, queuePosition);
-  }
-
-  @Override
-  public List<Token> findActiveExpiredTokens() {
-    return tokenRepository.findActiveExpiredTokens(LocalDateTime.now());
+    return new TokenDomain(token, queuePosition);
   }
 
   @Override
   @Transactional
   public int bulkUpdateExpiredTokens() {
     return tokenRepository.bulkUpdateExpiredTokens(LocalDateTime.now());
+  }
+
+  @Override
+  public int bulkUpdateDisconnectedToken() {
+    return tokenRepository.bulkUpdateDisconnectedToken(LocalDateTime.now());
   }
 
   @Override
@@ -98,12 +92,26 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   @Transactional
-  public void activateNextToken(Long tokenId, LocalDateTime expireAt) {
-    tokenRepository.activateNextToken(tokenId, expireAt);
+  public void setTokenStatusToDone(long id) {
+    tokenRepository.setTokenStatusToDone(id);
   }
 
   @Override
-  public void activateNextToken() {
-
+  @Transactional
+  public int activateNextToken(long id){
+    return tokenRepository.activateNextToken(id, LocalDateTime.now());
   }
+
+  @Override
+  public Optional<Token> findMostRecentlyDisconnectedToken() {
+    return tokenRepository.findMostRecentlyDisconnectedToken();
+  }
+
+  @Override
+  public void completeTokenAndActivateNextToken(long id) {
+    this.setTokenStatusToDone(id);
+    this.activateNextToken(id);
+  }
+
+
 }

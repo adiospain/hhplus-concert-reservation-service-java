@@ -1,22 +1,26 @@
 package io.hhplus.concert_reservation_service_java.domain.token;
 
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
-import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TokenService {
-  TokenWithPosition upsertToken(long userId);
+  TokenDomain upsertToken(long userId);
 
-  TokenWithPosition getToken(long reserverId, String accessKey);
-
-  List<Token> findActiveExpiredTokens();
+  TokenDomain getToken(long reserverId, String accessKey);
 
   int bulkUpdateExpiredTokens();
+  int bulkUpdateDisconnectedToken();
 
   List<Token> getExpiredTokens();
 
-  void activateNextToken(Long id, LocalDateTime localDateTime);
+  Optional<Token> findMostRecentlyDisconnectedToken();
 
-  void activateNextToken();
+
+
+
+  void completeTokenAndActivateNextToken(long id);
+    void setTokenStatusToDone(long id);
+    int activateNextToken(long id);
 }

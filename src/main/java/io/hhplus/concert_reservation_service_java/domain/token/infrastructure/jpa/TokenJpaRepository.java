@@ -18,9 +18,16 @@ public interface TokenJpaRepository extends JpaRepository<Token, Long> {
   @Query("SELECT MIN(t.id) FROM Token t WHERE t.status = 'ACTIVE'")
   Optional<Long> findSmallestActiveTokenId();
 
+
+
+
   @Modifying
-  @Query("UPDATE Token t SET t.status = 'EXPIRED' WHERE t.status = 'ACTIVE' AND t.expireAt < :now")
+  @Query("UPDATE Token t SET t.status = 'EXPIRED' WHERE t.expireAt < :now")
   int bulkUpdateExpiredTokens(LocalDateTime now);
+
+  @Modifying
+  @Query("UPDATE Token t SET t.status = 'DISCONNECTED' WHERE t.status = 'ACTIVE' AND t.updatedAt < :threshold")
+  int bulkUpdateDisconnectedToken(LocalDateTime threshold);
 
   @Query("SELECT t FROM Token t WHERE t.status = 'ACTIVE' AND t.expireAt < :now")
   @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
@@ -28,14 +35,23 @@ public interface TokenJpaRepository extends JpaRepository<Token, Long> {
 
   @Query("SELECT DISTINCT t FROM Token t WHERE t.status = 'ACTIVE' AND t.expireAt < :now")
   List<Token> findExpiredTokens(LocalDateTime now);
+  @Query("SELECT t FROM Token t WHERE t.status = 'DISCONNECTED' ORDER BY t.updatedAt DESC")
+  Optional<Token> findMostRecentlyDisconnectedToken();
 
   @Modifying
-  @Query(value = "UPDATE Token t SET t.status = 'ACTIVE', t.expires_at = :expireAt " +
+  @Query(value = "UPDATE Token t SET t.status = 'ACTIVE', t.expire_at = :expireAt " +
       "WHERE t.id = ("
       + "SELECT id FROM Token " +
         "WHERE id = :tokenId AND status = 'WAIT' " +
         "ORDER BY created_at ASC LIMIT 1)", nativeQuery = true)
-  void activateNextToken(Long tokenId, LocalDateTime expireAt);
+  int activateNextToken(Long tokenId, LocalDateTime expireAt);
+
+  @Modifying
+  @Query("UPDATE Token t SET t.status = 'DONE' WHERE t.id = :id")
+  void setTokenStatusToDone(long id);
 
   Optional<Token> findByReserverId(long reserverId);
+
+
+
 }

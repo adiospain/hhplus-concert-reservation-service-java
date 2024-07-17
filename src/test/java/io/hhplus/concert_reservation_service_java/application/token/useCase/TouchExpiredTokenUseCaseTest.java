@@ -48,6 +48,6 @@ class TouchExpiredTokenUseCaseTest {
 
     verify(tokenService, times(1)).bulkUpdateExpiredTokens();
     verify(tokenService, never()).getExpiredTokens();
-    verify(tokenService, never()).activateNextToken(anyLong(), any(LocalDateTime.class));
+    verify(tokenService, never()).activateNextToken(anyLong());
   }
 }

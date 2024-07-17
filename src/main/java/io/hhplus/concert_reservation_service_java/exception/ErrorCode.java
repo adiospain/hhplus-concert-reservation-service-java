@@ -25,10 +25,12 @@ public enum ErrorCode {
   RESERVATION_NOT_FOUND(NOT_FOUND, "예약을 찾을 수 없습니다"),
   PAYMENT_NOT_FOUND(NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
   TOKEN_NOT_FOUND(NOT_FOUND, "토큰이 존재하지 않습니다"),
+  DISCONNECTED_TOKEN_NOT_FOUND(NOT_FOUND, "연결이 끊긴 토큰을 찾을 수 없습니다"),
 
   //409
   ALREADY_RESERVED(CONFLICT, "해당 좌석은 이미 예약 되었습니다"),
   CONCERT_SCHEDULE_FULL(CONFLICT, "콘서트 날짜의 예약 인원이 다 찼습니다."),
+  WAITING_CONTINUE(CONFLICT, "아직 예약 순번이 아닙니다."),
   TOKEN_AND_USER_NOT_MATCHED(CONFLICT, "유저와 토큰이 일치하지 않습니다."),
 
   //500

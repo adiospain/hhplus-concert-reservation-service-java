@@ -19,6 +19,13 @@ public class TokenRepositoryImpl implements TokenRepository {
     return tokenRepository.findByAccessKey(accessKey);
   }
 
+
+
+  @Override
+  public Optional<Token> findMostRecentlyDisconnectedToken() {
+    return tokenRepository.findMostRecentlyDisconnectedToken();
+  }
+
   @Override
   public Optional<Token> findByReserverId(long reserverId) {
     return tokenRepository.findByReserverId(reserverId);
@@ -45,13 +52,25 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
+  public int bulkUpdateDisconnectedToken(LocalDateTime now) {
+    LocalDateTime threshold = LocalDateTime.now().minusSeconds(5);
+    return tokenRepository.bulkUpdateDisconnectedToken(threshold);
+  }
+
+  @Override
   public List<Token> findExpiredTokens(LocalDateTime now) {
     return tokenRepository.findExpiredTokens(now);
   }
 
+
   @Override
-  public void activateNextToken(Long tokenId, LocalDateTime expireAt) {
-    tokenRepository.activateNextToken(tokenId, expireAt);
+  public void setTokenStatusToDone(long id) {
+    tokenRepository.setTokenStatusToDone(id);
+  }
+
+  @Override
+  public int activateNextToken(Long tokenId, LocalDateTime expireAt) {
+    return tokenRepository.activateNextToken(tokenId, expireAt);
   }
 
 
