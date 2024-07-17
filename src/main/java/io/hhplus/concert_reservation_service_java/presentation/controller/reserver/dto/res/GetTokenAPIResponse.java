@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 
 public record GetTokenAPIResponse(long id, LocalDateTime expireAt, long order) {
   public static GetTokenAPIResponse from(TokenDomain token) {
-    return new GetTokenAPIResponse (token.getId(), token.getExpiredAt(), token.getOrder());
+    return new GetTokenAPIResponse (token.getId(), token.getExpiredAt(), token.getQueuePosition());
   }
 }

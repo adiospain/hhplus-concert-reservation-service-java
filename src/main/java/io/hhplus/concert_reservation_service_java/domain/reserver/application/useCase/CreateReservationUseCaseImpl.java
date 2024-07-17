@@ -3,7 +3,6 @@ package io.hhplus.concert_reservation_service_java.domain.reserver.application.u
 
 import io.hhplus.concert_reservation_service_java.domain.reserver.application.port.in.CreateReservationCommand;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
-import io.hhplus.concert_reservation_service_java.domain.token.application.service.TokenWithPosition;
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
@@ -14,6 +13,7 @@ import io.hhplus.concert_reservation_service_java.domain.reserver.application.po
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.Reserver;
 import io.hhplus.concert_reservation_service_java.domain.reserver.infrastructure.jpa.ReserverRepository;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
@@ -36,17 +36,20 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   public ReservationDomain execute(CreateReservationCommand command) {
     Reserver reserver = findReserver(command.getReserverId());
 
-    TokenWithPosition tokenWithPosition = tokenService.upsertToken(command.getReserverId());
+    TokenDomain tokenDomain = tokenService.upsertToken(command.getReserverId());
 
-    if (tokenWithPosition.getQueuePosition() == 0){
+    if (tokenDomain.getQueuePosition() == 0){
       ConcertScheduleSeat concertScheduleSeat = findConcertScheduleSeat(command);
       Reservation reservation = createReservation(reserver, concertScheduleSeat);
       Reservation savedReservation = saveReservation(reservation, command);
+
+      tokenService.completeTokenAndActivateNextToken(tokenDomain.getId());
+
       return reservationMapper.from(savedReservation);
     }
     else {
       //waiting Queue logic
-      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
+      throw new CustomException(ErrorCode.WAITING_CONTINUE);
     }
   }
 

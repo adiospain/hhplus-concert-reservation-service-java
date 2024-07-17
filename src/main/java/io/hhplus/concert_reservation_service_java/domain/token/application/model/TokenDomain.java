@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token.application.model;
 
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,16 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TokenDomain {
   private long id;
+  private Long reserverId;
   private String accessKey;
   private LocalDateTime expiredAt;
-  private long order;
+  private long queuePosition;
+
+  public TokenDomain(Token token, long queuePosition) {
+    this.id = token.getId();
+    this.reserverId = token.getReserverId();
+    this.accessKey = token.getAccessKey();
+    this.expiredAt = token.getExpireAt();
+    this.queuePosition = queuePosition;
+  }
 }
