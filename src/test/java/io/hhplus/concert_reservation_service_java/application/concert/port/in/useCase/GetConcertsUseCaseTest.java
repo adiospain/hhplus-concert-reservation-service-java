@@ -7,12 +7,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertsUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,9 +27,9 @@ import org.mockito.Mockito;
 
 class GetConcertsUseCaseTest {
 
-  private final ConcertRepository concertRepository = Mockito.mock(ConcertRepository.class);
+  private final ConcertService concertService = Mockito.mock(ConcertService.class);
   private final ConcertMapper concertMapper = Mockito.mock(ConcertMapper.class);
-  private final GetConcertsUseCase useCase = new GetConcertsUseCaseImpl(concertRepository, concertMapper);
+  private final GetConcertsUseCase useCase = new GetConcertsUseCaseImpl(concertService, concertMapper);
 
 
   @Test
@@ -42,7 +45,7 @@ class GetConcertsUseCaseTest {
         new ConcertDomain(2L, "Concert 2", null)
     );
 
-    when(concertRepository.findAll())
+    when(concertService.getAll())
         .thenReturn(concerts);
     when(concertMapper.WithoutConcertScheduleFrom(concerts))
         .thenReturn(expectedDomains);
@@ -52,8 +55,7 @@ class GetConcertsUseCaseTest {
 
     // Then
     assertThat(result).isNotNull().hasSize(2).isEqualTo(expectedDomains);
-
-    verify(concertRepository).findAll();
+    verify(concertService).getAll();
     verify(concertMapper).WithoutConcertScheduleFrom(concerts);
   }
 
@@ -61,7 +63,8 @@ class GetConcertsUseCaseTest {
   @DisplayName("콘서트가 없는 경우 빈 리스트 반환")
   void execute_WithNoConcerts_ReturnsEmptyList() {
     // Given
-    when(concertRepository.findAll()).thenReturn(Collections.emptyList());
+    when(concertService.getAll())
+        .thenReturn(Collections.emptyList());
     when(concertMapper.WithoutConcertScheduleFrom(Collections.emptyList())).thenReturn(Collections.emptyList());
 
     // When
@@ -69,23 +72,22 @@ class GetConcertsUseCaseTest {
 
     // Then
     assertThat(result).isNotNull().isEmpty();
-
-    verify(concertRepository).findAll();
+    verify(concertService).getAll();
     verify(concertMapper).WithoutConcertScheduleFrom(Collections.emptyList());
   }
 
   @Test
-  @DisplayName("Repository에서 예외 발생")
+  @DisplayName("ConcertService에서 예외 발생")
   void execute_WhenRepositoryThrowsException() {
     // Given
-    when(concertRepository.findAll()).thenThrow(new RuntimeException("Database error"));
+    when(concertService.getAll()).thenThrow(new CustomException(ErrorCode.SERVICE));
 
-    // When & Then
+    // When
     assertThatThrownBy(() -> useCase.execute())
-        .isInstanceOf(RuntimeException.class)
-        .hasMessage("Database error");
+        .isInstanceOf(CustomException.class);
 
-    verify(concertRepository).findAll();
+    // Then
+    verify(concertService).getAll();
     verify(concertMapper, never()).WithoutConcertScheduleFrom(any(List.class));
   }
 }
