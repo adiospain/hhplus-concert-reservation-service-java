@@ -27,15 +27,20 @@ public class Payment {
   @Column(name = "id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private Reserver reserver;
+  @Column(name = "reserver_id", nullable = false)
+  private Long reserverId;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "reservation_id", nullable = false)
-  private Reservation reservation;
+  @Column(name = "reservation_id", nullable = false)
+  private Long reservationId;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
+  public static Payment createFrom(Long reserverId, Long reservationId) {
+    return Payment.builder()
+        .reserverId(reserverId)
+        .reservationId(reservationId)
+        .createdAt(LocalDateTime.now())
+        .build();
+  }
 }
