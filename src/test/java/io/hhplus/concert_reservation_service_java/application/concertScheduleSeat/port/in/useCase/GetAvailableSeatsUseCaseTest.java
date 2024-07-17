@@ -7,16 +7,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleSeatDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleSeatMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableSeatsUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableSeatsUseCae;
+import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.seat.Seat;
+import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleSeatDTO;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,15 +32,15 @@ import org.mockito.Mockito;
 class GetAvailableSeatsUseCaseTest {
 
 
-  private final ConcertRepository concertRepository = Mockito.mock(ConcertRepository.class);
-  private final ReservationRepository reservationRepository = Mockito.mock(ReservationRepository.class);
+  private final ConcertService concertservice = Mockito.mock(ConcertService.class);
+  private final ReservationService reservationService = Mockito.mock(ReservationService.class);
   private final ConcertScheduleSeatMapper concertScheduleSeatMapper = Mockito.mock(ConcertScheduleSeatMapper.class);;
-  private final GetAvailableSeatsUseCae useCase = new GetAvailableSeatsUseCaseImpl(concertRepository, reservationRepository, concertScheduleSeatMapper);
+  private final GetAvailableSeatsUseCae useCase = new GetAvailableSeatsUseCaseImpl(concertservice, reservationService, concertScheduleSeatMapper);
 
 
   @Test
   @DisplayName("사용 가능한 좌석 조회 성공")
-  void getAvailableSeats_ReturnsListOfConcertScheduleSeatDTOs() {
+  void getAvailableSeats_ReturnsListOfConcertScheduleSeats() {
     // Given
     Long concertId = 3L;
     Long concertScheduleId = 1L;
@@ -59,10 +61,10 @@ class GetAvailableSeatsUseCaseTest {
         new ConcertScheduleSeatDomain(3L, 3)
     );
 
-    when(concertRepository.findSeatsByConcertScheduleId(concertScheduleId))
+    when(concertservice.getSeatsByConcertScheduleId(concertScheduleId))
         .thenReturn(allSeats);
-    when(reservationRepository.findSeatIdByconcertScheduleId(concertScheduleId))
-        .thenReturn(Arrays.asList(2L, 45L, 3L));
+    when(reservationService.getSeatsIdByconcertScheduleId(concertScheduleId))
+        .thenReturn(new HashSet<>(Arrays.asList(2L, 45L, 3L)));
     when(concertScheduleSeatMapper.AvailableSeatsFrom(allSeats, reservedSeatIds))
         .thenReturn(expectedDomains);
 
@@ -70,8 +72,8 @@ class GetAvailableSeatsUseCaseTest {
 
     assertThat(result).isNotNull().hasSize(3).isEqualTo(expectedDomains);
 
-    verify(concertRepository).findSeatsByConcertScheduleId(concertScheduleId);
-    verify(reservationRepository).findSeatIdByconcertScheduleId(concertScheduleId);
+    verify(concertservice).getSeatsByConcertScheduleId(concertScheduleId);
+    verify(reservationService).getSeatsIdByconcertScheduleId(concertScheduleId);
     verify(concertScheduleSeatMapper).AvailableSeatsFrom(allSeats, reservedSeatIds);
   }
 
@@ -92,14 +94,13 @@ class GetAvailableSeatsUseCaseTest {
       allSeats.add(new Seat(seatId, i));
       reservedSeatIds.add(seatId);
     }
-
     List<ConcertScheduleSeatDomain> expectedDomains = Collections.emptyList();
 
-    when(concertRepository.findSeatsByConcertScheduleId(concertScheduleId))
+    when(concertservice.getSeatsByConcertScheduleId(concertScheduleId))
         .thenReturn(allSeats);
-    when(reservationRepository.findSeatIdByconcertScheduleId(concertScheduleId))
-        .thenReturn(new ArrayList<>(reservedSeatIds));
-    when(concertScheduleSeatMapper.AvailableSeatsFrom(allSeats, reservedSeatIds))
+    when(reservationService.getSeatsIdByconcertScheduleId(concertScheduleId))
+        .thenReturn(new HashSet<>(reservedSeatIds));
+    when(concertScheduleSeatMapper.AvailableSeatsFrom(allSeats, new HashSet<>(reservedSeatIds)))
         .thenReturn(expectedDomains);
 
     // When
@@ -108,13 +109,13 @@ class GetAvailableSeatsUseCaseTest {
     // Then
     assertThat(result).isNotNull().hasSize(0);
 
-    verify(concertRepository).findSeatsByConcertScheduleId(concertScheduleId);
-    verify(reservationRepository).findSeatIdByconcertScheduleId(concertScheduleId);
+    verify(concertservice).getSeatsByConcertScheduleId(concertScheduleId);
+    verify(reservationService).getSeatsIdByconcertScheduleId(concertScheduleId);
     verify(concertScheduleSeatMapper).AvailableSeatsFrom(allSeats, reservedSeatIds);
   }
 
   @Test
-  @DisplayName("Repository에서 예외 발생")
+  @DisplayName("ConcertService에서 예외 발생")
   void RepositoryThrowsException() {
     // Given
     Long concertId = 3L;
@@ -123,14 +124,14 @@ class GetAvailableSeatsUseCaseTest {
         .concertId(concertId)
         .concertScheduleId(concertScheduleId).build();
 
-    when(concertRepository.findSeatsByConcertScheduleId(concertScheduleId))
-        .thenThrow(new RuntimeException("Database error"));
+    when(concertservice.getSeatsByConcertScheduleId(concertScheduleId))
+        .thenThrow(new CustomException(ErrorCode.SERVICE));
 
     // When & Then
     assertThatThrownBy(() -> useCase.execute(command))
         .isInstanceOf(CustomException.class);
 
-    verify(concertRepository).findSeatsByConcertScheduleId(concertScheduleId);
+    verify(concertservice).getSeatsByConcertScheduleId(concertScheduleId);
     verify(concertScheduleSeatMapper, never()).AvailableSeatsFrom(any(), any());
   }
 }
