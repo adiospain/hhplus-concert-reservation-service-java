@@ -27,8 +27,8 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
-  public Optional<Token> findByReserverId(long reserverId) {
-    return tokenRepository.findByReserverId(reserverId);
+  public Optional<Token> findByUserId(long userId) {
+    return tokenRepository.findByUserId(userId);
   }
 
   @Override

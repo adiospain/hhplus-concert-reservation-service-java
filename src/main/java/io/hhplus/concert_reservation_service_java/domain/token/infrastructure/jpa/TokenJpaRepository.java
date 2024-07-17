@@ -50,7 +50,7 @@ public interface TokenJpaRepository extends JpaRepository<Token, Long> {
   @Query("UPDATE Token t SET t.status = 'DONE' WHERE t.id = :id")
   void setTokenStatusToDone(long id);
 
-  Optional<Token> findByReserverId(long reserverId);
+  Optional<Token> findByUserId(long reserverId);
 
 
 

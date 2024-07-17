@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TokenDomain {
   private long id;
-  private Long reserverId;
+  private Long userId;
   private String accessKey;
   private LocalDateTime expiredAt;
   private long queuePosition;
 
   public TokenDomain(Token token, long queuePosition) {
     this.id = token.getId();
-    this.reserverId = token.getReserverId();
+    this.userId = token.getUserId();
     this.accessKey = token.getAccessKey();
     this.expiredAt = token.getExpireAt();
     this.queuePosition = queuePosition;

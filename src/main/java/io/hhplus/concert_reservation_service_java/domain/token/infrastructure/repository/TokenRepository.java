@@ -9,7 +9,7 @@ public interface TokenRepository {
 
   Optional <Token> findMostRecentlyDisconnectedToken();
 
-  Optional<Token> findByReserverId(long reserverId);
+  Optional<Token> findByUserId(long userId);
 
   Token save(Token token);
 

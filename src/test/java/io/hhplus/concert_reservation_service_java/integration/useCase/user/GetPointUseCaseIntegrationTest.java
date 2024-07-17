@@ -1,4 +1,10 @@
-package io.hhplus.concert_reservation_service_java.application.reserver.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.integration.useCase.user;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
@@ -10,14 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-
-class GetPointUseCaseTest {
+class GetPointUseCaseIntegrationTest {
   private final UserService userService = Mockito.mock(UserService.class);
   private final GetPointUseCase useCase = new GetPointUseCaseImpl(userService);
 

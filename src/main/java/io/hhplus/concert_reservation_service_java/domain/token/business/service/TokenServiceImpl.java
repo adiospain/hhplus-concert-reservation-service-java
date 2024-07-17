@@ -26,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
   @Transactional
   public TokenDomain upsertToken(long reserverId) {
 
-    Token token = tokenRepository.findByReserverId(reserverId)
+    Token token = tokenRepository.findByUserId(reserverId)
         .map(existingToken -> {
           // 기존 토큰 업데이트
           existingToken.setStatus(TokenStatus.WAIT);
@@ -59,10 +59,10 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   @Transactional(readOnly = true)
-  public TokenDomain getToken(long reserverId, String accessKey) {
+  public TokenDomain getToken(long userId, String accessKey) {
     Token token = tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND)); //토큰이 존재하지 않는다면 예외처리
-    if (token.getReserverId() != reserverId){
+    if (token.getUserId() != userId){
       throw new CustomException(ErrorCode.TOKEN_AND_USER_NOT_MATCHED);
     }
     Long smallestActiveTokenId = tokenRepository.findSmallestActiveTokenId().orElse(token.getId());
