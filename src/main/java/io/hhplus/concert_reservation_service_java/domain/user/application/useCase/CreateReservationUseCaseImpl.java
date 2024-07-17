@@ -20,28 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @UseCase
 public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
-  private final ReservationMapper reservationMapper;
-  private final TokenService tokenService;
 
   private final UserService userService;
   private final ReservationService reservationService;
   private final ConcertService concertService;
+  private final ReservationMapper reservationMapper;
 
   @Override
   @Transactional
   public ReservationDomain execute(CreateReservationCommand command) {
-
-    TokenDomain tokenDomain = tokenService.getToken(command.getUserId(), null);
-
-    if (tokenDomain.getQueuePosition() == 0){
-      return processReservation(command, tokenDomain);
-    }
-    else {
-      throw new CustomException(ErrorCode.WAITING_CONTINUE);
-    }
-  }
-
-  private ReservationDomain processReservation(CreateReservationCommand command, TokenDomain tokenDomain) {
     User user = userService.getUserWithLock(command.getUserId());
     ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
     Reservation reservation = createAndSaveReservation(user, concertScheduleSeat);

@@ -12,4 +12,7 @@ public interface ReservationService {
 
   Reservation saveToPay(Reservation reservation);
   Reservation getReservationToPay(long reservationId);
+
+  Reservation saveToCreate(Reservation savedReservation);
+
 }

@@ -1,16 +1,15 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.business.service;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
-import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
-import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,11 +34,21 @@ public class ConcertServiceImpl implements ConcertService {
 
   @Override
   public List<Concert> getAll() {
+    List<Concert> concerts = concertRepository.findAll();
+    if (concerts.isEmpty()){
+      return Collections.emptyList();
+    }
     return concertRepository.findAll();
   }
 
   @Override
   public List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId) {
     return concertRepository.findAllConcertSchedulesByConcertId(concertId);
+  }
+
+  @Override
+  public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
+    return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
+        .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
   }
 }
