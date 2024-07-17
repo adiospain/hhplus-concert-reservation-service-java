@@ -8,6 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.reserver.GetPointUseCas
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -16,8 +17,10 @@ public class GetPointUseCaseImpl implements GetPointUseCase {
 
   private final ReserverRepository reserverRepository;
 
+  @Override
+  @Transactional
   public int execute(GetPointCommand command) {
-    Reserver reserver = reserverRepository.findByIdWithPessimisticLock(command.getUserId())
+    Reserver reserver = reserverRepository.findByIdWithPessimisticLock(command.getReserverId())
         .orElseThrow(()->new CustomException(ErrorCode.RESERVER_NOT_FOUND));
     return reserver.getPoint();
   }

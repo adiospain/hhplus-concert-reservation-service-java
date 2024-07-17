@@ -6,6 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ChargePointCommand {
-  long userId;
+  long reserverId;
   int amount;
 }

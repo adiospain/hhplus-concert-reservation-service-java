@@ -80,7 +80,7 @@ public class ReserverController {
       @RequestBody ChargePointAPIRequest request){
 
     ChargePointCommand command = ChargePointCommand.builder()
-        .userId(userId)
+        .reserverId(userId)
         .amount(request.amount()).build();
 
     int point = chargePointUseCase.execute(command);

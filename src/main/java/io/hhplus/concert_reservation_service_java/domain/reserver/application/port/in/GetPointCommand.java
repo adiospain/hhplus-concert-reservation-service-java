@@ -6,5 +6,5 @@ import lombok.Getter;
 @Builder
 @Getter
 public class GetPointCommand {
-  long userId;
+  long reserverId;
 }
