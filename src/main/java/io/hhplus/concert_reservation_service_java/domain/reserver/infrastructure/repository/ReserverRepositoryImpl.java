@@ -21,12 +21,12 @@ public class ReserverRepositoryImpl implements ReserverRepository {
   }
 
   @Override
-  public Reserver save(Reserver reserver) {
-    return reserverRepository.save(reserver);
+  public Optional<Reserver> findByIdWithPessimisticLock(long reserverId) {
+    return reserverRepository.findByIdWithPessimisticLock(reserverId);
   }
 
   @Override
-  public Optional<Reserver> findByIdWithPessimisticLock(long reserverId) {
-    return reserverRepository.findByIdWithPessimisticLock(reserverId);
+  public Reserver save(Reserver reserver) {
+    return reserverRepository.save(reserver);
   }
 }

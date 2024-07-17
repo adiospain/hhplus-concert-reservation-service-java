@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface ReservationRepository {
 
-  List<Long> findSeatIdByconcertScheduleId(long concertScheduleId);
-
   Reservation save(Reservation reservation);
 
   Optional<Reservation> findById(long reservationId);
+
+  List<Long> findOccupiedSeatIdByconcertScheduleId(long concertScheduleId);
 }

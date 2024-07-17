@@ -13,12 +13,6 @@ public class ReservationRepositoryImpl implements ReservationRepository {
   private final ReservationJpaRepository reservationRepository;
 
   @Override
-  public List<Long> findSeatIdByconcertScheduleId(long concertScheduleId) {
-    return reservationRepository.findAllSeatIdByConcertScheduleId(concertScheduleId);
-  }
-
-
-  @Override
   public Reservation save(Reservation reservation) {
     return reservationRepository.save(reservation);
   }
@@ -26,6 +20,11 @@ public class ReservationRepositoryImpl implements ReservationRepository {
   @Override
   public Optional<Reservation> findById(long reservationId) {
     return reservationRepository.findById(reservationId);
+  }
+
+  @Override
+  public List<Long> findOccupiedSeatIdByconcertScheduleId(long concertScheduleId) {
+    return reservationRepository.findOccupiedSeatIdByconcertScheduleId(concertScheduleId);
   }
 
 
