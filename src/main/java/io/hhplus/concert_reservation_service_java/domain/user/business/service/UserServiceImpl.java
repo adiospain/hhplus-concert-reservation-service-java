@@ -44,13 +44,13 @@ public class UserServiceImpl implements UserService {
     return savedUser;
   }
 
-  @Override
-  public User usePoint(long userId, Integer price) {
-    User user = this.getUserWithLock(userId);
-    user.usePoint(price);
-    User savedUser = userRepository.save(user);
-    return savedUser;
-  }
+    @Override
+    public User usePoint(long userId, Integer price) {
+      User user = this.getUserWithLock(userId);
+      user.usePoint(price);
+      User savedUser = userRepository.save(user);
+      return savedUser;
+    }
 
   @Override
   public User save(User user) {
