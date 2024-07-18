@@ -23,4 +23,6 @@ public interface TokenService {
   void completeTokenAndActivateNextToken(long id);
     void setTokenStatusToDone(long id);
     int activateNextToken(long id);
+
+  Token getTokenByAccessKey(String tokenText);
 }

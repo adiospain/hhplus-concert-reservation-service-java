@@ -50,8 +50,8 @@ public enum ErrorCode {
     DATABASE(INTERNAL_SERVER_ERROR, "데이터베이스에서 오류가 발생했습니다."),
     OBJECT_CANNOT_BE_NULL(INTERNAL_SERVER_ERROR, "객체가 null일 수 없습니다."),
 
-    UNSPECIFIED_FAIL(INTERNAL_SERVER_ERROR, "정의 되지 않은 에러 입니다.");
-    private final HttpStatus httpStatus;
-    private final String message;
+  UNSPECIFIED_FAIL(INTERNAL_SERVER_ERROR, "정의 되지 않은 에러 입니다.");
+  private final HttpStatus httpStatus;
+  private final String message;
 
 }
