@@ -22,30 +22,30 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 @Component
 public class LoggingFilter implements Filter {
 
-  @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-      FilterChain filterChain) throws IOException, ServletException {
-    ContentCachingRequestWrapper httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
-    ContentCachingResponseWrapper httpServletResponse = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
-    long startTime = System.currentTimeMillis();
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+        FilterChain filterChain) throws IOException, ServletException {
+      ContentCachingRequestWrapper httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
+      ContentCachingResponseWrapper httpServletResponse = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
+      long startTime = System.currentTimeMillis();
 
-    logRequest(httpServletRequest);
-    filterChain.doFilter(httpServletRequest, httpServletResponse);
+      logRequest(httpServletRequest);
+      filterChain.doFilter(httpServletRequest, httpServletResponse);
 
-    long endTime = System.currentTimeMillis();
+      long endTime = System.currentTimeMillis();
 
-    log.info("INFO :: time: {}ms", endTime - startTime);
-    logResponse(httpServletResponse);
-    httpServletResponse.copyBodyToResponse();
-  }
+      log.info("INFO :: time: {}ms", endTime - startTime);
+      logResponse(httpServletResponse);
+      httpServletResponse.copyBodyToResponse();
+    }
 
-  private void logRequest (ContentCachingRequestWrapper request){
-    log.info("Request :: URL: {}", request.getRequestURI());
-    log.info("Request :: HTTP Method: {}", request.getMethod());
-  }
-  private void logResponse (ContentCachingResponseWrapper response){
-    String responseContent = new String(response.getContentAsByteArray());
-    log.info("Response :: Status: {}", response.getStatus());
-    log.info("Response :: ResponseContent: {}", responseContent);
-  }
+    private void logRequest (ContentCachingRequestWrapper request){
+      log.info("Request :: URL: {}", request.getRequestURI());
+      log.info("Request :: HTTP Method: {}", request.getMethod());
+    }
+    private void logResponse (ContentCachingResponseWrapper response){
+      String responseContent = new String(response.getContentAsByteArray());
+      log.info("Response :: Status: {}", response.getStatus());
+      log.info("Response :: ResponseContent: {}", responseContent);
+    }
 }
