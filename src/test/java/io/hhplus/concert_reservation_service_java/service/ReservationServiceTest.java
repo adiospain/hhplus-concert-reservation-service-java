@@ -1,10 +1,11 @@
-package io.hhplus.concert_reservation_service_java.business.service;
+package io.hhplus.concert_reservation_service_java.service;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.business.service.ReservationServiceImpl;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
+import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
@@ -63,7 +64,11 @@ class ReservationServiceTest {
   @DisplayName("유효한 예약 찾기")
   void testGetReservationToPay_ValidReservation() {
     long reservationId = 1L;
+    long userId = 2L;
+    int point = 200;
+    User user = new User(userId, point);
     Reservation reservation = new Reservation();
+    reservation.setUser(user);
     reservation.setStatus(ReservationStatus.OCCUPIED);
     reservation.setCreatedAt(LocalDateTime.now().minusMinutes(4));
 
@@ -78,10 +83,11 @@ class ReservationServiceTest {
   @DisplayName("결제를 하려다가 이미 결제된 예약 조회 - 예외처리")
   void testGetReservationToPay_AlreadyPaid() {
     long reservationId = 1L;
+    long userId = 2L;
     Reservation reservation = new Reservation();
     reservation.setId(reservationId);
     reservation.setStatus(ReservationStatus.PAID);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(4));
+    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(2));
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -95,21 +101,50 @@ class ReservationServiceTest {
   @DisplayName("결제를 위한 유효한 예약 조회")
   void testGetReservationToPay_Expired() {
     long reservationId = 1L;
+    long userId = 2L;
+    int point = 200;
+
+    User user = new User(userId, point);
     Reservation reservation = new Reservation();
+    reservation.setUser(user);
     reservation.setId(reservationId);
-    reservation.setStatus(ReservationStatus.EXPIRED);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(10));
+    reservation.setStatus(ReservationStatus.OCCUPIED);
+    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(6));
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+
     assertThatThrownBy(() -> service.getReservationToPay(reservationId))
         .isInstanceOf(CustomException.class)
         .hasFieldOrPropertyWithValue("errorCode", (ErrorCode.INVALID_RESERVATION_STATUS));
     verify(reservationRepository).findById(reservationId);
   }
+
+  @Test
+  @DisplayName("예약과 사용자 불일치 - 실패")
+  void testGetReservationToPay_UserMismatch() {
+    // Arrange
+    long reservationId = 1L;
+    long userId = 10L;
+    long differentUserId = 20L;
+
+    User user = new User(differentUserId, 3000);
+    Reservation reservation = new Reservation();
+    reservation.setId(reservationId);
+    reservation.setUser(user);
+
+    when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+
+    assertThatThrownBy(() -> service.getReservationToPay(reservationId))
+        .isInstanceOf(CustomException.class)
+        .hasFieldOrPropertyWithValue("errorCode", (ErrorCode.RESERVATION_AND_USER_NOT_MATCHED));
+
+  }
+
   @Test
   @DisplayName("결제를 하려다가 시간상 만료되었지만 상태전환 되지 않은 예약 조회")
   void testGetReservationToPay_ExpiredButNotStaus() {
     long reservationId = 1L;
+    long userId = 2L;
     Reservation reservation = new Reservation();
     reservation.setId(reservationId);
     reservation.setStatus(ReservationStatus.OCCUPIED);

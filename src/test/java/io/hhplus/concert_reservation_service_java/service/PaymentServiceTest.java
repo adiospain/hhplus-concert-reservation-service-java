@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.business.service;
+package io.hhplus.concert_reservation_service_java.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
