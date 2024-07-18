@@ -44,13 +44,13 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   @Override
-  public Reservation saveToCreate(Reservation reservation) {
+  public Reservation saveToPay(Reservation reservation) {
+    reservation.completeReservation();
     return reservationRepository.save(reservation);
   }
 
   @Override
-  public Reservation saveToPay(Reservation reservation){
-    reservation.completeReservation();
+  public Reservation saveToCreate(Reservation reservation){
     try {
       return reservationRepository.save(reservation);
     } catch (DataIntegrityViolationException e) {
