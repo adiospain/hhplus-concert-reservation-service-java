@@ -33,11 +33,15 @@ public class Payment {
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  public static Payment createFrom(Long reserverId, Long reservationId) {
+  public static Payment createFrom(Long userId, Long reservationId) {
     return Payment.builder()
-        .userId(reserverId)
+        .userId(userId)
         .reservationId(reservationId)
         .createdAt(LocalDateTime.now())
         .build();
+  }
+
+  public void setIdForTest(long id) {
+    this.id = id;
   }
 }
