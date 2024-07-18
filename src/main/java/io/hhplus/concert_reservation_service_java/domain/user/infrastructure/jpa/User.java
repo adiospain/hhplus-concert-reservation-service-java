@@ -34,9 +34,14 @@ public class User {
   }
 
   public void chargePoint(int amount) {
-    if (amount <= 0) {
-      throw new CustomException(ErrorCode.INVALID_AMOUNT);
+    try {
+      if (amount <= 0) {
+        throw new CustomException(ErrorCode.INVALID_AMOUNT);
+      }
+      int pointAfter = Math.addExact(this.point, amount);
+      this.point = pointAfter;
+    } catch (ArithmeticException e) {
+      throw new CustomException(ErrorCode.INTEGER_OVERFLOW);
     }
-    this.point += amount;
   }
 }
