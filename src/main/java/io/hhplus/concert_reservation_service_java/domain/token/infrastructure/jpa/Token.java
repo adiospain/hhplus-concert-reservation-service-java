@@ -73,6 +73,10 @@ public class Token {
   public void  turnActive() {
     this.status = TokenStatus.ACTIVE;
   }
+
+  public void setIdForTest(long id) {
+    this.id = id;
+  }
 }
 
 // TokenStatus enum
