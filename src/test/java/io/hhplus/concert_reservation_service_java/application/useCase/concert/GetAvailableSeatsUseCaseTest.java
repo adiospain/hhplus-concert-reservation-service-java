@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.concertScheduleSeat.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.concert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,10 +12,8 @@ import io.hhplus.concert_reservation_service_java.domain.concert.application.mod
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetAvailableSeatsCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertScheduleSeatMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetAvailableSeatsUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableSeatsUseCae;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;

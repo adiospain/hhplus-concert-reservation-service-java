@@ -1,28 +1,22 @@
-package io.hhplus.concert_reservation_service_java.application.concert.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.concert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
-import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertDetailUseCaseImpl;
-import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertsUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;

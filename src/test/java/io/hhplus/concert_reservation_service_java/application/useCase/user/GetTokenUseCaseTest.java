@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.token.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
@@ -19,8 +19,7 @@ class GetTokenUseCaseTest {
 
 
   private TokenService tokenService = Mockito.mock(TokenService.class);
-  private TokenMapper tokenMapper = Mockito.mock(TokenMapper.class);
-  private GetTokenUseCase useCase = new GetTokenUseCaseImpl(tokenService, tokenMapper);
+  private GetTokenUseCase useCase = new GetTokenUseCaseImpl(tokenService);
 
   @Test
   void execute_ShouldReturnTokenDTO_WhenTokenExists() {
@@ -31,18 +30,15 @@ class GetTokenUseCaseTest {
         .build();
     Token token = new Token();
     int queuePosition = 5;
-    TokenWithPosition tokenWithPosition = new TokenWithPosition(token, queuePosition);
     TokenDomain expectedTokenDomain = new TokenDomain();
 
-    when(tokenService.getToken(reserverId)).thenReturn(tokenWithPosition);
-    when(tokenMapper.from(token, queuePosition)).thenReturn(expectedTokenDomain);
+    when(tokenService.getToken(reserverId, token.getAccessKey())).thenReturn(expectedTokenDomain);
 
     TokenDomain result = useCase.execute(command);
 
     assertNotNull(result);
     assertEquals(expectedTokenDomain, result);
-    verify(tokenService).getToken(reserverId);
-    verify(tokenMapper).from(token, queuePosition);
+    verify(tokenService).getToken(reserverId, token.getAccessKey());
   }
 
 //  @Test

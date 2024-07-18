@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.token.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.token;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,14 +24,17 @@ class IssueTokenUseCaseTest {
   void execute_ShouldReturnTokenDTO_WhenTokenIssuedSuccessfully() {
 
     Long reserverId = 1L;
+    String accessKey = UUID.randomUUID().toString();
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
         .userId(reserverId)
+        .accessKey(accessKey)
         .build();
-    Token token = new Token();
+    Token token = Token.createWaitingToken(reserverId);
+    token.setIdForTest(2L);
     int queuePosition = 5;
-    TokenDomain expectedTokenDomain = new TokenDomain();
+    TokenDomain expectedTokenDomain = new TokenDomain(token, queuePosition);
 
-    String accessKey = UUID.randomUUID().toString();
+
     when(tokenService.upsertToken(reserverId, accessKey)).thenReturn(expectedTokenDomain);
 
     // Act
@@ -46,10 +49,12 @@ class IssueTokenUseCaseTest {
   @Test
   void execute_ShouldThrowException_WhenTokenServiceFails() {
     Long reserverId = 1L;
+    String accessKey = UUID.randomUUID().toString();
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
             .userId(reserverId)
+        .accessKey(accessKey)
                 .build();
-    String accessKey = UUID.randomUUID().toString();
+
     when(tokenService.upsertToken(reserverId, accessKey)).thenThrow(new RuntimeException("Service failed"));
 
     // Act & Assert

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.concert.port.in.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.concert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -12,11 +12,9 @@ import io.hhplus.concert_reservation_service_java.domain.concert.application.mod
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.useCase.GetConcertsUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +63,6 @@ class GetConcertsUseCaseTest {
     // Given
     when(concertService.getAll())
         .thenReturn(Collections.emptyList());
-    when(concertMapper.WithoutConcertScheduleFrom(Collections.emptyList())).thenReturn(Collections.emptyList());
 
     // When
     List<ConcertDomain> result = useCase.execute();
@@ -78,7 +75,7 @@ class GetConcertsUseCaseTest {
 
   @Test
   @DisplayName("ConcertService에서 예외 발생")
-  void execute_WhenRepositoryThrowsException() {
+  void execute_WhenServiceThrowsException() {
     // Given
     when(concertService.getAll()).thenThrow(new CustomException(ErrorCode.SERVICE));
 
@@ -89,5 +86,29 @@ class GetConcertsUseCaseTest {
     // Then
     verify(concertService).getAll();
     verify(concertMapper, never()).WithoutConcertScheduleFrom(any(List.class));
+  }
+
+  @Test
+  @DisplayName("ConcertMapper에서 예외 발생")
+  void execute_WhenMapperThrowsException() {
+    // Given
+    List<Concert> concerts = Arrays.asList(
+        new Concert(1L, "Concert 1"),
+        new Concert(2L, "Concert 2")
+    );
+    List<ConcertDomain> expectedDomains = Arrays.asList(
+        new ConcertDomain(1L, "Concert 1", null),
+        new ConcertDomain(2L, "Concert 2", null)
+    );
+    when(concertService.getAll()).thenReturn(concerts);
+    when(concertMapper.WithoutConcertScheduleFrom(concerts)).thenThrow(new CustomException(ErrorCode.CONCERT_NOT_FOUND));
+
+    // When
+    assertThatThrownBy(() -> useCase.execute())
+        .isInstanceOf(CustomException.class);
+
+    // Then
+    verify(concertService).getAll();
+    verify(concertMapper).WithoutConcertScheduleFrom(any(List.class));
   }
 }

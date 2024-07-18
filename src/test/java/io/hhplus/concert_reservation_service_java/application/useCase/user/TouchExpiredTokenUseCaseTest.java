@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.token.useCase;
+package io.hhplus.concert_reservation_service_java.application.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.TouchExpiredTokenUseCaseImpl;
@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
 
-
-import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.*;
 
