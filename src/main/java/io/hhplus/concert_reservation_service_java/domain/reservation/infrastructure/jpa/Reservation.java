@@ -67,11 +67,11 @@ public class Reservation {
   }
 
 
-  public void completeReservation() {
-    if (this.status == ReservationStatus.EXPIRED){
-      throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+    public void completeReservation() {
+      if (this.status == ReservationStatus.EXPIRED){
+        throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+      }
+      this.status = ReservationStatus.PAID;
+      this.paidAt = LocalDateTime.now();
     }
-    this.status = ReservationStatus.PAID;
-    this.paidAt = LocalDateTime.now();
-  }
 }
