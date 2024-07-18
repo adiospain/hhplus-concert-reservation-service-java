@@ -6,6 +6,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jp
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.GetTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -22,6 +23,7 @@ class GetTokenUseCaseTest {
   private GetTokenUseCase useCase = new GetTokenUseCaseImpl(tokenService);
 
   @Test
+  @DisplayName("토큰 조회")
   void execute_ShouldReturnTokenDTO_WhenTokenExists() {
     // Arrange
     Long reserverId = 1L;
