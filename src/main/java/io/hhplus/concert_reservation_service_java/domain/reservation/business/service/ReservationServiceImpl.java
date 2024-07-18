@@ -8,6 +8,7 @@ import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -75,5 +76,20 @@ public class ReservationServiceImpl implements ReservationService {
               "콘서트 날짜 ID: " + reservation.getConcertScheduleId() +
               ", 좌석 ID: " + reservation.getSeatId());
     }
+  }
+
+  @Override
+  public void expire(Reservation reservation) {
+
+  }
+
+  @Override
+  public void deleteExpiredReservations() {
+    reservationRepository.deleteExpiredReservations(LocalDateTime.now().minusMinutes(10));
+  }
+
+  @Override
+  public int bulkUpdateExpiredReservations() {
+    return reservationRepository.bulkUpdateExpiredReservations(LocalDateTime.now().minusMinutes(10));
   }
 }

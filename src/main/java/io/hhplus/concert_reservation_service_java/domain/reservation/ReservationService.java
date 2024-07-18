@@ -1,6 +1,7 @@
 package io.hhplus.concert_reservation_service_java.domain.reservation;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,4 +16,10 @@ public interface ReservationService {
 
   Reservation saveToCreate(Reservation savedReservation);
 
+  void expire(Reservation reservation);
+
+
+  void deleteExpiredReservations();
+
+  int bulkUpdateExpiredReservations();
 }

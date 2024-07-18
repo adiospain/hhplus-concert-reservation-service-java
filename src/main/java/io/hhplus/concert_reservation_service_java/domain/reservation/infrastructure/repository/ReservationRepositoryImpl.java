@@ -2,6 +2,7 @@ package io.hhplus.concert_reservation_service_java.domain.reservation.infrastruc
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationJpaRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,16 @@ public class ReservationRepositoryImpl implements ReservationRepository {
   @Override
   public List<Long> findOccupiedSeatIdByconcertScheduleId(long concertScheduleId) {
     return reservationRepository.findOccupiedSeatIdByconcertScheduleId(concertScheduleId);
+  }
+
+  @Override
+  public int bulkUpdateExpiredReservations(LocalDateTime now) {
+    return reservationRepository.bulkUpdateExpiredReservations(now);
+  }
+
+  @Override
+  public void deleteExpiredReservations(LocalDateTime expirationTime) {
+    reservationRepository.deleteExpiredReservations(expirationTime);
   }
 
 
