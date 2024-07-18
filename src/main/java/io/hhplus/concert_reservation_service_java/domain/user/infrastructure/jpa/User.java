@@ -11,11 +11,11 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Entity
-@Table(name = "reserver")
-@AllArgsConstructor
-@Getter
-public class User {
+  @Entity
+  @Table(name = "reserver")
+  @AllArgsConstructor
+  @Getter
+  public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

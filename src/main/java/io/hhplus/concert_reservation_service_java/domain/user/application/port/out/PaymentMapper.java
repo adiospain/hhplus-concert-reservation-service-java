@@ -24,10 +24,10 @@ public class PaymentMapper {
         .build();
   }
 
-  public PaymentDomain of(Payment savedPayment, Reservation reservation, User reserver) {
-    if (savedPayment == null){
-      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-    }
+    public PaymentDomain of(Payment savedPayment, Reservation reservation, User reserver) {
+      if (savedPayment == null){
+        throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+      }
 
     return PaymentDomain.builder()
         .id(savedPayment.getId())

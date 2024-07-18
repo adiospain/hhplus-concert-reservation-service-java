@@ -32,23 +32,23 @@ public class ReservationServiceImpl implements ReservationService {
         .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
   }
 
-  @Override
-  public Reservation getReservationToPay(long reservationId) {
-    Reservation reservation = this.getById(reservationId);
-    if (reservation.getStatus() != ReservationStatus.OCCUPIED) {
-      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
+    @Override
+    public Reservation getReservationToPay(long reservationId) {
+      Reservation reservation = this.getById(reservationId);
+      if (reservation.getStatus() != ReservationStatus.OCCUPIED) {
+        throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
+      }
+      if (reservation.getCreatedAt().plusMinutes(5).isBefore(LocalDateTime.now())) {
+        throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+      }
+      return reservation;
     }
-    if (reservation.getCreatedAt().plusMinutes(5).isBefore(LocalDateTime.now())) {
-      throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
-    }
-    return reservation;
-  }
 
-  @Override
-  public Reservation saveToPay(Reservation reservation) {
-    reservation.completeReservation();
-    return reservationRepository.save(reservation);
-  }
+    @Override
+    public Reservation saveToPay(Reservation reservation) {
+      reservation.completeReservation();
+      return reservationRepository.save(reservation);
+    }
 
   @Override
   public Reservation saveToCreate(Reservation reservation){

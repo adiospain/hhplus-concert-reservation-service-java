@@ -24,10 +24,10 @@ public class PaymentServiceImpl implements PaymentService {
     return paymentRepository.save(payment);
   }
 
-  @Override
-  public Payment createPayment(long reserverId, long reservationId) {
-    Payment savedPayment = Payment.createFrom(reserverId, reservationId);
-    paymentRepository.save(savedPayment);
-    return savedPayment;
-  }
+    @Override
+    public Payment createPayment(long reserverId, long reservationId) {
+      Payment savedPayment = Payment.createFrom(reserverId, reservationId);
+      paymentRepository.save(savedPayment);
+      return savedPayment;
+    }
 }
