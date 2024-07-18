@@ -10,6 +10,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.IssueTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -21,6 +22,7 @@ class IssueTokenUseCaseTest {
   private IssueTokenUseCase useCase = new IssueTokenUseCaseImpl(tokenService);
 
   @Test
+  @DisplayName("토큰 발급 성공")
   void execute_ShouldReturnTokenDTO_WhenTokenIssuedSuccessfully() {
 
     Long reserverId = 1L;
@@ -47,6 +49,7 @@ class IssueTokenUseCaseTest {
   }
 
   @Test
+  @DisplayName("토큰 발급 실패")
   void execute_ShouldThrowException_WhenTokenServiceFails() {
     Long reserverId = 1L;
     String accessKey = UUID.randomUUID().toString();
