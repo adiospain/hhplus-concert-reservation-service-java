@@ -15,18 +15,11 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.infrastruct
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
 
-import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
-import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
-import io.hhplus.concert_reservation_service_java.exception.CustomException;
-import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
