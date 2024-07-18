@@ -12,13 +12,11 @@ import org.springframework.stereotype.Component;
 public class TokenScheduler {
 
   private final TouchExpiredTokenUseCase touchExpiredTokenUseCase;
-  private final TouchDisconnectedTokenUseCase touchDisconnectedTokenUseCase;
 
   @Scheduled(fixedRate = 30 * 1000)
   public void touchExpiredToken(){
     touchExpiredTokenUseCase.execute();
   }
 
-  @Scheduled(fixedRate = 15 * 1000)
-  public void touchDisconnectedToken() {touchDisconnectedTokenUseCase.execute();}
+
 }
