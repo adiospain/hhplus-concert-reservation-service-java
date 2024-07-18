@@ -100,6 +100,12 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
+  public Token getTokenByAccessKey(String accessKey) {
+    return tokenRepository.findByAccessKey(accessKey)
+        .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND));
+  }
+
+  @Override
   public Optional<Token> findMostRecentlyDisconnectedToken() {
     return tokenRepository.findMostRecentlyDisconnectedToken();
   }

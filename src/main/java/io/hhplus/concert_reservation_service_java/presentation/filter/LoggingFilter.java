@@ -28,9 +28,12 @@ public class LoggingFilter implements Filter {
     ContentCachingRequestWrapper httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
     ContentCachingResponseWrapper httpServletResponse = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
     long startTime = System.currentTimeMillis();
+
     logRequest(httpServletRequest);
     filterChain.doFilter(httpServletRequest, httpServletResponse);
+
     long endTime = System.currentTimeMillis();
+
     log.info("INFO :: time: {}ms", endTime - startTime);
     logResponse(httpServletResponse);
     httpServletResponse.copyBodyToResponse();
@@ -39,7 +42,6 @@ public class LoggingFilter implements Filter {
   private void logRequest (ContentCachingRequestWrapper request){
     log.info("Request :: URL: {}", request.getRequestURI());
     log.info("Request :: HTTP Method: {}", request.getMethod());
-    log.info("Request :: Token : {}", request.getHeader("Authorization"));
   }
   private void logResponse (ContentCachingResponseWrapper response){
     String responseContent = new String(response.getContentAsByteArray());
