@@ -30,4 +30,14 @@ public class ErrorResponse {
             .build()
         );
   }
+
+  public static ErrorResponse of(ErrorCode errorCode, String runtimeValue) {
+    return ErrorResponse.builder()
+        .statusCode(errorCode.getHttpStatus().value())
+        .statusCodeName(errorCode.getHttpStatus().name())
+        .code(errorCode.name())
+        .message(errorCode.getMessage())
+        .runtimeValue(runtimeValue)
+        .build();
+  }
 }
