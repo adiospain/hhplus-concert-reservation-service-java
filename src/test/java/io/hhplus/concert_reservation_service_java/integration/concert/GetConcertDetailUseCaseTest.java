@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.useCase.concert;
+package io.hhplus.concert_reservation_service_java.integration.concert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

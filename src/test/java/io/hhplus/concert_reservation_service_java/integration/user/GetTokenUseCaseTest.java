@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.application.useCase.user;
+package io.hhplus.concert_reservation_service_java.integration.user;
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
