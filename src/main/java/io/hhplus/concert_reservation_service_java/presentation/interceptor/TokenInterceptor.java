@@ -18,21 +18,21 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class TokenInterceptor implements HandlerInterceptor {
   private final TokenService tokenService;
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws CustomException {
-      log.info("INFO :: TokenInterceptor");
-      String requestURI = request.getRequestURI();
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws CustomException {
+    log.info("INFO :: TokenInterceptor");
+    String requestURI = request.getRequestURI();
 
-      String accessKey = request.getHeader("Authorization");
-      if (StringUtils.isEmpty(accessKey)){
-        throw new CustomException(ErrorCode.NO_TOKEN);
-      }
-      try {
-        Token token = tokenService.getTokenByAccessKey(accessKey);
-        return true;
-      } catch (CustomException e){
-        log.error("ERROR :: Token validation failed for request to {}: {}", requestURI, e.getMessage());
-          throw new CustomException(ErrorCode.NOT_YET);
-      }
+    String accessKey = request.getHeader("Authorization");
+    if (StringUtils.isEmpty(accessKey)){
+      throw new CustomException(ErrorCode.NO_TOKEN);
     }
+    try {
+      Token token = tokenService.getTokenByAccessKey(accessKey);
+      return true;
+    } catch (CustomException e){
+      log.error("ERROR :: Token validation failed for request to {}: {}", requestURI, e.getMessage());
+        throw new CustomException(ErrorCode.NOT_YET);
+    }
+  }
 }
