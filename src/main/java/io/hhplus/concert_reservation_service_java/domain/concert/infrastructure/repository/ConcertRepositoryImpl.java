@@ -58,6 +58,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   }
 
   @Override
+  public Concert save(Concert concert) {
+    return concertRepository.save(concert);
+  }
+
+  @Override
   public ConcertSchedule save(ConcertSchedule concertSchedule) {
     return concertScheduleRepository.save(concertSchedule);
   }
@@ -65,5 +70,10 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   @Override
   public List<ConcertSchedule> findUpcomingConcertSchedules(long concertId, LocalDateTime now) {
     return concertScheduleRepository.findUpcomingConcertSchedules(concertId, now);
+  }
+
+  @Override
+  public void deleteAll() {
+    concertRepository.deleteAll();
   }
 }

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.service;
+package io.hhplus.concert_reservation_service_java.unit.service;
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.business.service.TokenServiceImpl;

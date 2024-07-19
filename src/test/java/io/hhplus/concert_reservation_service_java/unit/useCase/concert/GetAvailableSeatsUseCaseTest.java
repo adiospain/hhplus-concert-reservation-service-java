@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.integration.concert;
+package io.hhplus.concert_reservation_service_java.unit.useCase.concert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

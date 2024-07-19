@@ -25,7 +25,11 @@ public interface ConcertRepository {
 
   Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(long concertScheduleId, long SeatId);
 
+  Concert save(Concert concert);
+
   ConcertSchedule save(ConcertSchedule concertSchedule);
 
   List<ConcertSchedule> findUpcomingConcertSchedules(long concertId, LocalDateTime now);
+
+  void deleteAll();
 }

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.integration.reservation;
+package io.hhplus.concert_reservation_service_java.unit.useCase.reservation;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.TouchExpiredReservationUseCase;

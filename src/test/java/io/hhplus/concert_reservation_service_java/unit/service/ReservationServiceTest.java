@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.service;
+package io.hhplus.concert_reservation_service_java.unit.service;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.business.service.ReservationServiceImpl;

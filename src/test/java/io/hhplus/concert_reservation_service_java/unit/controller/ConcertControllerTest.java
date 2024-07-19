@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.presentation.controller.concert;
+package io.hhplus.concert_reservation_service_java.unit.controller;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertScheduleDomain;
@@ -10,9 +10,7 @@ import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetai
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertsUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableConcertSchedulesUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetAvailableSeatsUseCae;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleDTO;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertScheduleSeatDTO;
+import io.hhplus.concert_reservation_service_java.presentation.controller.concert.ConcertController;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res.GetConcertDetailAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res.GetConcertScheduleAPIRespose;
 import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.res.GetConcertsAPIResponse;

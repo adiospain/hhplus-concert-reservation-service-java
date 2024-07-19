@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.integration.token;
+package io.hhplus.concert_reservation_service_java.unit.useCase.token;
 
 import static org.junit.jupiter.api.Assertions.*;
 

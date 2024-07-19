@@ -22,8 +22,11 @@ public class ConcertServiceImpl implements ConcertService {
 
   @Override
   public List<ConcertSchedule> getUpcomingConcertSchedules(long concertId) {
+    if (concertId <= 0){
+      throw new CustomException(ErrorCode.INVALID_CONCERT);
+    }
     List<ConcertSchedule> concertSchedules = concertRepository.findUpcomingConcertSchedules(concertId, LocalDateTime.now());
-    return concertSchedules;
+      return concertSchedules;
   }
 
   @Override
