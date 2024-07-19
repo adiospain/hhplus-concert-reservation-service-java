@@ -47,6 +47,11 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
+  public long findLastActiveToken() {
+    return tokenRepository.findLastActiveToken();
+  }
+
+  @Override
   public int bulkUpdateExpiredTokens(LocalDateTime now) {
     return tokenRepository.bulkUpdateExpiredTokens(now);
   }
