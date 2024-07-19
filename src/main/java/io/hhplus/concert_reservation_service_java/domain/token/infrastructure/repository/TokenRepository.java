@@ -18,6 +18,8 @@ public interface TokenRepository {
 
   List<Token> findActiveExpiredTokens(LocalDateTime now);
 
+  long findLastActiveToken();
+
   int bulkUpdateExpiredTokens(LocalDateTime now);
   int bulkUpdateDisconnectedToken(LocalDateTime now);
 
@@ -28,6 +30,7 @@ public interface TokenRepository {
   Optional<Token> findByAccessKey(String accessKey);
 
   void setTokenStatusToDone(long id);
+
 
 
 }

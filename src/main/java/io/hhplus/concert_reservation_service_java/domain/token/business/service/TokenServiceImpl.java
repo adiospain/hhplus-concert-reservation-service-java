@@ -10,7 +10,6 @@ import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,9 +93,17 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
+  public int activateNextToken(long id) {
+    LocalDateTime now = LocalDateTime.now();
+    return tokenRepository.activateNextToken(id, now);
+  }
+
+  @Override
   @Transactional
-  public int activateNextToken(long id){
-    return tokenRepository.activateNextToken(id, LocalDateTime.now());
+  public void activateNextToken(){
+    long lastActive = tokenRepository.findLastActiveToken();
+    LocalDateTime now = LocalDateTime.now();
+    tokenRepository.activateNextToken(lastActive, now);
   }
 
   @Override
