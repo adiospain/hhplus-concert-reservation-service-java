@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class ConcertDomain {
-  private long id;
-  private String name;
+    private long id;
+    private String name;
 
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private List<ConcertScheduleDomain> schedules;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ConcertScheduleDomain> schedules;
 }

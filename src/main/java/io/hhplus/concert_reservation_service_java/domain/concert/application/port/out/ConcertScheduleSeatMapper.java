@@ -13,36 +13,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConcertScheduleSeatMapper {
 
-  public ConcertScheduleSeatDomain from (ConcertScheduleSeat concertScheduleSeat){
-    if (concertScheduleSeat == null){
-      throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
+    public ConcertScheduleSeatDomain from (ConcertScheduleSeat concertScheduleSeat){
+      if (concertScheduleSeat == null){
+        throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
+      }
+      return ConcertScheduleSeatDomain.builder()
+          .id(concertScheduleSeat.getId())
+          .seatNumber(concertScheduleSeat.getSeat().getSeatNumber())
+          .build();
     }
-    return ConcertScheduleSeatDomain.builder()
-        .id(concertScheduleSeat.getId())
-        .seatNumber(concertScheduleSeat.getSeat().getSeatNumber())
-        .build();
-  }
 
-  public List<ConcertScheduleSeatDomain> from (List<ConcertScheduleSeat> concertScheduleSeat){
-    if (concertScheduleSeat == null || concertScheduleSeat.isEmpty()){
-      throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
+    public List<ConcertScheduleSeatDomain> from (List<ConcertScheduleSeat> concertScheduleSeat){
+      if (concertScheduleSeat == null || concertScheduleSeat.isEmpty()){
+        throw new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
+      }
+      return concertScheduleSeat.stream()
+          .map(this::from)
+          .collect(Collectors.toList());
     }
-    return concertScheduleSeat.stream()
-        .map(this::from)
-        .collect(Collectors.toList());
-  }
 
-  public ConcertScheduleSeatDomain from (Seat seat){
-    return ConcertScheduleSeatDomain.builder()
-        .id(seat.getId())
-        .seatNumber(seat.getSeatNumber())
-        .build();
-  }
+    public ConcertScheduleSeatDomain from (Seat seat){
+      return ConcertScheduleSeatDomain.builder()
+          .id(seat.getId())
+          .seatNumber(seat.getSeatNumber())
+          .build();
+    }
 
-  public List<ConcertScheduleSeatDomain> AvailableSeatsFrom(List<Seat> allSeats, Set<Long> reservedSeatIds) {
-    return allSeats.stream()
-        .filter(seat -> !reservedSeatIds.contains(seat.getId()))
-        .map(this::from)
-        .collect(Collectors.toList());
-  }
+    public List<ConcertScheduleSeatDomain> AvailableSeatsFrom(List<Seat> allSeats, Set<Long> reservedSeatIds) {
+      return allSeats.stream()
+          .filter(seat -> !reservedSeatIds.contains(seat.getId()))
+          .map(this::from)
+          .collect(Collectors.toList());
+    }
 }

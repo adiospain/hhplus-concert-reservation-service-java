@@ -8,6 +8,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ConcertScheduleSeatDomain {
-  private Long id;
-  private int seatNumber;
+    private Long id;
+    private int seatNumber;
 }

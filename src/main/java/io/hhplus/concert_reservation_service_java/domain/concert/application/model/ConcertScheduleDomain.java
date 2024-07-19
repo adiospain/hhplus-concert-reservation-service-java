@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ConcertScheduleDomain {
-  private long id;
-  private LocalDateTime startAt;
-  private int capacity;
+    private long id;
+    private LocalDateTime startAt;
+    private int capacity;
 }
