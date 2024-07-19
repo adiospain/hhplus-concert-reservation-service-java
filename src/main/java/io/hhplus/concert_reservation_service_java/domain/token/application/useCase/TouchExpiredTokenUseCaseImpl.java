@@ -17,16 +17,6 @@ public class TouchExpiredTokenUseCaseImpl implements TouchExpiredTokenUseCase {
   @Override
   @Transactional
   public void execute(){
-    int updatedCount = tokenService.bulkUpdateExpiredTokens();
-
-    if (updatedCount > 0){
-      List<Token> expiredTokens = tokenService.getExpiredTokens();
-
-      for (Token token : expiredTokens){
-        tokenService.activateNextToken(token.getId());
-      }
-    }
-
-
+    tokenService.bulkUpdateExpiredTokens();
   }
 }
