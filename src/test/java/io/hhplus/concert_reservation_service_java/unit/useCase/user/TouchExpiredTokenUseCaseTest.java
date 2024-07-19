@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.integration.user;
+package io.hhplus.concert_reservation_service_java.unit.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.TouchExpiredTokenUseCaseImpl;

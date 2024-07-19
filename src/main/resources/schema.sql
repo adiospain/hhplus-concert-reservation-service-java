@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS reservation (
       seat_id BIGINT NOT NULL,
       status VARCHAR(50) NOT NULL,
     created_at TIMESTAMP,
+    paid_at TIMESTAMP,
     reserved_price INTEGER,
     FOREIGN KEY (user_id) REFERENCES reserver(id),
     UNIQUE (concert_schedule_id, seat_id)
