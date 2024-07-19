@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.integration.useCase.user;
 
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.user.CreateReservationUseCase;
@@ -43,12 +44,23 @@ class CreateReservationUseCaseIntegrationTest {
   private ReservationRepository reservationRepository;
 
   private User user;
+  private Concert concert;
   private ConcertSchedule concertSchedule;
   private Seat seat;
   private ConcertScheduleSeat concertScheduleSeat;
 
   @BeforeEach
   void setUp() {
+
+    concert = Concert.builder()
+        .id(1L)
+        .name("아이유 콘서트")
+        .build();
+
+    concertSchedule = ConcertSchedule.builder()
+        .id(2L)
+        .concert(concert)
+        .build();
     user = new User(1L, 34000);
     user = userRepository.save(user);
   }
@@ -127,7 +139,7 @@ class CreateReservationUseCaseIntegrationTest {
     // Given
     Reservation existingReservation = Reservation.builder()
         .user(user)
-        .concertScheduleId(concertSchedule.getId())
+        .concertScheduleId(2L)
         .seatId(seat.getId())
         .status(ReservationStatus.OCCUPIED)
         .build();
