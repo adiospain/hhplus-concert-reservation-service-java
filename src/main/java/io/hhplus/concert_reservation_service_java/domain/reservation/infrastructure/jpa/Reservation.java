@@ -76,4 +76,13 @@ public class Reservation {
     this.status = ReservationStatus.PAID;
     this.paidAt = LocalDateTime.now();
   }
+
+  public void validatePayment() {
+    if (this.status != ReservationStatus.OCCUPIED) {
+      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
+    }
+    if (this.createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
+      throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+    }
+  }
 }

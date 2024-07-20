@@ -35,12 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
   @Override
   public Reservation getReservationToPay(long reservationId) {
     Reservation reservation = this.getById(reservationId);
-    if (reservation.getStatus() != ReservationStatus.OCCUPIED) {
-      throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS);
-    }
-    if (reservation.getCreatedAt().plusMinutes(5).isBefore(LocalDateTime.now())) {
-      throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
-    }
+    reservation.validatePayment();
     return reservation;
   }
 

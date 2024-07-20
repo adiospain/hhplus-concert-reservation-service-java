@@ -38,5 +38,10 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     reservationRepository.deleteExpiredReservations(expirationTime);
   }
 
+  @Override
+  public List<Reservation> findAll() {
+    return reservationRepository.findAll();
+  }
+
 
 }

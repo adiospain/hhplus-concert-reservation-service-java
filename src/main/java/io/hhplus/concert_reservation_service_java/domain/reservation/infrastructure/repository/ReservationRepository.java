@@ -16,4 +16,6 @@ public interface ReservationRepository {
   int bulkUpdateExpiredReservations(LocalDateTime now);
 
   void deleteExpiredReservations(LocalDateTime localDateTime);
+
+  List<Reservation> findAll();
 }
