@@ -610,7 +610,7 @@ erDiagram
 
 </details>
 
-<details>
+<details open>
 <summary style="font-size: 1.5em; font-weight: bold">Reflection</summary>
 쉽게 쓰여지는 코드는 없다.
 
