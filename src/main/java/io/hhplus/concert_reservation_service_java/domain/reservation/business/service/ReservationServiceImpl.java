@@ -84,6 +84,7 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   @Override
+  @Transactional
   public int bulkUpdateExpiredReservations() {
     return reservationRepository.bulkUpdateExpiredReservations(LocalDateTime.now().minusMinutes(10));
   }
