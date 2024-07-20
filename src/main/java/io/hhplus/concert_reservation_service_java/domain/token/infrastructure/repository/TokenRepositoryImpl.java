@@ -47,7 +47,7 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
-  public long findLastActiveToken() {
+  public Optional<Long> findLastActiveToken() {
     return tokenRepository.findLastActiveToken();
   }
 
@@ -71,6 +71,16 @@ public class TokenRepositoryImpl implements TokenRepository {
   @Override
   public void setTokenStatusToDone(long id) {
     tokenRepository.setTokenStatusToDone(id);
+  }
+
+  @Override
+  public void deleteAll() {
+
+  }
+
+  @Override
+  public List<Token> findAll() {
+    return tokenRepository.findAll();
   }
 
   @Override

@@ -100,10 +100,12 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   @Transactional
-  public void activateNextToken(){
-    long lastActive = tokenRepository.findLastActiveToken();
-    LocalDateTime now = LocalDateTime.now();
-    tokenRepository.activateNextToken(lastActive, now);
+  public void activateNextToken() {
+    tokenRepository.findLastActiveToken()
+        .ifPresent(lastActiveTokenId -> {
+            LocalDateTime now = LocalDateTime.now();
+            tokenRepository.activateNextToken(lastActiveTokenId, now);
+    });
   }
 
   @Override

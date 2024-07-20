@@ -18,7 +18,7 @@ public interface TokenRepository {
 
   List<Token> findActiveExpiredTokens(LocalDateTime now);
 
-  long findLastActiveToken();
+  Optional<Long> findLastActiveToken();
 
   int bulkUpdateExpiredTokens(LocalDateTime now);
   int bulkUpdateDisconnectedToken(LocalDateTime now);
@@ -32,5 +32,7 @@ public interface TokenRepository {
   void setTokenStatusToDone(long id);
 
 
+  void deleteAll();
 
+  List<Token> findAll();
 }

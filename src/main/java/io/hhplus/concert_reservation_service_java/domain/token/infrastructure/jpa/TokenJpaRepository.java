@@ -54,7 +54,7 @@ public interface TokenJpaRepository extends JpaRepository<Token, Long> {
 
   @Query(value = "SELECT q.id FROM Token q " +
       "WHERE q.status = 'ACTIVE' " +
-      "AND q.id = (SELECT MAX(q2.id) FROM Token t2 WHERE t2.status = 'ACTIVE') ",
+      "AND q.id = (SELECT MAX(t2.id) FROM Token t2 WHERE t2.status = 'ACTIVE') ",
       nativeQuery = true)
-  long findLastActiveToken();
+  Optional<Long> findLastActiveToken();
 }
