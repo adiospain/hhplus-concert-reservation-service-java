@@ -4,7 +4,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.application.model
 
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
-import io.hhplus.concert_reservation_service_java.domain.user.IssueTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
@@ -39,10 +39,10 @@ class IssueTokenUseCaseIntegrationTest {
   @DisplayName("토큰 발급 성공")
   void execute_ShouldReturnTokenDTO_WhenTokenIssuedSuccessfully() {
     // Given
-    Long reserverId = 1L;
+    Long UserId = 1L;
     String accessKey = UUID.randomUUID().toString();
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
-        .userId(reserverId)
+        .userId(UserId)
         .accessKey(accessKey)
         .build();
 
@@ -51,13 +51,13 @@ class IssueTokenUseCaseIntegrationTest {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getReserverId()).isEqualTo(reserverId);
+    assertThat(result.getUserId()).isEqualTo(UserId);
     assertThat(result.getAccessKey()).isEqualTo(accessKey);
 
     // Verify token is saved in the database
     Token savedToken = tokenRepository.findByAccessKey(accessKey).orElseThrow();
     assertThat(savedToken).isNotNull();
-    assertThat(savedToken.getReserverId()).isEqualTo(reserverId);
+    assertThat(savedToken.getUserId()).isEqualTo(UserId);
     assertThat(savedToken.getAccessKey()).isEqualTo(accessKey);
   }
 
@@ -65,10 +65,10 @@ class IssueTokenUseCaseIntegrationTest {
   @DisplayName("토큰 발급 실패")
   void execute_ShouldThrowException_WhenTokenServiceFails() {
     // Given
-    Long reserverId = 1L;
+    Long UserId = 1L;
     String accessKey = UUID.randomUUID().toString();
     IssueTokenUseCommand command = IssueTokenUseCommand.builder()
-        .userId(reserverId)
+        .userId(UserId)
         .accessKey(accessKey)
         .build();
 

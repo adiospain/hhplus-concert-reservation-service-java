@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.domain.user.application.useCa
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
 
 import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.IssueTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import lombok.RequiredArgsConstructor;
