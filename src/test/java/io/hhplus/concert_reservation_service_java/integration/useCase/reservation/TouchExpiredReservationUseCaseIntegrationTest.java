@@ -89,10 +89,11 @@ class TouchExpiredReservationUseCaseIntegrationTest {
   }
 
   private Reservation createReservation(LocalDateTime createdAt, ReservationStatus status) {
-    Reservation reservation = new Reservation();
-    reservation.setConcertScheduleId(1L);
-    reservation.setStatus(status);
-    reservation.setCreatedAt(createdAt);
+    Reservation reservation = Reservation.builder()
+        .concertScheduleId(1L)
+        .status(status)
+        .createdAt(createdAt)
+        .build();
     return reservationRepository.save(reservation);
   }
 }

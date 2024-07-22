@@ -18,18 +18,16 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "reservation",
     uniqueConstraints = @UniqueConstraint(columnNames = {"concert_schedule_id", "seat_id"}))
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
 public class Reservation {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,6 +81,16 @@ public class Reservation {
     }
     if (this.createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
       throw new CustomException(ErrorCode.EXPIRED_RESERVATION);
+    }
+  }
+
+  public void markAs (ReservationStatus updateStatus){
+    this.status = updateStatus;
+  }
+
+  public void markCreatedAt (LocalDateTime timestamp){
+    if (this.createdAt != null && this.createdAt.isBefore(timestamp)){
+      throw new CustomException(ErrorCode.TIME_PARADOX);
     }
   }
 }

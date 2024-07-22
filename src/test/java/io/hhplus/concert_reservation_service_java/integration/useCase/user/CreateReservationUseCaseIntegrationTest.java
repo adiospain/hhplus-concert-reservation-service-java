@@ -125,11 +125,12 @@ class CreateReservationUseCaseIntegrationTest {
   @Test
   void 이미_예약된_좌석_예외() {
     // Given
-    Reservation existingReservation = new Reservation();
-    existingReservation.setUser(user);
-    existingReservation.setConcertScheduleId(concertSchedule.getId());
-    existingReservation.setSeatId(seat.getId());
-    existingReservation.setStatus(ReservationStatus.OCCUPIED);
+    Reservation existingReservation = Reservation.builder()
+        .user(user)
+        .concertScheduleId(concertSchedule.getId())
+        .seatId(seat.getId())
+        .status(ReservationStatus.OCCUPIED)
+        .build();
     reservationRepository.save(existingReservation);
 
     CreateReservationCommand command = CreateReservationCommand.builder()

@@ -67,10 +67,12 @@ class ReservationServiceTest {
     long userId = 2L;
     int point = 200;
     User user = new User(userId, point);
-    Reservation reservation = new Reservation();
-    reservation.setUser(user);
-    reservation.setStatus(ReservationStatus.OCCUPIED);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(4));
+    Reservation reservation = Reservation.builder()
+        .id(reservationId)
+        .user(user)
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now().minusMinutes(4))
+        .build();
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -84,10 +86,12 @@ class ReservationServiceTest {
   void testGetReservationToPay_AlreadyPaid() {
     long reservationId = 1L;
     long userId = 2L;
-    Reservation reservation = new Reservation();
-    reservation.setId(reservationId);
-    reservation.setStatus(ReservationStatus.PAID);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(2));
+    Reservation reservation = Reservation.builder()
+        .id(reservationId)
+        .status(ReservationStatus.PAID)
+        .createdAt(LocalDateTime.now().minusMinutes(2))
+        .build();
+
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -105,11 +109,12 @@ class ReservationServiceTest {
     int point = 200;
 
     User user = new User(userId, point);
-    Reservation reservation = new Reservation();
-    reservation.setUser(user);
-    reservation.setId(reservationId);
-    reservation.setStatus(ReservationStatus.OCCUPIED);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(6));
+    Reservation reservation = Reservation.builder()
+        .user(user)
+        .id(reservationId)
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now().minusMinutes(6))
+        .build();
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -128,9 +133,10 @@ class ReservationServiceTest {
     long differentUserId = 20L;
 
     User user = new User(differentUserId, 3000);
-    Reservation reservation = new Reservation();
-    reservation.setId(reservationId);
-    reservation.setUser(user);
+    Reservation reservation = Reservation.builder()
+        .id(reservationId)
+        .user(user)
+        .build();
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -145,10 +151,11 @@ class ReservationServiceTest {
   void testGetReservationToPay_ExpiredButNotStaus() {
     long reservationId = 1L;
     long userId = 2L;
-    Reservation reservation = new Reservation();
-    reservation.setId(reservationId);
-    reservation.setStatus(ReservationStatus.OCCUPIED);
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(10));
+    Reservation reservation = Reservation.builder()
+        .id(reservationId)
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now().minusMinutes(10))
+        .build();
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
     assertThatThrownBy(() -> service.getReservationToPay(reservationId))
@@ -184,9 +191,10 @@ class ReservationServiceTest {
   @Test
   @DisplayName("결제를 하려다가 시간상 만료되었지만 상태전환 되지 않은 예약 조회")
   void testSaveToPay_UniqueConstraintViolation_AlreadyReserved() {
-    Reservation reservation = new Reservation();
-    reservation.setConcertScheduleId(1L);
-    reservation.setSeatId(1L);
+    Reservation reservation = Reservation.builder()
+        .concertScheduleId(1L)
+        .seatId(1L)
+        .build();
 
     when(reservationRepository.save(reservation)).thenThrow(
         new CustomException(ErrorCode.ALREADY_RESERVED));
@@ -197,9 +205,11 @@ class ReservationServiceTest {
 
   @Test
   void testSaveToPay_UniqueConstraintViolation_ReservationFail() {
-    Reservation reservation = new Reservation();
-    reservation.setConcertScheduleId(1L);
-    reservation.setSeatId(1L);
+    Reservation reservation = Reservation.builder()
+        .concertScheduleId(1L)
+        .seatId(1L)
+        .build();
+
 
     when(reservationRepository.save(reservation)).thenThrow(
         new CustomException(ErrorCode.RESERVATION_FAILED));

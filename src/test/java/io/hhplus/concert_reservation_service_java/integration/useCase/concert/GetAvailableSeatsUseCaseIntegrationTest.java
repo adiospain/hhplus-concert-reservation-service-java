@@ -48,11 +48,11 @@ class GetAvailableSeatsUseCaseIntegrationTest {
   }
 
   private void reserveSeat(Seat seat, ConcertSchedule schedule) {
-    Reservation reservation = new Reservation();
-    reservation.setSeatId(seat.getId());
-    reservation.setConcertScheduleId(schedule.getId());
-    reservation.setStatus(ReservationStatus.OCCUPIED);
-    reservation.setPaidAt(null);
+    Reservation reservation = Reservation.builder()
+            .seatId(seat.getId())
+                .concertScheduleId(schedule.getId())
+                    .status(ReservationStatus.OCCUPIED)
+                        .build();
     reservationRepository.save(reservation);
   }
 

@@ -49,6 +49,7 @@ public enum ErrorCode {
   SERVICE(INTERNAL_SERVER_ERROR, "서비스에서 오류가 발생했습니다"),
   DATABASE(INTERNAL_SERVER_ERROR, "데이터베이스에서 오류가 발생했습니다."),
   OBJECT_CANNOT_BE_NULL(INTERNAL_SERVER_ERROR, "객체가 null일 수 없습니다."),
+  TIME_PARADOX(INTERNAL_SERVER_ERROR, "업데이트 되는 시간은 현재 시간보다 줄어들 수 없습니다. 업데이트 시간은 현재 생성 시간보다 이후여야 합니다."),
 
   UNSPECIFIED_FAIL(INTERNAL_SERVER_ERROR, "정의 되지 않은 에러 입니다.");
   private final HttpStatus httpStatus;

@@ -51,9 +51,10 @@ class CreatePaymentUseCaseTest {
         .userId(1L)
         .reservationId(3L)
         .build();
-    reservation = new Reservation();
-    reservation.setId(3L);
-    reservation.setReservedPrice(5000);
+    reservation = Reservation.builder()
+        .id(3L)
+        .reservedPrice(5000)
+        .build();
     reserver = new User(1L, 6000);
     payment = Payment.builder()
         .id(2L)

@@ -50,10 +50,13 @@ class CreatePaymentUseCaseIntegrationTest {
     user = new User(1L, 6000);
     user = userRepository.save(user);
 
-    reservation = new Reservation();
-    reservation.setReservedPrice(5000);
-    reservation.setStatus(ReservationStatus.OCCUPIED);
-    reservation.setUser(user);
+    reservation = Reservation.builder()
+        .user(user)
+        .concertScheduleId(2L)
+        .seatId(3L)
+        .reservedPrice(5000)
+        .status(ReservationStatus.OCCUPIED)
+        .build();
     reservation = reservationRepository.save(reservation);
   }
 
@@ -102,7 +105,7 @@ class CreatePaymentUseCaseIntegrationTest {
   @DisplayName("유효하지 않은 예약 상태")
   void execute_InvalidReservationStatus() {
     // Given
-    reservation.setStatus(ReservationStatus.OCCUPIED);
+    reservation.markAs(ReservationStatus.OCCUPIED);
     reservationRepository.save(reservation);
 
     CreatePaymentCommand command = CreatePaymentCommand.builder()
@@ -120,7 +123,7 @@ class CreatePaymentUseCaseIntegrationTest {
   @DisplayName("만료된 예약")
   void execute_ExpiredReservation() {
     // Given
-    reservation.setCreatedAt(LocalDateTime.now().minusMinutes(16)); // Assuming 15 minutes is the expiration time
+    reservation.markCreatedAt(LocalDateTime.now().minusMinutes(16)); // Assuming 15 minutes is the expiration time
     reservationRepository.save(reservation);
 
     CreatePaymentCommand command = CreatePaymentCommand.builder()
