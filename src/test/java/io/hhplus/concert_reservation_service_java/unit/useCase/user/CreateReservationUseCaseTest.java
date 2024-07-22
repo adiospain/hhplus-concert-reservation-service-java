@@ -14,7 +14,10 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.infrastruct
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa.Seat;
-
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.springframework.dao.DataIntegrityViolationException;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +26,7 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -98,7 +102,7 @@ class CreateReservationUseCaseTest {
   }
 
   @Test
-  void 예약_실패_수정수정수정수정수정수정수정수정수정수정() {
+  void 예약_실패_이미_예약된_좌석() {
     long userId = 1L;
     long concertScheduleId = 1L;
     long seatId = 1L;
@@ -140,20 +144,20 @@ class CreateReservationUseCaseTest {
 
     when(userService.getUserWithLock(command.getUserId())).thenReturn(user);
     when(concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId())).thenReturn(concertScheduleSeat);
-    when(reservationService.saveToCreate(any(Reservation.class))).thenReturn(reservation);
-    when(reservationMapper.from(reservation)).thenReturn(reservationDomain);
 
-    ReservationDomain result = useCase.execute(command);
+    when(reservationService.saveToCreate(any(Reservation.class))).thenThrow(new CustomException(ErrorCode.ALREADY_RESERVED));
+
+    //when(reservationMapper.from(reservation)).thenReturn(reservationDomain);
 
 
-    assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(reservation.getId());
-    assertThat(result.getCreatedAt()).isEqualTo(reservation.getCreatedAt());
+    AssertionsForClassTypes.assertThatThrownBy(() -> useCase.execute(command))
+        .isInstanceOf(CustomException.class)
+        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RESERVED);
 
     verify(userService).getUserWithLock(command.getUserId());
     verify(concertService).getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
     verify(reservationService).saveToCreate(any(Reservation.class));
-    verify(reservationMapper).from(reservation);
+    verify(reservationMapper, never()).from(any(Reservation.class));
   }
 
 
