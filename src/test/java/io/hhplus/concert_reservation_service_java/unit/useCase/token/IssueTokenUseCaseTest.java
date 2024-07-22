@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
-import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.IssueTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
-import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.IssueTokenUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.IssueTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;

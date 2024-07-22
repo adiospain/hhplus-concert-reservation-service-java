@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.integration.useCase.user;
+package io.hhplus.concert_reservation_service_java.integration.useCase.token;
 
 
 
