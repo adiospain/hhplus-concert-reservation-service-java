@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class ReservationScheduler {
   private final TouchExpiredReservationUseCase touchExpiredReservationUseCase;
 
-  @Scheduled(fixedRate = 10 * 60 * 1000)
+  @Scheduled(fixedRate = 60 * 1000)
   public void touchExpiredReservation() {
     touchExpiredReservationUseCase.execute();
   }

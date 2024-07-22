@@ -31,7 +31,7 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   public ReservationDomain execute(CreateReservationCommand command) {
     User user = userService.getUserWithLock(command.getUserId());
     ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
-    Reservation reservation = createAndSaveReservation(user, concertScheduleSeat);
+    Reservation reservation = createAndSaveReservation(user, concertScheduleSeat); //Included repository.save
     return reservationMapper.from(reservation);
   }
 
