@@ -55,8 +55,66 @@ class CreateReservationUseCaseTest {
     ConcertSchedule concertSchedule = new ConcertSchedule();
     concertSchedule.setId(concertScheduleId);
 
-    Seat seat = new Seat();
-    seat.setId(seatId);
+    Seat seat = Seat.builder()
+        .id(seatId)
+        .build();
+
+
+    ConcertScheduleSeat concertScheduleSeat = new ConcertScheduleSeat();
+    concertScheduleSeat.setId(1L);
+    concertScheduleSeat.setConcertSchedule(concertSchedule);
+    concertScheduleSeat.setSeat(seat);
+    concertScheduleSeat.setPrice(25000);
+
+
+    Reservation reservation = Reservation.builder()
+        .id(1L)
+        .user(reserver)
+        .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
+        .seatId(concertScheduleSeat.getSeat().getId())
+        .status(ReservationStatus.OCCUPIED)
+        .createdAt(LocalDateTime.now())
+        .reservedPrice(concertScheduleSeat.getPrice())
+        .build();
+    ReservationDomain reservationDomain = new ReservationDomain(reservation.getId(), reservation.getCreatedAt(), reservation.getCreatedAt().plusMinutes(5));
+
+    when(userService.getUserWithLock(command.getUserId())).thenReturn(reserver);
+    when(concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId())).thenReturn(concertScheduleSeat);
+    when(reservationService.saveToCreate(any(Reservation.class))).thenReturn(reservation);
+    when(reservationMapper.from(reservation)).thenReturn(reservationDomain);
+
+    ReservationDomain result = useCase.execute(command);
+
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(reservation.getId());
+    assertThat(result.getCreatedAt()).isEqualTo(reservation.getCreatedAt());
+
+    verify(userService).getUserWithLock(command.getUserId());
+    verify(concertService).getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
+    verify(reservationService).saveToCreate(any(Reservation.class));
+    verify(reservationMapper).from(reservation);
+  }
+
+  @Test
+  void 예약_실패_수정수정수정수정수정수정수정수정수정수정() {
+    long reserverId = 1L;
+    long concertScheduleId = 1L;
+    long seatId = 1L;
+    CreateReservationCommand command = CreateReservationCommand.builder()
+        .userId(reserverId)
+        .concertScheduleId(concertScheduleId)
+        .seatId(seatId).build();
+
+    User reserver = new User(reserverId, 34000);
+
+    ConcertSchedule concertSchedule = new ConcertSchedule();
+    concertSchedule.setId(concertScheduleId);
+
+    Seat seat = Seat.builder()
+        .id(seatId)
+        .build();
+    
 
     ConcertScheduleSeat concertScheduleSeat = new ConcertScheduleSeat();
     concertScheduleSeat.setId(1L);

@@ -7,11 +7,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Entity
 @Table(name = "seat")
-@Data
+@Getter
+@Builder
 @AllArgsConstructor
 public class Seat {
   @Id
