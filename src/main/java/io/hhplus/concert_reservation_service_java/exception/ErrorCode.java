@@ -44,6 +44,9 @@ public enum ErrorCode {
   AVAILABLE_SEAT_FAILED(INTERNAL_SERVER_ERROR, "예약 가능한 좌석을 찾는 중 오류가 발생했습니다"),
   INTEGER_OVERFLOW(INTERNAL_SERVER_ERROR, "integer 오버플로우 발생했습니다."),
 
+  CONCURRENT_LOCK (INTERNAL_SERVER_ERROR, "동시에 데이터를 수정하여 작업을 완료할 수 없습니다."),
+  OPERATION_INTERRUPTED(INTERNAL_SERVER_ERROR, "작업 중단"),
+
   USECASE(INTERNAL_SERVER_ERROR, "유즈케이스에서 오류가 발생했습니다"),
   MAPPER(INTERNAL_SERVER_ERROR, "매퍼에서 오류가 발생했습니다."),
   SERVICE(INTERNAL_SERVER_ERROR, "서비스에서 오류가 발생했습니다"),
