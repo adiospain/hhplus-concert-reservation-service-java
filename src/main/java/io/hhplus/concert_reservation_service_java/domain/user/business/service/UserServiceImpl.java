@@ -22,14 +22,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRED)
   public User getUserWithLock(long userId) {
     return userRepository.findByIdWithPessimisticLock(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
   }
 
   @Override
-  @Transactional
   public int getPoint(long userId) {
     User user = this.getUserWithLock(userId);
     return user.getPoint();

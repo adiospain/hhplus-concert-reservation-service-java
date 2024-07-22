@@ -6,6 +6,8 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
@@ -20,6 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public Optional<User> findByIdWithPessimisticLock(long reserverId) {
     return userRepository.findByIdWithPessimisticLock(reserverId);
   }

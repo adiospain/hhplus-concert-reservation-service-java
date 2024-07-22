@@ -7,6 +7,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase
 
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @UseCase
