@@ -98,15 +98,16 @@ class CreateReservationUseCaseTest {
 
   @Test
   void 예약_실패_수정수정수정수정수정수정수정수정수정수정() {
-    long reserverId = 1L;
+    long userId = 1L;
     long concertScheduleId = 1L;
     long seatId = 1L;
     CreateReservationCommand command = CreateReservationCommand.builder()
-        .userId(reserverId)
+        .userId(userId)
         .concertScheduleId(concertScheduleId)
-        .seatId(seatId).build();
+        .seatId(seatId)
+        .build();
 
-    User reserver = new User(reserverId, 34000);
+    User user = new User(userId, 34000);
 
     ConcertSchedule concertSchedule = new ConcertSchedule();
     concertSchedule.setId(concertScheduleId);
@@ -114,7 +115,7 @@ class CreateReservationUseCaseTest {
     Seat seat = Seat.builder()
         .id(seatId)
         .build();
-    
+
 
     ConcertScheduleSeat concertScheduleSeat = new ConcertScheduleSeat();
     concertScheduleSeat.setId(1L);
@@ -125,7 +126,7 @@ class CreateReservationUseCaseTest {
 
     Reservation reservation = Reservation.builder()
         .id(1L)
-        .user(reserver)
+        .user(user)
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .status(ReservationStatus.OCCUPIED)
@@ -134,7 +135,7 @@ class CreateReservationUseCaseTest {
         .build();
     ReservationDomain reservationDomain = new ReservationDomain(reservation.getId(), reservation.getCreatedAt(), reservation.getCreatedAt().plusMinutes(5));
 
-    when(userService.getUserWithLock(command.getUserId())).thenReturn(reserver);
+    when(userService.getUserWithLock(command.getUserId())).thenReturn(user);
     when(concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId())).thenReturn(concertScheduleSeat);
     when(reservationService.saveToCreate(any(Reservation.class))).thenReturn(reservation);
     when(reservationMapper.from(reservation)).thenReturn(reservationDomain);
