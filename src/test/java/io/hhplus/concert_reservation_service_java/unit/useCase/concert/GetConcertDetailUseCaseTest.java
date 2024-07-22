@@ -47,8 +47,11 @@ class GetConcertDetailUseCaseTest {
       concertSchedules = new ArrayList<>();
       Concert concert = new Concert((long)i, "아이유 콘서트"+i);
       for (int j=1; j <= 50; ++j){
-        ConcertSchedule concertSchedule = new ConcertSchedule(concert, fixedDateTime.plusDays(j), 42);
-        concertSchedule.setId((long)j);
+        ConcertSchedule concertSchedule = ConcertSchedule.builder()
+            .concert(concert)
+            .startAt( fixedDateTime.plusDays(j))
+            .capacity(42)
+            .build();
         concertSchedules.add(concertSchedule);
       }
       concerts.add(concert);
@@ -66,10 +69,11 @@ class GetConcertDetailUseCaseTest {
     List<ConcertScheduleDomain> concertScheduleDomains = new ArrayList<>();
     Concert concert = new Concert(concertId, "국립국악원 정기공연");
     for (int j=0; j <5; ++j){
-      ConcertSchedule concertSchedule = new ConcertSchedule();
-      concertSchedule.setId((long)3+j);
-      concertSchedule.setStartAt(fixedDateTime.plusDays(j));
-      concertSchedule.setCapacity(j);
+      ConcertSchedule concertSchedule = ConcertSchedule.builder()
+              .id((long)3+j)
+                  .startAt(fixedDateTime.plusDays(j))
+                      .capacity(j)
+                          .build();
       concertSchedules.add(concertSchedule);
       concertScheduleDomains.add(new ConcertScheduleDomain(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
     }

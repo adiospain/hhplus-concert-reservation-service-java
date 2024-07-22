@@ -46,10 +46,11 @@ class GetAvailableConcertSchedulesUseCaseTest {
     List<ConcertScheduleDomain> concertScheduleDomains = new ArrayList<>();
     Concert concert = new Concert(concertId, "국립국악원 정기공연");
     for (int j=1; j <= 5; ++j){
-      ConcertSchedule concertSchedule = new ConcertSchedule();
-      concertSchedule.setId((long)3+j);
-      concertSchedule.setStartAt(now.plusDays(j));
-      concertSchedule.setCapacity(j);
+      ConcertSchedule concertSchedule = ConcertSchedule.builder()
+              .id((long)3+j)
+                  .startAt(now.plusDays(j))
+                      .capacity(j)
+                          .build();
       concertSchedules.add(concertSchedule);
       concertScheduleDomains.add(new ConcertScheduleDomain(concertSchedule.getId(), concertSchedule.getStartAt(), concertSchedule.getCapacity()));
     }

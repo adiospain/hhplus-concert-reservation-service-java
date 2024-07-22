@@ -9,11 +9,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "concert_schedule")
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
 public class ConcertSchedule {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +42,5 @@ public class ConcertSchedule {
     this.concert = concert;
     this.startAt = startAt;
     this.capacity = capacity;
-  }
-
-  public ConcertSchedule() {
-
   }
 }

@@ -52,8 +52,9 @@ class CreateReservationUseCaseTest {
 
     User reserver = new User(reserverId, 34000);
 
-    ConcertSchedule concertSchedule = new ConcertSchedule();
-    concertSchedule.setId(concertScheduleId);
+    ConcertSchedule concertSchedule = ConcertSchedule.builder()
+            .id(concertScheduleId)
+                .build();
 
     Seat seat = Seat.builder()
         .id(seatId)
@@ -109,8 +110,10 @@ class CreateReservationUseCaseTest {
 
     User user = new User(userId, 34000);
 
-    ConcertSchedule concertSchedule = new ConcertSchedule();
-    concertSchedule.setId(concertScheduleId);
+    ConcertSchedule concertSchedule = ConcertSchedule.builder()
+        .id(concertScheduleId)
+        .build();
+        ;
 
     Seat seat = Seat.builder()
         .id(seatId)
