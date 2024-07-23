@@ -7,6 +7,8 @@ import io.hhplus.concert_reservation_service_java.domain.user.application.port.i
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.GetPointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserRepository;
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,16 +45,18 @@ class PointUseCaseConcurrencyTest {
   @BeforeEach
   void setUp() {
     user = new User(1L, 1000);
-    user = userRepository.save(user);
   }
 
   @Test
   @DisplayName("포인트 충전과 조회 동시성 테스트")
   void concurrentChargeAndGetPoint() throws InterruptedException {
-    int numberOfThreads = 100;
+    int numberOfThreads = 7000;
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
     AtomicInteger successfulOperations = new AtomicInteger(0);
+    AtomicInteger conccurentIssue = new AtomicInteger(0);
+    AtomicInteger chargeFail = new AtomicInteger(0);
+    AtomicInteger getFail = new AtomicInteger(0);
     for (int i = 0; i < numberOfThreads; i++) {
       final int index = i;
       executorService.submit(() -> {
@@ -77,8 +81,12 @@ class PointUseCaseConcurrencyTest {
               successfulOperations.incrementAndGet();
             }
           }
-        } catch (Exception e) {
-          e.printStackTrace();
+        } catch (CustomException e) {
+          if (index % 2 == 0)
+            chargeFail.incrementAndGet();
+          else {
+            getFail.incrementAndGet();
+          }
         } finally {
           latch.countDown();
         }
@@ -91,11 +99,12 @@ class PointUseCaseConcurrencyTest {
 
     // 최종 포인트 확인
     User updatedUser = userService.getUserWithLock(user.getId());
-    int point = userService.getPoint(user.getId());
+    //int point = userService.getPoint(user.getId());
     int expectedCharges = numberOfThreads / 2; // 충전 횟수
-    int expectedFinalPoint = 1000 + (100 * expectedCharges); // 초기 포인트 + (충전 금액 * 충전 횟수)
+    int expectedFinalPoint = 1000 + (100 * (expectedCharges - chargeFail.get()));// 초기 포인트 + (충전 금액 * 충전 횟수)
 
-    assertThat(point).isEqualTo(expectedFinalPoint);
-    assertThat(successfulOperations.get()).isEqualTo(numberOfThreads);
+    int totalOperations = successfulOperations.get() + chargeFail.get() + getFail.get();
+    assertThat(totalOperations).isEqualTo(numberOfThreads);
+    assertThat(updatedUser.getPoint()).isEqualTo(expectedFinalPoint);
   }
 }
