@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
 import org.hibernate.StaleObjectStateException;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class ChargePointUseCaseImpl implements ChargePointUseCase {
       User user = userService.chargePoint(command.getUserId(), command.getAmount());
       return user.getPoint();
     }
-    catch (ObjectOptimisticLockingFailureException e){
+    catch (PessimisticLockingFailureException e){
       throw new CustomException(ErrorCode.CONCURRENT_LOCK);
     }
 

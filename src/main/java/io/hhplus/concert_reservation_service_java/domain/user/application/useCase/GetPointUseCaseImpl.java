@@ -7,6 +7,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 
@@ -20,7 +21,7 @@ public class GetPointUseCaseImpl implements GetPointUseCase {
     try{
       return userService.getPoint(command.getReserverId());
     }
-    catch (ObjectOptimisticLockingFailureException e) {
+    catch (PessimisticLockingFailureException e) {
       throw new CustomException(ErrorCode.CONCURRENT_LOCK);
     }
   }

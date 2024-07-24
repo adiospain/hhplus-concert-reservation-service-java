@@ -14,6 +14,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     try{
       userService.usePoint(id, price);
     }
-    catch (ObjectOptimisticLockingFailureException e){
+    catch (PessimisticLockingFailureException e){
       throw new CustomException(ErrorCode.CONCURRENT_LOCK);
     }
   }
