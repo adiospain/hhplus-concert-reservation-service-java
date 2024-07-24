@@ -60,10 +60,25 @@ public class UserServiceImpl implements UserService {
       try {
         User user = this.getUserWithLock(userId);
         user.chargePoint(amount);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        long endTime = System.nanoTime();
+
+        long totalDurationNanos = endTime - startTime;
+        double totalDurationMillis = totalDurationNanos / 1_000_000.0;
+
+        log.info("chargePoint:: successful - userId={}, amount={}, Total Duration: {} ms",
+            userId, amount, totalDurationMillis);
+
+        return savedUser;
       } catch (StaleObjectStateException | PessimisticLockingFailureException e) {
-        log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
-          throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+        long endTime = System.nanoTime();
+
+        long totalDurationNanos = endTime - startTime;
+        double totalDurationMillis = totalDurationNanos / 1_000_000.0;
+        log.warn("chargePoint:: failed - UserId: {}, amount: {}, Total Duration: {} ms",
+            userId, amount, totalDurationMillis);
+        throw new CustomException(ErrorCode.CONCURRENT_LOCK);
       }finally{
         long endTime = System.nanoTime();
         long durationNanos = endTime - startTime;
@@ -79,15 +94,25 @@ public class UserServiceImpl implements UserService {
       try {
         User user = this.getUserWithLock(userId);
         user.usePoint(price);
-        return userRepository.save(user);
-      } catch (StaleObjectStateException | PessimisticLockingFailureException e ) {
-        log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
-          throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-      }finally{
+        User savedUser = userRepository.save(user);
+
         long endTime = System.nanoTime();
-        long durationNanos = endTime - startTime;
-        double durationMillis = durationNanos / 1_000_000.0;
-        log.info("usePoint::userId={}, price={}, Duration: {} ms",userId, price, durationMillis);
+
+        long totalDurationNanos = endTime - startTime;
+        double totalDurationMillis = totalDurationNanos / 1_000_000.0;
+
+        log.info("usePoint:: successful - userId={}, price={}, Total Duration: {} ms",
+            userId, price, totalDurationMillis);
+
+        return savedUser;
+      } catch (StaleObjectStateException | PessimisticLockingFailureException e ) {
+        long endTime = System.nanoTime();
+
+        long totalDurationNanos = endTime - startTime;
+        double totalDurationMillis = totalDurationNanos / 1_000_000.0;
+        log.warn("usePoint:: failed - UserId: {}, Price: {}, Total Duration: {} ms",
+            userId, price, totalDurationMillis);
+          throw new CustomException(ErrorCode.CONCURRENT_LOCK);
       }
   }
 

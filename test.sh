@@ -1,6 +1,6 @@
 #!/bin/bash
 # Number of times to run the test
-RUN_COUNT=5
+RUN_COUNT=10
 INTERVAL=60
 GRADLE_COMMAND="./gradlew clean test --rerun-tasks --info --tests 'io.hhplus.concert_reservation_service_java.integration.useCase.user.PointUseCaseConcurrencyTest.concurrentChargeUseAndGetPoint'"
 
