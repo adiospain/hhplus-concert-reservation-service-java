@@ -34,4 +34,10 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
       return paymentMapper.of(payment, reservation, user);
   }
+
+  @Override
+  public void usePoint(long id, int price){
+    userService.usePoint(id, price);
+  }
+
 }
