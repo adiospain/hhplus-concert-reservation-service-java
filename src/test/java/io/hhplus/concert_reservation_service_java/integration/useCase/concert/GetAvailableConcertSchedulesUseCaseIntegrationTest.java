@@ -35,17 +35,13 @@ class GetAvailableConcertSchedulesUseCaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    Concert concert = new Concert();
-    concert.setName("국립국악원 정기공연");
+    Concert concert = new Concert(11L, "국립국악원 정기공연");
     concert = concertRepository.save(concert);
     concertId = concert.getId();
 
     LocalDateTime now = LocalDateTime.now();
     for (int i = 1; i <= 5; i++) {
-      ConcertSchedule schedule = new ConcertSchedule();
-      schedule.setConcert(concert);
-      schedule.setStartAt(now.plusDays(i));
-      schedule.setCapacity(100 + i);
+      ConcertSchedule schedule = new ConcertSchedule(concert, now.plusDays(i), 100+i);;
       concertRepository.save(schedule);
     }
   }
