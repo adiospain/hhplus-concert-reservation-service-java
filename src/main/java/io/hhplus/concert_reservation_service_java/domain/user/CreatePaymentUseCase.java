@@ -6,4 +6,6 @@ import io.hhplus.concert_reservation_service_java.domain.user.application.port.i
 public interface CreatePaymentUseCase {
 
   PaymentDomain execute(CreatePaymentCommand command);
+
+  void usePoint(long id, int price);
 }

@@ -8,7 +8,8 @@ import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
-import org.springframework.dao.PessimisticLockingFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
 
   @Override
+  @Transactional
   public User getUser(long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -36,55 +38,55 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public int getPoint(long userId) {
     long startTime = System.nanoTime();
-    try {
-      User user = this.getUser(userId);
-      return user.getPoint();
-    } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }finally{
-      long endTime = System.nanoTime();
-      long durationNanos = endTime - startTime;
-      double durationMillis = durationNanos / 1_000_000.0;
-      log.info("getPoint::userId={}, Duration: {} ms",userId, durationMillis);
-    }
+      try {
+        User user = this.getUser(userId);
+        return user.getPoint();
+      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+        throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }finally{
+        long endTime = System.nanoTime();
+        long durationNanos = endTime - startTime;
+        double durationMillis = durationNanos / 1_000_000.0;
+        log.info("getPoint::userId={}, Duration: {} ms",userId, durationMillis);
+      }
   }
 
   @Override
   @Transactional
   public User chargePoint(long userId, int amount) {
     long startTime = System.nanoTime();
-    try {
-      User user = this.getUser(userId);
-      user.chargePoint(amount);
-      return userRepository.save(user);
-    } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
-      log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }finally{
-      long endTime = System.nanoTime();
-      long durationNanos = endTime - startTime;
-      double durationMillis = durationNanos / 1_000_000.0;
-      log.info("chargePoint::userId={}, amount={}, Duration: {} ms",userId, amount, durationMillis);
-    }
+      try {
+        User user = this.getUser(userId);
+        user.chargePoint(amount);
+        return userRepository.save(user);
+      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+        log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
+          throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }finally{
+        long endTime = System.nanoTime();
+        long durationNanos = endTime - startTime;
+        double durationMillis = durationNanos / 1_000_000.0;
+        log.info("chargePoint::userId={}, amount={}, Duration: {} ms",userId, amount, durationMillis);
+      }
   }
 
   @Override
   @Transactional
   public User usePoint(long userId, Integer price) {
     long startTime = System.nanoTime();
-    try {
-      User user = this.getUser(userId);
-      user.usePoint(price);
-      return userRepository.save(user);
-    } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e ) {
-      log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }finally{
-      long endTime = System.nanoTime();
-      long durationNanos = endTime - startTime;
-      double durationMillis = durationNanos / 1_000_000.0;
-      log.info("usePoint::userId={}, price={}, Duration: {} ms",userId, price, durationMillis);
-    }
+      try {
+        User user = this.getUser(userId);
+        user.usePoint(price);
+        return userRepository.save(user);
+      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e ) {
+        log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
+          throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }finally{
+        long endTime = System.nanoTime();
+        long durationNanos = endTime - startTime;
+        double durationMillis = durationNanos / 1_000_000.0;
+        log.info("usePoint::userId={}, price={}, Duration: {} ms",userId, price, durationMillis);
+      }
   }
 
   @Override
