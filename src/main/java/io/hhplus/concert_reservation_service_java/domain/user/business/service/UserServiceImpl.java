@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
       try {
         User user = this.getUserWithLock(userId);
         return user.getPoint();
-      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+      } catch (StaleObjectStateException | PessimisticLockingFailureException e) {
         throw new CustomException(ErrorCode.CONCURRENT_LOCK);
       }finally{
         long endTime = System.nanoTime();
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
         User user = this.getUserWithLock(userId);
         user.chargePoint(amount);
         return userRepository.save(user);
-      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+      } catch (StaleObjectStateException | PessimisticLockingFailureException e) {
         log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
           throw new CustomException(ErrorCode.CONCURRENT_LOCK);
       }finally{
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
         User user = this.getUserWithLock(userId);
         user.usePoint(price);
         return userRepository.save(user);
-      } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e ) {
+      } catch (StaleObjectStateException | PessimisticLockingFailureException e ) {
         log.error(ErrorCode.CONCURRENT_LOCK.getMessage());
           throw new CustomException(ErrorCode.CONCURRENT_LOCK);
       }finally{

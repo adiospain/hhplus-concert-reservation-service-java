@@ -23,8 +23,6 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Version
-  private long version;
   @Column(name = "point")
   private Integer point;
 
