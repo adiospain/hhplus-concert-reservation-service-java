@@ -11,7 +11,10 @@ import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
@@ -37,7 +40,12 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
   @Override
   public void usePoint(long id, int price){
-    userService.usePoint(id, price);
+    try{
+      userService.usePoint(id, price);
+    }
+    catch (ObjectOptimisticLockingFailureException e){
+      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+    }
   }
 
 }
