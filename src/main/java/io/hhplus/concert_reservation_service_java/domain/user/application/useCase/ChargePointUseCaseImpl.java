@@ -23,10 +23,15 @@ public class ChargePointUseCaseImpl implements ChargePointUseCase {
 
   @Override
   public int execute(ChargePointCommand command) {
-    long startTime = System.nanoTime();
-
+    try{
       User user = userService.chargePoint(command.getUserId(), command.getAmount());
       return user.getPoint();
+    }
+    catch (ObjectOptimisticLockingFailureException e){
+      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+    }
+
+
 
   }
 }
