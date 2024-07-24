@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChargePointUseCaseImpl implements ChargePointUseCase {
   private final UserService userService;
 
+
   @Override
   public int execute(ChargePointCommand command) {
     try{
