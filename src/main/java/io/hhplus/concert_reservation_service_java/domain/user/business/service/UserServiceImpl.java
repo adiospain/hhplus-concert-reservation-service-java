@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
 
   @Override
-  @Transactional
   public User getUser(long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
   public int getPoint(long userId) {
     long startTime = System.nanoTime();
       try {
-        User user = this.getUser(userId);
+        User user = this.getUserWithLock(userId);
         return user.getPoint();
       } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
         throw new CustomException(ErrorCode.CONCURRENT_LOCK);
@@ -56,7 +55,7 @@ public class UserServiceImpl implements UserService {
   public User chargePoint(long userId, int amount) {
     long startTime = System.nanoTime();
       try {
-        User user = this.getUser(userId);
+        User user = this.getUserWithLock(userId);
         user.chargePoint(amount);
         return userRepository.save(user);
       } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
@@ -75,7 +74,7 @@ public class UserServiceImpl implements UserService {
   public User usePoint(long userId, Integer price) {
     long startTime = System.nanoTime();
       try {
-        User user = this.getUser(userId);
+        User user = this.getUserWithLock(userId);
         user.usePoint(price);
         return userRepository.save(user);
       } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e ) {
