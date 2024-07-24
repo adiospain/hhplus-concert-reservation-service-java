@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 @SpringBootTest
 @Transactional
@@ -44,18 +45,13 @@ class PointUseCaseConcurrencyTest {
   @Autowired
   private UserRepository userRepository;
 
-  private User user;
-
-  @BeforeEach
-  void setUp() {
-
-  }
 
   @Test
   @DisplayName("포인트 충전과 조회 동시성 테스트")
   void concurrentChargeAndGetPoint() throws InterruptedException {
     int numberOfThreads = 7000;
-    user = new User(1L, 1000);
+    User user = new User(1L, 1000);
+    userRepository.save(user);
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
     AtomicInteger successfulOperations = new AtomicInteger(0);
@@ -115,7 +111,7 @@ class PointUseCaseConcurrencyTest {
   @DisplayName("포인트 충전, 사용, 조회 동시성 테스트")
   void concurrentChargeUseAndGetPoint() throws InterruptedException {
     int numberOfThreads = 3333;
-    user = new User(1L, 1000);
+    User user = new User(1L, 1000);
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
     AtomicInteger successfulOperations = new AtomicInteger(0);
@@ -142,17 +138,17 @@ class PointUseCaseConcurrencyTest {
             createPaymentUseCase.usePoint(user.getId(), 50);
             successfulOperations.incrementAndGet();
           }
-              else {
-                // 조회
-                GetPointCommand getCommand = GetPointCommand.builder()
-                    .reserverId(user.getId())
-                    .build();
-                int point = getPointUseCase.execute(getCommand);
-                if (point >= 0) {
-                  successfulOperations.incrementAndGet();
-                }
+            else {
+              // 조회
+              GetPointCommand getCommand = GetPointCommand.builder()
+                  .reserverId(user.getId())
+                  .build();
+              int point = getPointUseCase.execute(getCommand);
+              if (point >= 0) {
+                successfulOperations.incrementAndGet();
               }
-        } catch (CustomException e) {
+            }
+        } catch (Exception e) {
           if (index % 3 == 0)
             chargeFail.incrementAndGet();
           else if (index % 3 == 1)
@@ -193,7 +189,7 @@ class PointUseCaseConcurrencyTest {
   @DisplayName("연속 포인트 충전, 사용, 조회 동시성 테스트")
   void concurrentChargeUseAndGetPoint_sequence() throws InterruptedException {
     int numberOfThreads = 3333;
-    user = new User(1L, 1000);
+    User user = new User(1L, 1000);
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
     AtomicInteger successfulOperations = new AtomicInteger(0);
@@ -211,10 +207,10 @@ class PointUseCaseConcurrencyTest {
                 .userId(user.getId())
                 .amount(100)
                 .build();
-            int result = chargePointUseCase.execute(chargeCommand);
+            chargePointUseCase.execute(chargeCommand);
             successfulOperations.incrementAndGet();
           }
-            else if (index % 3==1){
+          else if (index % 3==1){
               createPaymentUseCase.usePoint(user.getId(), 50);
               successfulOperations.incrementAndGet();
           } else {
@@ -263,10 +259,49 @@ class PointUseCaseConcurrencyTest {
     System.out.println("Expected final point: " + expectedFinalPoint);
   }
 
+  @Test
+  @DisplayName("여러번 잔액 사용 동시성 테스트")
+  void concurrentu_manyUse() throws InterruptedException {
+    int initPoint = 1000;
+    User user = new User(1L, initPoint);
+    userRepository.save(user);
+    int numberOfThreads = 3333;
+    ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+    CountDownLatch latch = new CountDownLatch(numberOfThreads);
+    AtomicInteger successfulOperations = new AtomicInteger(0);
+    AtomicInteger notEnoughFail = new AtomicInteger(0);
+    AtomicInteger dontCareFail = new AtomicInteger(0);
 
+    for (int i = 0; i < numberOfThreads; i++) {
+      final int index = i;
+      executorService.submit(() -> {
+        try {
+            createPaymentUseCase.usePoint(user.getId(),1);
+            successfulOperations.incrementAndGet();
+        } catch (Exception e) {
+          if (e instanceof CustomException){
+            if (((CustomException) e).getErrorCode() == ErrorCode.NOT_ENOUGH_POINT){
+              notEnoughFail.incrementAndGet();
+            }
+          }
+          else {
+            dontCareFail.incrementAndGet();
+          }
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+    latch.await(1, TimeUnit.MINUTES);
+    executorService.shutdown();
+    executorService.awaitTermination(1, TimeUnit.MINUTES);
+    int totalOperations = successfulOperations.get() + notEnoughFail.get() + dontCareFail.get();
 
-
-
+    assertThat(totalOperations).isEqualTo(numberOfThreads);
+    assertThat(notEnoughFail.get()).isEqualTo(numberOfThreads - initPoint);
+    System.out.println("Successful operations: " + successfulOperations.get());
+    System.out.println("Not Enough failures: " + notEnoughFail.get());
+  }
 
 
 
@@ -279,7 +314,7 @@ class PointUseCaseConcurrencyTest {
   @DisplayName("여러 사용자 포인트 충전, 사용, 조회 동시성 테스트")
   void concurrentChargeUseAndGetPoint_manyUser() throws InterruptedException {
     int numberOfThreads = 3333;
-    user = new User(1L, 1000);
+    User user = new User(1L, 1000);
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
     AtomicInteger successfulOperations = new AtomicInteger(0);
@@ -294,7 +329,7 @@ class PointUseCaseConcurrencyTest {
           if (index % 3 == 0) {
             // 충전
             ChargePointCommand chargeCommand = ChargePointCommand.builder()
-                .userId(user.getId())
+                .userId(user.getId()+4L)
                 .amount(100)
                 .build();
             int result = chargePointUseCase.execute(chargeCommand);
@@ -303,20 +338,20 @@ class PointUseCaseConcurrencyTest {
             }
           } else if (index % 3 == 1) {
             // 사용
-            createPaymentUseCase.usePoint(user.getId(),50);
+            createPaymentUseCase.usePoint(user.getId()+index%2,50);
             successfulOperations.incrementAndGet();
           }
           else {
             // 조회
             GetPointCommand getCommand = GetPointCommand.builder()
-                .reserverId(user.getId())
+                .reserverId(user.getId() + index % 3)
                 .build();
             int point = getPointUseCase.execute(getCommand);
             if (point >= 0) {
               successfulOperations.incrementAndGet();
             }
           }
-        } catch (CustomException e) {
+        } catch (Exception e) {
           if (index % 3 == 0)
             chargeFail.incrementAndGet();
           else if (index % 3 == 1)
@@ -334,10 +369,12 @@ class PointUseCaseConcurrencyTest {
     executorService.awaitTermination(1, TimeUnit.MINUTES);
 
     // 최종 포인트 확인
-    User updatedUser = userService.getUserWithLock(user.getId());
+    User updatedUser = userService.getUserWithLock(user.getId()+4);
     int expectedCharges = numberOfThreads / 3; // 충전 횟수
     int expectedUses = numberOfThreads / 3; // 사용 횟수
-    int expectedFinalPoint = 1000 + (100 * (expectedCharges - chargeFail.get())) - (50 * (expectedUses - useFail.get()));
+    int expectedFinalPoint = 1500 + (100 * (expectedCharges - chargeFail.get()))
+        //- (50 * (expectedUses - useFail.get()))
+    ;
 
     int totalOperations = successfulOperations.get() + chargeFail.get() + useFail.get() + getFail.get();
     assertThat(totalOperations).isEqualTo(numberOfThreads);

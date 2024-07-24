@@ -31,8 +31,5 @@ public class ChargePointUseCaseImpl implements ChargePointUseCase {
     catch (PessimisticLockingFailureException e){
       throw new CustomException(ErrorCode.CONCURRENT_LOCK);
     }
-
-
-
   }
 }

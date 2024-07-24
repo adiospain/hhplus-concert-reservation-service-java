@@ -5,6 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
+import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
