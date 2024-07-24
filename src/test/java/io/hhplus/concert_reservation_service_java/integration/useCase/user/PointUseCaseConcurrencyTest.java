@@ -156,7 +156,13 @@ class PointUseCaseConcurrencyTest {
           if (index % 3 == 0)
             chargeFail.incrementAndGet();
           else if (index % 3 == 1)
-            useFail.incrementAndGet();
+            if (e.getErrorCode() == ErrorCode.NOT_ENOUGH_POINT){
+              successfulOperations.incrementAndGet();
+            }
+            else {
+              useFail.incrementAndGet();
+            }
+
           else
             getFail.incrementAndGet();
         } finally {

@@ -40,7 +40,7 @@ class ChargePointUseCaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    user = new User(21L, 1000);
+    user = new User(1L, 1000);
     user = userRepository.save(user);
   }
 
