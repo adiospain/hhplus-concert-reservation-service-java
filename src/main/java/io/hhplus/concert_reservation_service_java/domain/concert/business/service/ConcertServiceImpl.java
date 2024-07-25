@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -51,8 +52,12 @@ public class ConcertServiceImpl implements ConcertService {
 
   @Override
   public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
-    return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
-        .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
+    try{
+      return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
+          .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
+    } catch (ObjectOptimisticLockingFailureException e){
+      throw new CustomException(ErrorCode.ALREADY_RESERVED);
+    }
   }
 
   @Override
