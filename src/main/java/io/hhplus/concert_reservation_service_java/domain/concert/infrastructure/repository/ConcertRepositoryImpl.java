@@ -58,6 +58,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   }
 
   @Override
+  public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(
+      long concertScheduleId, long seatId) {
+    return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(concertScheduleId, seatId);
+  }
+
+  @Override
   public Concert save(Concert concert) {
     return concertRepository.save(concert);
   }

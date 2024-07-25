@@ -17,4 +17,6 @@ public interface ConcertService {
   List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId);
 
   ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId);
+
+  ConcertScheduleSeat getConcertScheduleSeatWithLock(long concertScheduleId, long seatId);
 }
