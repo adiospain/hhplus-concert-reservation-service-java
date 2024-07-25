@@ -47,9 +47,9 @@ SELECT
     cs.id AS concert_schedule_id,
     s.id AS seat_id,
     CASE
-        WHEN LEFT(s.seat_number, 1) = 'A' THEN 150000 + RAND() * 50000
-    WHEN LEFT(s.seat_number, 1) = 'B' THEN 100000 + RAND() * 50000
-    ELSE 70000 + RAND() * 30000
+        WHEN LEFT(s.seat_number, 1) = 'A' THEN 150000 + 1 * 50000
+    WHEN LEFT(s.seat_number, 1) = 'B' THEN 100000 + 2 * 50000
+    ELSE 70000 + 1 * 30000
 END AS price
 FROM concert_schedule cs
 CROSS JOIN seat s;
