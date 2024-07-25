@@ -55,9 +55,9 @@ public class ConcertServiceImpl implements ConcertService {
         .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
   }
 
-  @Override
-  public ConcertScheduleSeat getConcertScheduleSeatWithLock(long concertScheduleId, long seatId) {
-    return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(concertScheduleId, seatId)
-        .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
-  }
+    @Override
+    public ConcertScheduleSeat getConcertScheduleSeatWithLock(long concertScheduleId, long seatId) {
+      return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(concertScheduleId, seatId)
+          .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
+    }
 }
