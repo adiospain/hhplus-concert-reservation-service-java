@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS concert_schedule_seat (
     FOREIGN KEY (concert_schedule_id) REFERENCES concert_schedule(id),
     FOREIGN KEY (seat_id) REFERENCES seat(id)
     );
+ALTER TABLE concert_schedule_seat ADD COLUMN version BIGINT DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS reservation (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,

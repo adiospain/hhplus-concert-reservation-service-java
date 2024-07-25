@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
@@ -52,12 +54,14 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   }
 
   @Override
+  @Transactional
   public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(
       long concertScheduleId, long seatId) {
     return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(
       long concertScheduleId, long seatId) {
     return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatIdWithLock(concertScheduleId, seatId);
