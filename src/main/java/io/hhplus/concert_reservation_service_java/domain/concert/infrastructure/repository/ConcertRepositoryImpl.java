@@ -54,7 +54,6 @@ public class ConcertRepositoryImpl implements ConcertRepository {
   }
 
   @Override
-  @Transactional
   public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(
       long concertScheduleId, long seatId) {
     return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);

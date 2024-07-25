@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.business.service;
 
+import io.hhplus.concert_reservation_service_java.core.common.common.redisson.DistributedLock;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
@@ -11,7 +12,10 @@ import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Service;
 public class ConcertServiceImpl implements ConcertService {
   private final ConcertRepository concertRepository;
 
+
+  private final RedissonClient redissonClient;
 
   @Override
   public List<ConcertSchedule> getUpcomingConcertSchedules(long concertId) {
@@ -52,11 +58,19 @@ public class ConcertServiceImpl implements ConcertService {
 
   @Override
   public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
+    String lockKey = "reservation:" + concertScheduleId + ":" + seatId;
+    RLock lock = redissonClient.getLock(lockKey);
+
+
     try{
+      boolean isLocked = lock.tryLock(5, 10, TimeUnit.SECONDS);
+      if (!isLocked) {
+        throw new CustomException(ErrorCode.ALREADY_RESERVED);
+      }
       return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
           .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
-    } catch (ObjectOptimisticLockingFailureException e){
-      throw new CustomException(ErrorCode.ALREADY_RESERVED);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 
