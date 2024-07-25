@@ -16,6 +16,11 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +56,6 @@ class CreateReservationUseCaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-
     concert = Concert.builder()
         .id(1L)
         .name("아이유 콘서트")
@@ -61,6 +65,19 @@ class CreateReservationUseCaseIntegrationTest {
         .id(2L)
         .concert(concert)
         .build();
+
+    seat = Seat.builder()
+        .id(1L)
+        .seatNumber(1)
+        .build();
+
+    concertScheduleSeat = ConcertScheduleSeat.builder()
+        .id(51L)
+        .concertSchedule(concertSchedule)
+        .seat(seat)
+        .price(100000)
+        .build();
+
     user = new User(1L, 34000);
     user = userRepository.save(user);
   }
@@ -76,6 +93,8 @@ class CreateReservationUseCaseIntegrationTest {
 
     // When
     ReservationDomain result = createReservationUseCase.execute(command);
+
+    ReservationDomain result1 = createReservationUseCase.execute(command);
 
     // Then
     assertThat(result).isNotNull();
@@ -155,5 +174,47 @@ class CreateReservationUseCaseIntegrationTest {
     assertThatThrownBy(() -> createReservationUseCase.execute(command))
         .isInstanceOf(CustomException.class)
         .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RESERVED);
+  }
+
+  @Test
+  void 동시에_여러_예약_요청시_하나만_성공해야함() throws InterruptedException {
+    // Given
+    int numberOfThreads = 1000;
+    ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+    CountDownLatch latch = new CountDownLatch(numberOfThreads);
+    AtomicInteger successCount = new AtomicInteger(0);
+    AtomicInteger failCount = new AtomicInteger(0);
+
+
+    CreateReservationCommand command = CreateReservationCommand.builder()
+        .userId(user.getId())
+        .concertScheduleId(concertSchedule.getId())
+        .seatId(seat.getId())
+        .build();
+
+    // When
+    for (int i = 0; i < numberOfThreads; i++) {
+      executorService.submit(() -> {
+        try {
+          createReservationUseCase.execute(command);
+          successCount.incrementAndGet();
+        } catch (CustomException e) {
+          if (e.getErrorCode() == ErrorCode.ALREADY_RESERVED) {
+            failCount.incrementAndGet();
+          }
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    latch.await(); // 모든 스레드가 작업을 마칠 때까지 대기
+
+    // Then
+    assertThat(successCount.get()).isEqualTo(1);
+    assertThat(failCount.get()).isEqualTo(numberOfThreads - 1);
+
+    List<Reservation> reservations = reservationRepository.findAll();
+    assertThat(reservations.size()).isEqualTo(1);
   }
 }
