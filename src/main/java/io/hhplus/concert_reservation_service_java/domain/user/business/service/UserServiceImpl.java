@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
 
         log.info("getPoint:: successful - UserId: {}, Point: {}, Attempt: {}, Attempt Duration: {} ms, Total Duration: {} ms",
             userId, point, attempt + 1, attemptDurationMillis, durationMillis);
+
         return point;
       } catch (ObjectOptimisticLockingFailureException e) {
         long attemptDurationNanos = System.nanoTime() - attemptStartTime;
@@ -115,9 +116,16 @@ public class UserServiceImpl implements UserService {
         User user = this.getUser(userId);
         user.usePoint(price);
         User savedUser = userRepository.save(user);
+
+        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+        double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
+
         long durationNanos = System.nanoTime() - startTime;
         double durationMillis = durationNanos / 1_000_000.0;
-        log.info("usePoint:: successful - userId={}, price={}, Duration: {} ms",userId, price, durationMillis);
+
+        log.info("usePoint:: successful - userId={}, price={}, Attempt Duration: {} ms, Total Duration: {} ms",
+            userId, price,attemptDurationMillis, durationMillis);
+
         return savedUser;
       } catch (ObjectOptimisticLockingFailureException e) {
         long attemptDurationNanos = System.nanoTime() - attemptStartTime;
