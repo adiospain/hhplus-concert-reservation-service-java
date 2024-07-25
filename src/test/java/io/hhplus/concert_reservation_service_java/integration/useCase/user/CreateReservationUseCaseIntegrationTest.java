@@ -82,31 +82,31 @@ class CreateReservationUseCaseIntegrationTest {
     user = userRepository.save(user);
   }
 
-  @Test
-  void 예약_성공() {
-    // Given
-    CreateReservationCommand command = CreateReservationCommand.builder()
-        .userId(user.getId())
-        .concertScheduleId(concertSchedule.getId())
-        .seatId(seat.getId())
-        .build();
+    @Test
+    void 예약_성공() {
+      // Given
+      CreateReservationCommand command = CreateReservationCommand.builder()
+          .userId(user.getId())
+          .concertScheduleId(concertSchedule.getId())
+          .seatId(seat.getId())
+          .build();
 
-    // When
-    ReservationDomain result = createReservationUseCase.execute(command);
+      // When
+      ReservationDomain result = createReservationUseCase.execute(command);
 
-    ReservationDomain result1 = createReservationUseCase.execute(command);
+      ReservationDomain result1 = createReservationUseCase.execute(command);
 
-    // Then
-    assertThat(result).isNotNull();
-    assertThat(result.getId()).isNotNull();
-    assertThat(result.getCreatedAt()).isNotNull();
-    Reservation savedReservation = reservationRepository.findById(result.getId()).orElseThrow();
-    assertThat(savedReservation.getUser().getId()).isEqualTo(user.getId());
-    assertThat(savedReservation.getConcertScheduleId()).isEqualTo(concertSchedule.getId());
-    assertThat(savedReservation.getSeatId()).isEqualTo(seat.getId());
-    assertThat(savedReservation.getStatus()).isEqualTo(ReservationStatus.OCCUPIED);
-    assertThat(savedReservation.getReservedPrice()).isEqualTo(concertScheduleSeat.getPrice());
-  }
+      // Then
+      assertThat(result).isNotNull();
+      assertThat(result.getId()).isNotNull();
+      assertThat(result.getCreatedAt()).isNotNull();
+      Reservation savedReservation = reservationRepository.findById(result.getId()).orElseThrow();
+      assertThat(savedReservation.getUser().getId()).isEqualTo(user.getId());
+      assertThat(savedReservation.getConcertScheduleId()).isEqualTo(concertSchedule.getId());
+      assertThat(savedReservation.getSeatId()).isEqualTo(seat.getId());
+      assertThat(savedReservation.getStatus()).isEqualTo(ReservationStatus.OCCUPIED);
+      assertThat(savedReservation.getReservedPrice()).isEqualTo(concertScheduleSeat.getPrice());
+    }
 
   @Test
   void 사용자_없음_예외() {
@@ -153,68 +153,68 @@ class CreateReservationUseCaseIntegrationTest {
         .hasFieldOrPropertyWithValue("errorCode", ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND);
   }
 
-  @Test
-  void 이미_예약된_좌석_예외() {
-    // Given
-    Reservation existingReservation = Reservation.builder()
-        .user(user)
-        .concertScheduleId(2L)
-        .seatId(seat.getId())
-        .status(ReservationStatus.OCCUPIED)
-        .build();
-    reservationRepository.save(existingReservation);
+    @Test
+    void 이미_예약된_좌석_예외() {
+      // Given
+      Reservation existingReservation = Reservation.builder()
+          .user(user)
+          .concertScheduleId(2L)
+          .seatId(seat.getId())
+          .status(ReservationStatus.OCCUPIED)
+          .build();
+      reservationRepository.save(existingReservation);
 
-    CreateReservationCommand command = CreateReservationCommand.builder()
-        .userId(user.getId())
-        .concertScheduleId(concertSchedule.getId())
-        .seatId(seat.getId())
-        .build();
+      CreateReservationCommand command = CreateReservationCommand.builder()
+          .userId(user.getId())
+          .concertScheduleId(concertSchedule.getId())
+          .seatId(seat.getId())
+          .build();
 
-    // When & Then
-    assertThatThrownBy(() -> createReservationUseCase.execute(command))
-        .isInstanceOf(CustomException.class)
-        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RESERVED);
-  }
-
-  @Test
-  void 동시에_여러_예약_요청시_하나만_성공해야함() throws InterruptedException {
-    // Given
-    int numberOfThreads = 1000;
-    ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-    CountDownLatch latch = new CountDownLatch(numberOfThreads);
-    AtomicInteger successCount = new AtomicInteger(0);
-    AtomicInteger failCount = new AtomicInteger(0);
-
-
-    CreateReservationCommand command = CreateReservationCommand.builder()
-        .userId(user.getId())
-        .concertScheduleId(concertSchedule.getId())
-        .seatId(seat.getId())
-        .build();
-
-    // When
-    for (int i = 0; i < numberOfThreads; i++) {
-      executorService.submit(() -> {
-        try {
-          createReservationUseCase.execute(command);
-          successCount.incrementAndGet();
-        } catch (CustomException e) {
-          if (e.getErrorCode() == ErrorCode.ALREADY_RESERVED) {
-            failCount.incrementAndGet();
-          }
-        } finally {
-          latch.countDown();
-        }
-      });
+      // When & Then
+      assertThatThrownBy(() -> createReservationUseCase.execute(command))
+          .isInstanceOf(CustomException.class)
+          .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RESERVED);
     }
 
-    latch.await(); // 모든 스레드가 작업을 마칠 때까지 대기
+    @Test
+    void 동시에_여러_예약_요청시_하나만_성공해야함() throws InterruptedException {
+      // Given
+      int numberOfThreads = 1000;
+      ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+      CountDownLatch latch = new CountDownLatch(numberOfThreads);
+      AtomicInteger successCount = new AtomicInteger(0);
+      AtomicInteger failCount = new AtomicInteger(0);
 
-    // Then
-    assertThat(successCount.get()).isEqualTo(1);
-    assertThat(failCount.get()).isEqualTo(numberOfThreads - 1);
 
-    List<Reservation> reservations = reservationRepository.findAll();
-    assertThat(reservations.size()).isEqualTo(1);
-  }
+      CreateReservationCommand command = CreateReservationCommand.builder()
+          .userId(user.getId())
+          .concertScheduleId(concertSchedule.getId())
+          .seatId(seat.getId())
+          .build();
+
+      // When
+      for (int i = 0; i < numberOfThreads; i++) {
+        executorService.submit(() -> {
+          try {
+            createReservationUseCase.execute(command);
+            successCount.incrementAndGet();
+          } catch (CustomException e) {
+            if (e.getErrorCode() == ErrorCode.ALREADY_RESERVED) {
+              failCount.incrementAndGet();
+            }
+          } finally {
+            latch.countDown();
+          }
+        });
+      }
+
+      latch.await(); // 모든 스레드가 작업을 마칠 때까지 대기
+
+      // Then
+      assertThat(successCount.get()).isEqualTo(1);
+      assertThat(failCount.get()).isEqualTo(numberOfThreads - 1);
+
+      List<Reservation> reservations = reservationRepository.findAll();
+      assertThat(reservations.size()).isEqualTo(1);
+    }
 }
