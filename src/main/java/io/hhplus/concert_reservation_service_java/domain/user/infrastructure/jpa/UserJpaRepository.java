@@ -14,9 +14,9 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
   @Query("SELECT r FROM User r WHERE r.id = :id")
   Optional<User> findById(@Param("id") long id);
 
-  @Lock(LockModeType.PESSIMISTIC_WRITE)
-  @Query("SELECT r FROM User r WHERE r.id = :id")
-  @QueryHints({
-      @QueryHint(name = "javax.persistence.lock.timeout", value = "7000")})
-  Optional<User> findByIdWithPessimisticLock(@Param("id")long id);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM User r WHERE r.id = :id")
+    @QueryHints({
+        @QueryHint(name = "javax.persistence.lock.timeout", value = "7000")})
+    Optional<User> findByIdWithPessimisticLock(@Param("id")long id);
 }
