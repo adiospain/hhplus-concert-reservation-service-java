@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.business.service;
 
-import io.hhplus.concert_reservation_service_java.core.common.annotation.DistributedLock;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
@@ -14,13 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RLock;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class ConcertServiceImpl implements ConcertService {
   private final ConcertRepository concertRepository;
+
 
   @Override
   public List<ConcertSchedule> getUpcomingConcertSchedules(long concertId) {
