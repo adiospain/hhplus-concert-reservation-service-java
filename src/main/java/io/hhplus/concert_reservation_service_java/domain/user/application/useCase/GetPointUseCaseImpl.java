@@ -20,8 +20,8 @@ public class GetPointUseCaseImpl implements GetPointUseCase {
     try{
       return userService.getPoint(command.getReserverId());
     }
-    catch (ObjectOptimisticLockingFailureException e) {
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }
+      catch (ObjectOptimisticLockingFailureException e) {
+        throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }
   }
 }

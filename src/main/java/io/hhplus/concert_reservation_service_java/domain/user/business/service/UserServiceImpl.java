@@ -19,18 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-  private final UserRepository userRepository;
-  private static final int MAX_RETRIES = 20;
-  private static final int INITIAL_RETRY_DELAY = 100; // 초기 대기 시간 (밀리초)
-  private static final double BACKOFF_MULTIPLIER = 2.0; // 대기 시간 증가 배수
-  private static final int MAX_RETRY_DELAY = 1000; // 최대 대기 시간 (밀리초)
+    private final UserRepository userRepository;
+    private static final int MAX_RETRIES = 20;
+    private static final int INITIAL_RETRY_DELAY = 100; // 초기 대기 시간 (밀리초)
+    private static final double BACKOFF_MULTIPLIER = 2.0; // 대기 시간 증가 배수
+    private static final int MAX_RETRY_DELAY = 1000; // 최대 대기 시간 (밀리초)
   
   @Override
-  @Transactional
-  public User getUser(long userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-  }
+    @Transactional
+    public User getUser(long userId) {
+      return userRepository.findById(userId)
+          .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
 
   @Override
   public User getUserWithLock(long userId) {
@@ -38,109 +38,109 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
   }
 
-  @Override
-  public int getPoint(long userId) {
-    long startTime = System.nanoTime();
-    for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      long attemptStartTime = System.nanoTime();
-      try {
-        User user = this.getUser(userId);
-        int point = user.getPoint();
+    @Override
+    public int getPoint(long userId) {
+      long startTime = System.nanoTime();
+      for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        long attemptStartTime = System.nanoTime();
+        try {
+          User user = this.getUser(userId);
+          int point = user.getPoint();
 
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
 
-        long durationNanos = System.nanoTime() - startTime;
-        double durationMillis = durationNanos / 1_000_000.0;
+          long durationNanos = System.nanoTime() - startTime;
+          double durationMillis = durationNanos / 1_000_000.0;
 
-        log.info("getPoint:: successful - UserId: {}, Point: {}, Attempt: {}, Attempt Duration: {} ms, Total Duration: {} ms",
-            userId, point, attempt + 1, attemptDurationMillis, durationMillis);
+          log.info("getPoint:: successful - UserId: {}, Point: {}, Attempt: {}, Attempt Duration: {} ms, Total Duration: {} ms",
+              userId, point, attempt + 1, attemptDurationMillis, durationMillis);
 
-        return point;
-      } catch (ObjectOptimisticLockingFailureException e) {
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double durationMillis = attemptDurationNanos / 1_000_000.0;
-        log.warn("getPoint:: failed - UserId: {}, Attempt: {}, Attempt Duration: {} ms",
-            userId, attempt + 1, durationMillis);
-        handleRetry(attempt, e);
+          return point;
+        } catch (ObjectOptimisticLockingFailureException e) {
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double durationMillis = attemptDurationNanos / 1_000_000.0;
+          log.warn("getPoint:: failed - UserId: {}, Attempt: {}, Attempt Duration: {} ms",
+              userId, attempt + 1, durationMillis);
+          handleRetry(attempt, e);
+        }
       }
+      long totalDurationNanos = System.nanoTime() - startTime;
+      double durationMillis = totalDurationNanos / 1_000_000.0;
+      log.error("getPoint:: failed after all retries - UserId: {}, Total Duration: {} ms",
+          userId, durationMillis);
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
     }
-    long totalDurationNanos = System.nanoTime() - startTime;
-    double durationMillis = totalDurationNanos / 1_000_000.0;
-    log.error("getPoint:: failed after all retries - UserId: {}, Total Duration: {} ms",
-        userId, durationMillis);
-    throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
-  }
 
-  @Override
-  public User chargePoint(long userId, int amount) {
-    long startTime = System.nanoTime();
-    for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      long attemptStartTime = System.nanoTime();
-      try {
-        User user = this.getUser(userId);
-        user.chargePoint(amount);
-        User savedUser = userRepository.save(user);
+    @Override
+    public User chargePoint(long userId, int amount) {
+      long startTime = System.nanoTime();
+      for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        long attemptStartTime = System.nanoTime();
+        try {
+          User user = this.getUser(userId);
+          user.chargePoint(amount);
+          User savedUser = userRepository.save(user);
 
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
 
-        long durationNanos = System.nanoTime() - startTime;
-        double durationMillis = durationNanos / 1_000_000.0;
+          long durationNanos = System.nanoTime() - startTime;
+          double durationMillis = durationNanos / 1_000_000.0;
 
-        log.info("chargePoint:: successful - UserId: {}, Amount: {}, Attempt: {}, Attempt Duration: {} ms, Total Duration: {} ms",
-            userId, amount, attempt + 1, attemptDurationMillis, durationMillis);
+          log.info("chargePoint:: successful - UserId: {}, Amount: {}, Attempt: {}, Attempt Duration: {} ms, Total Duration: {} ms",
+              userId, amount, attempt + 1, attemptDurationMillis, durationMillis);
 
-        return savedUser;
-      } catch (ObjectOptimisticLockingFailureException e) {
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double durationMillis = attemptDurationNanos / 1_000_000.0;
-        log.warn("chargePoint:: failed - UserId: {}, Amount: {}, Attempt: {}, Attempt Duration: {} ms",
-            userId, amount, attempt + 1, durationMillis);
-        handleRetry(attempt, e);
+          return savedUser;
+        } catch (ObjectOptimisticLockingFailureException e) {
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double durationMillis = attemptDurationNanos / 1_000_000.0;
+          log.warn("chargePoint:: failed - UserId: {}, Amount: {}, Attempt: {}, Attempt Duration: {} ms",
+              userId, amount, attempt + 1, durationMillis);
+          handleRetry(attempt, e);
+        }
       }
+      long totalDurationNanos = System.nanoTime() - startTime;
+      double durationMillis = totalDurationNanos / 1_000_000.0;
+      log.error("chargePoint:: failed after all retries - UserId: {}, Amount: {}, Total Duration: {} ms",
+          userId, amount, durationMillis);
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
     }
-    long totalDurationNanos = System.nanoTime() - startTime;
-    double durationMillis = totalDurationNanos / 1_000_000.0;
-    log.error("chargePoint:: failed after all retries - UserId: {}, Amount: {}, Total Duration: {} ms",
-        userId, amount, durationMillis);
-    throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
-  }
 
-  @Override
-  public User usePoint(long userId, Integer price) {
-    long startTime = System.nanoTime();
-    for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      long attemptStartTime = System.nanoTime();
-      try {
-        User user = this.getUser(userId);
-        user.usePoint(price);
-        User savedUser = userRepository.save(user);
+    @Override
+    public User usePoint(long userId, Integer price) {
+      long startTime = System.nanoTime();
+      for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        long attemptStartTime = System.nanoTime();
+        try {
+          User user = this.getUser(userId);
+          user.usePoint(price);
+          User savedUser = userRepository.save(user);
 
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double attemptDurationMillis = attemptDurationNanos / 1_000_000.0;
 
-        long durationNanos = System.nanoTime() - startTime;
-        double durationMillis = durationNanos / 1_000_000.0;
+          long durationNanos = System.nanoTime() - startTime;
+          double durationMillis = durationNanos / 1_000_000.0;
 
-        log.info("usePoint:: successful - userId={}, price={}, Attempt Duration: {} ms, Total Duration: {} ms",
-            userId, price,attemptDurationMillis, durationMillis);
+          log.info("usePoint:: successful - userId={}, price={}, Attempt Duration: {} ms, Total Duration: {} ms",
+              userId, price,attemptDurationMillis, durationMillis);
 
-        return savedUser;
-      } catch (ObjectOptimisticLockingFailureException e) {
-        long attemptDurationNanos = System.nanoTime() - attemptStartTime;
-        double durationMillis = attemptDurationNanos / 1_000_000.0;
-        log.warn("usePoint:: failed - UserId: {}, Price: {}, Attempt: {}, Attempt Duration: {} ms",
-            userId, price, attempt + 1, durationMillis);
-        handleRetry(attempt, e);
+          return savedUser;
+        } catch (ObjectOptimisticLockingFailureException e) {
+          long attemptDurationNanos = System.nanoTime() - attemptStartTime;
+          double durationMillis = attemptDurationNanos / 1_000_000.0;
+          log.warn("usePoint:: failed - UserId: {}, Price: {}, Attempt: {}, Attempt Duration: {} ms",
+              userId, price, attempt + 1, durationMillis);
+          handleRetry(attempt, e);
+        }
       }
+      long totalDurationNanos = System.nanoTime() - startTime;
+      double durationMillis = totalDurationNanos / 1_000_000.0;
+      log.error("usePoint:: failed after all retries - UserId: {}, Price: {}, Total Duration: {} ms",
+          userId, price, durationMillis);
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
     }
-    long totalDurationNanos = System.nanoTime() - startTime;
-    double durationMillis = totalDurationNanos / 1_000_000.0;
-    log.error("usePoint:: failed after all retries - UserId: {}, Price: {}, Total Duration: {} ms",
-        userId, price, durationMillis);
-    throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
-  }
 
   @Override
   public User save(User user) {

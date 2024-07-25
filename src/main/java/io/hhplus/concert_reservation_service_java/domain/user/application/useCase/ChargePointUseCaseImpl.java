@@ -28,9 +28,9 @@ public class ChargePointUseCaseImpl implements ChargePointUseCase {
       User user = userService.chargePoint(command.getUserId(), command.getAmount());
       return user.getPoint();
     }
-    catch (ObjectOptimisticLockingFailureException e){
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }
+      catch (ObjectOptimisticLockingFailureException e){
+        throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }
 
 
 

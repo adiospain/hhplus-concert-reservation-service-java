@@ -43,9 +43,9 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     try{
       userService.usePoint(id, price);
     }
-    catch (ObjectOptimisticLockingFailureException e){
-      throw new CustomException(ErrorCode.CONCURRENT_LOCK);
-    }
+      catch (ObjectOptimisticLockingFailureException e){
+        throw new CustomException(ErrorCode.CONCURRENT_LOCK);
+      }
   }
 
 }
