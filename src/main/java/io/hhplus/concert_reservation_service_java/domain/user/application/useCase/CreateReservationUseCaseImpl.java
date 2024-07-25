@@ -15,10 +15,12 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @UseCase
+@Slf4j
 public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
 
   private final UserService userService;
@@ -29,10 +31,20 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   @Override
   @Transactional
   public ReservationDomain execute(CreateReservationCommand command) {
+    long startTime = System.nanoTime();
     User user = userService.getUserWithLock(command.getUserId());
     ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
     Reservation reservation = createAndSaveReservation(user, concertScheduleSeat); //Included repository.save
-    return reservationMapper.from(reservation);
+    ReservationDomain reservationDomain = reservationMapper.from(reservation);
+
+    long endTime = System.nanoTime();
+    long durationNanos = endTime - startTime;
+    double durationMillis = durationNanos / 1_000_000.0;
+
+    log.info("execute::userId={}, concertScheduleId={}, seatId={}, Total Duration: {} ms",
+        command.getUserId(), command.getConcertScheduleId(), command.getSeatId(), durationMillis);
+
+    return reservationDomain;
   }
 
   private Reservation createAndSaveReservation(User user, ConcertScheduleSeat concertScheduleSeat) {
