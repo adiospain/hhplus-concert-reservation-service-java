@@ -24,13 +24,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.redisson.api.RedissonClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ConcertServiceTest {
   private final ConcertRepository concertRepository = Mockito.mock(ConcertRepository.class);
-  private final ConcertService service = new ConcertServiceImpl(concertRepository);
+  private final RedissonClient redissonClient = Mockito.mock(RedissonClient.class);
+  private final ConcertService service = new ConcertServiceImpl(concertRepository, redissonClient);
 
   @Test
   @DisplayName("현재 예약 가능한 콘서트 날짜 조회")

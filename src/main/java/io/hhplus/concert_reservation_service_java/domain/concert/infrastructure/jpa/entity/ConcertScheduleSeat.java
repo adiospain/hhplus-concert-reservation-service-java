@@ -42,9 +42,6 @@ public class ConcertScheduleSeat {
   @Column(name = "price")
   private Integer price;
 
-  @Version
-  private long version;
-
   public ConcertScheduleSeat() {
 
   }
