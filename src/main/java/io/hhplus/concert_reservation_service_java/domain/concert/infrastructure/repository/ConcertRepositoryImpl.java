@@ -53,12 +53,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     return concertScheduleRepository.findById(concertScheduleId);
   }
 
-  @Override
-  @Transactional
-  public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(
-      long concertScheduleId, long seatId) {
-    return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);
-  }
+    @Override
+    @Transactional
+    public Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(
+        long concertScheduleId, long seatId) {
+      return concertScheduleSeatRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId);
+    }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)

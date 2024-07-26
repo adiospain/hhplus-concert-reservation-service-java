@@ -50,15 +50,15 @@ public class ConcertServiceImpl implements ConcertService {
     return concertRepository.findAllConcertSchedulesByConcertId(concertId);
   }
 
-  @Override
-  public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
-    try{
-      return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
-          .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
-    } catch (ObjectOptimisticLockingFailureException e){
-      throw new CustomException(ErrorCode.ALREADY_RESERVED);
+    @Override
+    public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
+      try{
+        return concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
+            .orElseThrow(()->new CustomException(ErrorCode.CONCERT_SCHEDULE_OR_SEAT_NOT_FOUND));
+      } catch (ObjectOptimisticLockingFailureException e){
+        throw new CustomException(ErrorCode.ALREADY_RESERVED);
+      }
     }
-  }
 
   @Override
   public ConcertScheduleSeat getConcertScheduleSeatWithLock(long concertScheduleId, long seatId) {

@@ -31,37 +31,37 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   private final ConcertService concertService;
   private final ReservationMapper reservationMapper;
 
-  @Override
-  public ReservationDomain execute(CreateReservationCommand command) {
-    long startTime = System.nanoTime();
-    try {
-      User user = userService.getUserWithLock(command.getUserId());
-      ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
-      Reservation reservation = createAndSaveReservation(user, concertScheduleSeat); //Included repository.save
-      ReservationDomain reservationDomain = reservationMapper.from(reservation);
+    @Override
+    public ReservationDomain execute(CreateReservationCommand command) {
+      long startTime = System.nanoTime();
+      try {
+        User user = userService.getUserWithLock(command.getUserId());
+        ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
+        Reservation reservation = createAndSaveReservation(user, concertScheduleSeat); //Included repository.save
+        ReservationDomain reservationDomain = reservationMapper.from(reservation);
 
-      return reservationDomain;
+        return reservationDomain;
+      }
+      catch (CustomException e) {
+          throw new CustomException(e.getErrorCode());
+      } finally {
+        long endTime = System.nanoTime();
+        long durationNanos = endTime - startTime;
+        double durationMillis = durationNanos / 1_000_000.0;
+        log.info("execute::userId={}, concertScheduleId={}, seatId={}, Total Duration: {} ms",
+            command.getUserId(), command.getConcertScheduleId(), command.getSeatId(), durationMillis);
+      }
     }
-    catch (CustomException e) {
-        throw new CustomException(e.getErrorCode());
-    } finally {
-      long endTime = System.nanoTime();
-      long durationNanos = endTime - startTime;
-      double durationMillis = durationNanos / 1_000_000.0;
-      log.info("execute::userId={}, concertScheduleId={}, seatId={}, Total Duration: {} ms",
-          command.getUserId(), command.getConcertScheduleId(), command.getSeatId(), durationMillis);
-    }
-  }
 
-  private Reservation createAndSaveReservation(User user, ConcertScheduleSeat concertScheduleSeat) {
-    Reservation savedReservation = Reservation.builder()
-        .user(user)
-        .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
-        .seatId(concertScheduleSeat.getSeat().getId())
-        .status(ReservationStatus.OCCUPIED)
-        .createdAt(LocalDateTime.now())
-        .reservedPrice(concertScheduleSeat.getPrice())
-        .build();
-    return reservationService.saveToCreate(savedReservation);
-  }
+    private Reservation createAndSaveReservation(User user, ConcertScheduleSeat concertScheduleSeat) {
+      Reservation savedReservation = Reservation.builder()
+          .user(user)
+          .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
+          .seatId(concertScheduleSeat.getSeat().getId())
+          .status(ReservationStatus.OCCUPIED)
+          .createdAt(LocalDateTime.now())
+          .reservedPrice(concertScheduleSeat.getPrice())
+          .build();
+      return reservationService.saveToCreate(savedReservation);
+    }
 }
