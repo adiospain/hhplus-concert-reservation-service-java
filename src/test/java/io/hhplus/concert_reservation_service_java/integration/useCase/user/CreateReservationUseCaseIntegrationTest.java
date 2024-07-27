@@ -176,34 +176,35 @@ class CreateReservationUseCaseIntegrationTest {
   }
 
   @Test
-  void 동시에_여러_예약_요청시_하나만_성공해야함() throws InterruptedException {
+  void 동시에_여러_사용자가_같은_좌석_예약_요청시_하나만_성공해야함() throws InterruptedException {
     // Given
     int numberOfThreads = 1000;
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
-    AtomicInteger successCount = new AtomicInteger(0);
-    AtomicInteger failCount = new AtomicInteger(0);
+    AtomicInteger reservedSuccessCount = new AtomicInteger(0);
+    AtomicInteger reservedFailCount = new AtomicInteger(0);
 
-
-    CreateReservationCommand command = CreateReservationCommand.builder()
-        .userId(user.getId())
-        .concertScheduleId(concertSchedule.getId())
-        .seatId(seat.getId())
-        .build();
 
     // When
     for (int i = 0; i < numberOfThreads; i++) {
+      CreateReservationCommand command = CreateReservationCommand.builder()
+          .userId(user.getId()+ i%6)
+          .concertScheduleId(concertSchedule.getId())
+          .seatId(seat.getId())
+          .build();
       executorService.submit(() -> {
         try {
           createReservationUseCase.execute(command);
-          successCount.incrementAndGet();
+          reservedSuccessCount.incrementAndGet();
         } catch (Exception e) {
-          if (e instanceof CustomException) {
+          if (e instanceof CustomException){
             if (((CustomException) e).getErrorCode() == ErrorCode.ALREADY_RESERVED) {
-              failCount.incrementAndGet();
+              reservedFailCount.incrementAndGet();
+            }
+            if (((CustomException) e).getErrorCode() == ErrorCode.LOCK_ACQUISITION_FAIL) {
+              reservedFailCount.incrementAndGet();
             }
           }
-
         } finally {
           latch.countDown();
         }
@@ -213,8 +214,8 @@ class CreateReservationUseCaseIntegrationTest {
     latch.await(); // 모든 스레드가 작업을 마칠 때까지 대기
 
     // Then
-    assertThat(successCount.get()).isEqualTo(1);
-    assertThat(failCount.get()).isEqualTo(numberOfThreads - 1);
+    assertThat(reservedSuccessCount.get()).isEqualTo(1);
+    assertThat(reservedFailCount.get()).isEqualTo(numberOfThreads - 1);
 
     List<Reservation> reservations = reservationRepository.findAll();
     assertThat(reservations.size()).isEqualTo(1);
