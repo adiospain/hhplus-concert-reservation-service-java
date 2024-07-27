@@ -33,7 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Transactional
 class CreateReservationUseCaseIntegrationTest {
 
   @Autowired
@@ -198,10 +197,13 @@ class CreateReservationUseCaseIntegrationTest {
         try {
           createReservationUseCase.execute(command);
           successCount.incrementAndGet();
-        } catch (CustomException e) {
-          if (e.getErrorCode() == ErrorCode.ALREADY_RESERVED) {
-            failCount.incrementAndGet();
+        } catch (Exception e) {
+          if (e instanceof CustomException) {
+            if (((CustomException) e).getErrorCode() == ErrorCode.ALREADY_RESERVED) {
+              failCount.incrementAndGet();
+            }
           }
+
         } finally {
           latch.countDown();
         }

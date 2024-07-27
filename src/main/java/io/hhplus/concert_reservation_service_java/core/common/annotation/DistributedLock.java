@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.core.common.common.redisson;
+package io.hhplus.concert_reservation_service_java.core.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

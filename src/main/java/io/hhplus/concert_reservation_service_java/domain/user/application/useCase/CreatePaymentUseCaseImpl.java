@@ -5,7 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.application.mod
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
+import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.PaymentMapper;
@@ -15,7 +15,6 @@ import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.PessimisticLockingFailureException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
