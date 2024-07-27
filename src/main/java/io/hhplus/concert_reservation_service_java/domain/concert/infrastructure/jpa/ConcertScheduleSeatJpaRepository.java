@@ -17,7 +17,6 @@ public interface ConcertScheduleSeatJpaRepository extends JpaRepository<ConcertS
   @Query("SELECT css.seat FROM ConcertScheduleSeat css WHERE css.concertSchedule.id = :concertScheduleId")
   List<Seat> findSeatsByConcertScheduleId(long concertScheduleId);
 
-  @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
   @Query("SELECT css FROM ConcertScheduleSeat css WHERE css.concertSchedule.id = :concertScheduleId AND css.seat.id = :seatId")
   Optional<ConcertScheduleSeat> findConcertSceduleSeatByconcertScheduleIdAndseatId(long concertScheduleId, long seatId);
 

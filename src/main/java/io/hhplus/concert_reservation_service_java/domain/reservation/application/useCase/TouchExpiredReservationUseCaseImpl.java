@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.reservation.application.useCase;
 
-import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
+import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.TouchExpiredReservationUseCase;
 

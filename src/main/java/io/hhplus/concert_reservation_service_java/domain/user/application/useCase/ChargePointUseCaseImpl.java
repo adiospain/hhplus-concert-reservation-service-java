@@ -2,7 +2,7 @@ package io.hhplus.concert_reservation_service_java.domain.user.application.useCa
 
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
-import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
+import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
 
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
@@ -10,11 +10,7 @@ import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
-import org.hibernate.StaleObjectStateException;
 import org.springframework.dao.PessimisticLockingFailureException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @UseCase

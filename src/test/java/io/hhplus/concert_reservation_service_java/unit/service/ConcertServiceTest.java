@@ -31,8 +31,7 @@ import static org.mockito.Mockito.*;
 
 class ConcertServiceTest {
   private final ConcertRepository concertRepository = Mockito.mock(ConcertRepository.class);
-  private final RedissonClient redissonClient = Mockito.mock(RedissonClient.class);
-  private final ConcertService service = new ConcertServiceImpl(concertRepository, redissonClient);
+  private final ConcertService service = new ConcertServiceImpl(concertRepository);
 
   @Test
   @DisplayName("현재 예약 가능한 콘서트 날짜 조회")

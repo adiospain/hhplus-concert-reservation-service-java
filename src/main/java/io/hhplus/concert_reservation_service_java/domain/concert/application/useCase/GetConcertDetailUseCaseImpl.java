@@ -3,12 +3,10 @@ package io.hhplus.concert_reservation_service_java.domain.concert.application.us
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.model.ConcertDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.in.GetConcertDetailCommand;
-import io.hhplus.concert_reservation_service_java.core.common.common.UseCase;
-import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
+import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
-import io.hhplus.concert_reservation_service_java.presentation.controller.concert.dto.ConcertDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
