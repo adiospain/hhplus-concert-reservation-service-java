@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.business.service;
 
+import io.hhplus.concert_reservation_service_java.core.common.annotation.DistributedLock;
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
