@@ -3,6 +3,7 @@ package io.hhplus.concert_reservation_service_java.core.common.common.redisson;
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
 import io.hhplus.concert_reservation_service_java.core.common.annotation.DistributedLock;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class DistributedLockAop {
     try {
       boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());  // (2)정의된 waitTime까지 획득을 시도한다, 정의된 leaseTime이 지나면 잠금을 해제한다.
       if (!available) {
-        return false;
+        throw new LockNotAvailableException(ErrorCode.LOCK_ACQUISITION_FAIL,"Failed to acquire lock for method: " + method.getName() + " with key: " + key);
       }
 
       return aopForTransaction.proceed(joinPoint);  // (3)DistributedLock 어노테이션이 선언된 메서드를 별도의 트랜잭션으로 실행한다.
