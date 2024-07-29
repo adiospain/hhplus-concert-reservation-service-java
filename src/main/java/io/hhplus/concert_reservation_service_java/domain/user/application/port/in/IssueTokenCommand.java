@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class IssueTokenUseCommand {
+public class IssueTokenCommand {
   String accessKey;
   long userId;
 }

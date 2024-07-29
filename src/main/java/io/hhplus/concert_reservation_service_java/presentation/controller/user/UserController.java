@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.presentation.controller.user;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.GetPointCommand;
 
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenCommand;
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
@@ -43,7 +43,7 @@ public class UserController {
   public ResponseEntity<IssueTokenAPIResponse> issueToken (
       @RequestHeader(value = "Authorization", required =false) String accessKey,
       @PathVariable long userId){
-    IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+    IssueTokenCommand command = IssueTokenCommand.builder()
         .accessKey(accessKey)
         .userId(userId)
         .build();

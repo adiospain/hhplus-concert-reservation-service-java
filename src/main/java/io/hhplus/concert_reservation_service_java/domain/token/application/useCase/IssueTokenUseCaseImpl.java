@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token.application.useCase;
 
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenCommand;
 
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
@@ -15,7 +15,7 @@ public class IssueTokenUseCaseImpl implements IssueTokenUseCase {
   private final TokenService tokenService;
 
   @Override
-  public TokenDomain execute(IssueTokenUseCommand command) {
+  public TokenDomain execute(IssueTokenCommand command) {
     TokenDomain tokenDomain = tokenService.upsertToken(command.getUserId(),
         command.getAccessKey());
     return tokenDomain;

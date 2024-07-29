@@ -5,7 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.application.model
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenCommand;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ class IssueTokenUseCaseIntegrationTest {
     // Given
     Long UserId = 1L;
     String accessKey = UUID.randomUUID().toString();
-    IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+    IssueTokenCommand command = IssueTokenCommand.builder()
         .userId(UserId)
         .accessKey(accessKey)
         .build();
@@ -67,7 +67,7 @@ class IssueTokenUseCaseIntegrationTest {
     // Given
     Long UserId = 1L;
     String accessKey = UUID.randomUUID().toString();
-    IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+    IssueTokenCommand command = IssueTokenCommand.builder()
         .userId(UserId)
         .accessKey(accessKey)
         .build();

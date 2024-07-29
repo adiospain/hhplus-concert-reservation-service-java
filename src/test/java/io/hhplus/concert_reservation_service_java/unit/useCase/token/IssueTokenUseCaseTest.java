@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.unit.useCase.token;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
@@ -27,7 +27,7 @@ class IssueTokenUseCaseTest {
 
     Long reserverId = 1L;
     String accessKey = UUID.randomUUID().toString();
-    IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+    IssueTokenCommand command = IssueTokenCommand.builder()
         .userId(reserverId)
         .accessKey(accessKey)
         .build();
@@ -53,7 +53,7 @@ class IssueTokenUseCaseTest {
   void execute_ShouldThrowException_WhenTokenServiceFails() {
     Long reserverId = 1L;
     String accessKey = UUID.randomUUID().toString();
-    IssueTokenUseCommand command = IssueTokenUseCommand.builder()
+    IssueTokenCommand command = IssueTokenCommand.builder()
             .userId(reserverId)
         .accessKey(accessKey)
                 .build();
