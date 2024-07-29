@@ -1,10 +1,10 @@
 package io.hhplus.concert_reservation_service_java.unit.useCase.user;
 
-import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
-import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.GetTokenUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.GetTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,8 +27,8 @@ class GetTokenUseCaseTest {
   void execute_ShouldReturnTokenDTO_WhenTokenExists() {
     // Arrange
     Long reserverId = 1L;
-    GetTokenUseCommand command = GetTokenUseCommand.builder()
-        .reserverId(reserverId)
+    GetTokenCommand command = GetTokenCommand.builder()
+        .userId(reserverId)
         .build();
     Token token = new Token();
     int queuePosition = 5;

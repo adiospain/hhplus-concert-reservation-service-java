@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.integration.useCase.token;
 
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
-import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
@@ -50,8 +50,8 @@ class GetTokenUseCaseIntegrationTest {
   @DisplayName("토큰 조회 성공")
   void execute_ShouldReturnTokenDTO_WhenTokenExists() {
     // Arrange
-    GetTokenUseCommand command = GetTokenUseCommand.builder()
-        .reserverId(token.getUserId())
+    GetTokenCommand command = GetTokenCommand.builder()
+        .userId(token.getUserId())
         .accessKey(token.getAccessKey())
         .build();
 
@@ -68,8 +68,8 @@ class GetTokenUseCaseIntegrationTest {
   @DisplayName("존재하지 않는 토큰 조회 시 예외 발생")
   void execute_ShouldThrowException_WhenTokenDoesNotExist() {
     // Arrange
-    GetTokenUseCommand command = GetTokenUseCommand.builder()
-        .reserverId(999L)
+    GetTokenCommand command = GetTokenCommand.builder()
+        .userId(999L)
         .accessKey("non-existent-access-key")
         .build();
 
@@ -83,8 +83,8 @@ class GetTokenUseCaseIntegrationTest {
   @DisplayName("잘못된 AccessKey로 토큰 조회 시 예외 발생")
   void execute_ShouldThrowException_WhenAccessKeyIsInvalid() {
     // Arrange
-    GetTokenUseCommand command = GetTokenUseCommand.builder()
-        .reserverId(token.getUserId())
+    GetTokenCommand command = GetTokenCommand.builder()
+        .userId(token.getUserId())
         .accessKey("invalid-access-key")
         .build();
 

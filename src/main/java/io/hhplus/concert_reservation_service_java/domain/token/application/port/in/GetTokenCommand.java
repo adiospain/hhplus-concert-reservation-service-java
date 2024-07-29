@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetTokenUseCommand {
+public class GetTokenCommand {
   String accessKey;
-  long reserverId;
+  long userId;
 }

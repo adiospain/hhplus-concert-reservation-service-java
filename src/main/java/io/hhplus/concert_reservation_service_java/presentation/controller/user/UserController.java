@@ -5,7 +5,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.application.port.i
 
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenUseCommand;
 
-import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenUseCommand;
+import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
@@ -56,9 +56,9 @@ public class UserController {
   public ResponseEntity<GetTokenAPIResponse> getToken (
       @RequestHeader(value = "Authorization", required =false) String accessKey,
       @PathVariable long userId){
-    GetTokenUseCommand command = GetTokenUseCommand.builder()
+    GetTokenCommand command = GetTokenCommand.builder()
         .accessKey(accessKey)
-        .reserverId(userId)
+        .userId(userId)
         .build();
     TokenDomain token = getTokenUseCase.execute(command);
     return ResponseEntity.ok(GetTokenAPIResponse.from(token));
