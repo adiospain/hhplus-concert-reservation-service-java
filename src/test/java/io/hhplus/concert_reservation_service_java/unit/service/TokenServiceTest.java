@@ -3,9 +3,11 @@ package io.hhplus.concert_reservation_service_java.unit.service;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.business.service.TokenServiceImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,7 +36,7 @@ class TokenServiceTest {
   @Test
   void upsertToken_WhenTokenExists_ShouldUpdateToken() {
     // Given
-    long UserId = 1L;
+    long userId = 1L;
     String accessKey = "existingAccessKey";
     Token token = Token.builder()
         .id(23L)
@@ -48,7 +50,7 @@ class TokenServiceTest {
     when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
 
     // When
-    TokenDomain result = tokenService.upsertToken(UserId, accessKey);
+    TokenDomain result = tokenService.upsertToken(userId, accessKey);
 
     // Then
     assertNotNull(result);
