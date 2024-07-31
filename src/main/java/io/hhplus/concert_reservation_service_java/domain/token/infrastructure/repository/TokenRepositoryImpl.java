@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 @Repository
@@ -15,6 +16,7 @@ public class TokenRepositoryImpl implements TokenRepository {
   private final TokenJpaRepository tokenRepository;
 
   @Override
+  @Transactional(readOnly = true)
   public Optional<Token> findByAccessKey(String accessKey){
     return tokenRepository.findByAccessKey(accessKey);
   }
@@ -27,6 +29,7 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
+  @Transactional
   public Optional<Token> findByUserId(long userId) {
     return tokenRepository.findByUserId(userId);
   }

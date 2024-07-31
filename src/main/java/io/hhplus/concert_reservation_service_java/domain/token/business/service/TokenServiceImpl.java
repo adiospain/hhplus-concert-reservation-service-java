@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.domain.token.business.service;
 
+import io.hhplus.concert_reservation_service_java.core.common.annotation.DistributedLock;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
@@ -48,12 +49,11 @@ public class TokenServiceImpl implements TokenService {
       savedToken.turnActive();
       tokenRepository.save(savedToken);
     }
-    return new TokenDomain(token, queuePosition);
+    return new TokenDomain(savedToken, queuePosition);
   }
 
 
   @Override
-  @Transactional(readOnly = true)
   public TokenDomain getToken(long userId, String accessKey) {
     Token token = tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND)); //토큰이 존재하지 않는다면 예외처리
