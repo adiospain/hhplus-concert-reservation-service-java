@@ -6,6 +6,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jp
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -98,7 +100,10 @@ class TokenServiceTest {
     when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThrows(CustomException.class, () -> tokenService.getToken(UserId, accessKey));
+    assertThatThrownBy(() -> tokenService.getToken(UserId, accessKey))
+        .isInstanceOf(CustomException.class)
+        .hasFieldOrPropertyWithValue("errorCode", (ErrorCode.TOKEN_NOT_FOUND));
+
   }
 
   @Test
