@@ -23,14 +23,17 @@ public class TokenInterceptor implements HandlerInterceptor {
     log.info("INFO :: TokenInterceptor");
     String requestURI = request.getRequestURI();
 
+    //토큰 발급 시에는 헤더에 토큰 없어도 허용
     if (requestURI.matches("/api/users/\\d+/token") && "POST".equalsIgnoreCase(request.getMethod())){
       return true;
     }
 
+    //헤더에 토큰 없으면 나가세요
     String accessKey = request.getHeader("Authorization");
     if (StringUtils.isEmpty(accessKey)){
       throw new CustomException(ErrorCode.NO_TOKEN);
     }
+
     try {
       Token token = tokenService.getTokenByAccessKey(accessKey);
       return true;
