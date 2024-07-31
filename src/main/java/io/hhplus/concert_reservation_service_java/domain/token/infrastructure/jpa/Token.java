@@ -42,6 +42,8 @@ public class Token {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  private int position;
+
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
@@ -71,6 +73,26 @@ public class Token {
 
   public void  turnActive() {
     this.status = TokenStatus.ACTIVE;
+  }
+
+
+
+
+  public static Token create(long userId, String accessKey, int position) {
+    if (position > 0){
+      return Token.builder()
+          .userId(userId)
+          .accessKey(accessKey)
+          .status(TokenStatus.WAIT)
+          .position(position)
+          .build();
+    }
+    return Token.builder()
+        .userId(userId)
+        .accessKey(accessKey)
+        .status(TokenStatus.ACTIVE)
+        .position(position)
+        .build();
   }
 }
 

@@ -1,7 +1,8 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository;
 
+
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
-import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenJpaRepository;
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.redis.TokenRedisRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,25 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class TokenRepositoryImpl implements TokenRepository {
 
-  private final TokenJpaRepository tokenRepository;
+  private final TokenRedisRepository tokenRepository;
+
+
+
+
+  @Override
+  public Optional<Token> findByUserIdAndAccessKey(long userId, String accessKey) {
+    return tokenRepository.getToken(userId, accessKey);
+  }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<Token> findByAccessKey(String accessKey){
-    return tokenRepository.findByAccessKey(accessKey);
-  }
-
-
-
-  @Override
-  public Optional<Token> findMostRecentlyDisconnectedToken() {
-    return tokenRepository.findMostRecentlyDisconnectedToken();
+    return null;
   }
 
   @Override
   @Transactional
   public Optional<Token> findByUserId(long userId) {
-    return tokenRepository.findByUserId(userId);
+    return null;
   }
 
   @Override
@@ -41,39 +43,37 @@ public class TokenRepositoryImpl implements TokenRepository {
 
   @Override
   public Optional<Long> findSmallestActiveTokenId() {
-    return tokenRepository.findSmallestActiveTokenId();
+    return Optional.empty();
   }
 
   @Override
   public List<Token> findActiveExpiredTokens(LocalDateTime now) {
-    return tokenRepository.findActiveExpiredTokens(now);
+    return List.of();
   }
 
   @Override
   public Optional<Long> findLastActiveToken() {
-    return tokenRepository.findLastActiveToken();
+    return null;
   }
 
   @Override
   public int bulkUpdateExpiredTokens(LocalDateTime now) {
-    return tokenRepository.bulkUpdateExpiredTokens(now);
+    return 0;
   }
 
   @Override
   public int bulkUpdateDisconnectedToken(LocalDateTime now) {
-    LocalDateTime threshold = LocalDateTime.now().minusSeconds(5);
-    return tokenRepository.bulkUpdateDisconnectedToken(threshold);
+    return 0;
   }
 
   @Override
   public List<Token> findExpiredTokens(LocalDateTime now) {
-    return tokenRepository.findExpiredTokens(now);
+    return List.of();
   }
 
 
   @Override
   public void setTokenStatusToDone(long id) {
-    tokenRepository.setTokenStatusToDone(id);
   }
 
   @Override
@@ -83,13 +83,16 @@ public class TokenRepositoryImpl implements TokenRepository {
 
   @Override
   public List<Token> findAll() {
-    return tokenRepository.findAll();
+    return List.of();
   }
 
   @Override
   public int activateNextToken(Long tokenId, LocalDateTime expireAt) {
-    return tokenRepository.activateNextToken(tokenId, expireAt);
+    return 0;
   }
 
-
+  @Override
+  public Optional<Token> findMostRecentlyDisconnectedToken() {
+    return Optional.empty();
+  }
 }

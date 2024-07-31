@@ -24,8 +24,10 @@ public class TokenServiceImpl implements TokenService {
   @Override
   @Transactional
   public TokenDomain upsertToken(long reserverId, String accessKey) {
-
-    Token token = tokenRepository.findByUserId(reserverId)
+    if (accessKey.isEmpty()){
+      throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
+    }
+    Token token = tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)
         .map(existingToken -> {
           // 기존 토큰 업데이트
           if (existingToken.getStatus() == TokenStatus.DONE |
@@ -41,32 +43,14 @@ public class TokenServiceImpl implements TokenService {
           return Token.createWaitingToken(reserverId);
         });
     Token savedToken = tokenRepository.save(token);
-
-    Long smallestActiveTokenId = tokenRepository.findSmallestActiveTokenId().orElse(savedToken.getId());
-    long queuePosition = (savedToken.getId() - smallestActiveTokenId);
-
-    if (queuePosition == 0) {
-      savedToken.turnActive();
-      tokenRepository.save(savedToken);
-    }
-    return new TokenDomain(savedToken, queuePosition);
+    return new TokenDomain(savedToken, token.getPosition());
   }
-
 
   @Override
   public TokenDomain getToken(long userId, String accessKey) {
-    Token token = tokenRepository.findByAccessKey(accessKey)
+    Token token = tokenRepository.findByUserIdAndAccessKey(userId,accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND)); //토큰이 존재하지 않는다면 예외처리
-    if (token.getUserId() != userId){
-      throw new CustomException(ErrorCode.TOKEN_AND_USER_NOT_MATCHED);
-    }
-    Long smallestActiveTokenId = tokenRepository.findSmallestActiveTokenId().orElse(token.getId());
-    long queuePosition = (token.getId() - smallestActiveTokenId);
-    if (queuePosition == 0) {
-      token.turnActive();
-      tokenRepository.save(token);
-    }
-    return new TokenDomain(token, queuePosition);
+    return new TokenDomain(token, token.getPosition());
   }
 
   @Override

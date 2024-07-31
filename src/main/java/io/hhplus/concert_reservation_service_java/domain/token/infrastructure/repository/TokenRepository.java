@@ -10,6 +10,7 @@ public interface TokenRepository {
 
   Optional <Token> findMostRecentlyDisconnectedToken();
 
+  Optional<Token> findByUserIdAndAccessKey(long userId, String accessKey);
   Optional<Token> findByUserId(long userId);
 
   Token save(Token token);
