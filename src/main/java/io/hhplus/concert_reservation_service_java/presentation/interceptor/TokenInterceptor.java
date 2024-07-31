@@ -20,7 +20,6 @@ public class TokenInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws CustomException {
-    log.info("INFO :: TokenInterceptor");
     String requestURI = request.getRequestURI();
 
     //토큰 발급 시에는 헤더에 토큰 없어도 허용
