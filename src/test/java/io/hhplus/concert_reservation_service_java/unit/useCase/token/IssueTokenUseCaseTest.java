@@ -3,12 +3,14 @@ package io.hhplus.concert_reservation_service_java.unit.useCase.token;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.IssueTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.application.useCase.IssueTokenUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,8 +33,13 @@ class IssueTokenUseCaseTest {
         .userId(reserverId)
         .accessKey(accessKey)
         .build();
-    Token token = Token.createWaitingToken(reserverId);
-    token.setIdForTest(2L);
+    Token token = Token.builder()
+        .id(23L)
+        .userId(reserverId)
+        .accessKey(UUID.randomUUID().toString())
+        .status(TokenStatus.WAIT)
+        .expireAt(LocalDateTime.now().plusMinutes(5))
+        .build();
     int queuePosition = 5;
     TokenDomain expectedTokenDomain = new TokenDomain(token, queuePosition);
 

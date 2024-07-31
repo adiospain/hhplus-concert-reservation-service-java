@@ -36,10 +36,15 @@ class TokenServiceTest {
     // Given
     long UserId = 1L;
     String accessKey = "existingAccessKey";
-    Token existingToken = Token.createWaitingToken(UserId);
-    existingToken.setIdForTest(3L);
-    when(tokenRepository.findByUserId(UserId)).thenReturn(Optional.of(existingToken));
-    when(tokenRepository.save(any(Token.class))).thenReturn(existingToken);
+    Token token = Token.builder()
+        .id(23L)
+        .userId(userId)
+        .accessKey(UUID.randomUUID().toString())
+        .status(TokenStatus.WAIT)
+        .expireAt(LocalDateTime.now().plusMinutes(5))
+        .build();
+    when(tokenRepository.findByUserId(userId)).thenReturn(Optional.of(token));
+    when(tokenRepository.save(any(Token.class))).thenReturn(token);
     when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
 
     // When
