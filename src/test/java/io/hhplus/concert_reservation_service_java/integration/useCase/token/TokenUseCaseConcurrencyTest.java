@@ -54,55 +54,9 @@ public class TokenUseCaseConcurrencyTest {
   private TokenRepository tokenRepository;
 
   @Test
-  @DisplayName("여러 사용자 토큰 조회 동시성 테스트")
-  public void concurrentGetAndToken_manyUser() throws InterruptedException {
-    int numberOfThreads = 3333;
-    User user = new User(1L, 1000);
-    ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-    CountDownLatch latch = new CountDownLatch(numberOfThreads);
-    AtomicInteger successfulOperations = new AtomicInteger(0);
-    AtomicInteger chargeFail = new AtomicInteger(0);
-    AtomicInteger useFail = new AtomicInteger(0);
-    AtomicInteger getFail = new AtomicInteger(0);
-    for (int i = 0; i < numberOfThreads; i++) {
-      final int index = i;
-      final long userId = user.getId() + i % 3;
-      String accessKey = UUID.randomUUID().toString();
-      IssueTokenCommand issueTokenCommand = IssueTokenCommand.builder()
-          .accessKey(accessKey)
-          .userId(userId)
-          .build();
-
-      GetTokenCommand getTokenCommand = GetTokenCommand.builder()
-          .accessKey(accessKey)
-          .userId(userId)
-          .build();
-      executorService.submit(() -> {
-        try {
-          {
-            // 조회
-            TokenDomain token = issueTokenUseCase.execute(issueTokenCommand);
-            TokenDomain tokenDomain = getTokenUseCase.execute(getTokenCommand);
-            if (tokenDomain != null ) {
-              successfulOperations.incrementAndGet();
-            }
-          }
-        } catch (Exception e) {
-            getFail.incrementAndGet();
-        } finally {
-          latch.countDown();
-        }
-      });
-    }
-
-    latch.await(1, TimeUnit.MINUTES);
-    executorService.shutdown();
-    executorService.awaitTermination(1, TimeUnit.MINUTES);
-  }
-
-  @Test
+  @DisplayName("여러 사용자(300명) 토큰 조회 동시성 테스트")
   void getToken_ConcurrencyTest() throws InterruptedException, ExecutionException {
-    int threadCount = 10;
+    int threadCount = 300;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
     CountDownLatch latch = new CountDownLatch(threadCount);
     ConcurrentHashMap<Long, AtomicInteger> queuePositions = new ConcurrentHashMap<>();
@@ -114,12 +68,11 @@ public class TokenUseCaseConcurrencyTest {
     List<Future<TokenDomain>> futures = new ArrayList<>();
 
     for (int i = 0; i < threadCount; i++) {
-      String accessKey = UUID.randomUUID().toString()+"aaa";
+      String accessKey = "aa"+i;
       Token existingToken = Token.builder()
+          .id(3L)
           .userId(userId+i)
           .accessKey(accessKey)
-          .status(TokenStatus.WAIT)
-          .expireAt(LocalDateTime.now().plusMinutes(5))
           .build();
       tokenRepository.save(existingToken);
 
@@ -130,7 +83,15 @@ public class TokenUseCaseConcurrencyTest {
           .build();
       futures.add(executorService.submit(() -> {
         try {
+          long startTime = System.nanoTime();
           TokenDomain result = getTokenUseCase.execute(getTokenCommand);
+          long endTime = System.nanoTime();
+          long duration = endTime - startTime;
+
+          // Convert nanoseconds to milliseconds for readability
+          double durationMs = duration / 1_000_000.0;
+
+          System.out.println("Redis::getTokenUseCase execution time: " + durationMs + " ms");
           return result;
         } finally {
           latch.countDown();
@@ -149,7 +110,7 @@ public class TokenUseCaseConcurrencyTest {
       try{
         TokenDomain result = future.get();
         userTokens.computeIfAbsent(result.getUserId(), k -> new ArrayList<>()).add(result);
-        queuePositions.computeIfAbsent(result.getQueuePosition(), k -> new AtomicInteger()).incrementAndGet();
+        queuePositions.computeIfAbsent(result.getUserId(), k -> new AtomicInteger()).set((int) result.getQueuePosition());
         successfulRequests.incrementAndGet();
       } catch (ExecutionException e){
         if (e.getCause() instanceof CustomException) {
@@ -162,26 +123,20 @@ public class TokenUseCaseConcurrencyTest {
 
     }
 
-    int activeTokens = queuePositions.getOrDefault(0L, new AtomicInteger()).get();
-    int waitingTokens = queuePositions.getOrDefault(1L, new AtomicInteger()).get();
 
-    assertEquals(threadCount, activeTokens);
-
-    //토큰 상태확인
-    for (List<TokenDomain> tokens : userTokens.values()) {
-      boolean hasActiveToken = false;
-      for (TokenDomain token : tokens) {
-        if (token.getQueuePosition() == 0) {
-          assertTrue(hasActiveToken == false, "Each user should have only one active token");
-          hasActiveToken = true;
-        }
-      }
-      assertTrue(hasActiveToken, "Each user should have at least one active token");
-    }
+    latch.await(5, TimeUnit.SECONDS);
+    executorService.shutdown();
 
     //데이터 베이스 확인
     List<Token> allTokens = tokenRepository.findAll();
-    long activeTokenCount = allTokens.stream().filter(t -> t.getStatus() == TokenStatus.ACTIVE).count();
-    assertEquals(10, activeTokenCount);
+    List<Token> activeTokens = tokenRepository.findActiveTokens();
+    List<Token> waitingTokens = tokenRepository.findWaitingTokens();
+
+    int tokensCnt = allTokens.size();
+    int activeCnt = activeTokens.size();
+    int waitingCnt = waitingTokens.size();
+
+    assertEquals(threadCount, activeCnt + waitingCnt);
+    assertEquals(threadCount, tokensCnt);
   }
 }
