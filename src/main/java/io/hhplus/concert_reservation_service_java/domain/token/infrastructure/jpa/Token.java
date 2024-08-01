@@ -1,5 +1,7 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa;
 
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import jakarta.persistence.*;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -54,20 +56,15 @@ public class Token {
     updatedAt = LocalDateTime.now();
   }
 
-  public void renew() {
-    this.status = TokenStatus.WAIT;
+  public void renew(long userId) {
+    if (userId != this.userId)
+      throw new CustomException(ErrorCode.TOKEN_AND_USER_NOT_MATCHED);
     this.accessKey = UUID.randomUUID().toString();
-    LocalDateTime now = LocalDateTime.now();
-    this.expireAt = now.plusMinutes(5);
-    this.createdAt = now;
-    this.updatedAt = now;
   }
   public static Token createWaitingToken(Long userId) {
     return Token.builder()
         .userId(userId)
         .accessKey(UUID.randomUUID().toString())
-        .status(TokenStatus.WAIT)
-        .expireAt(LocalDateTime.now().plusMinutes(5))
         .build();
   }
 
