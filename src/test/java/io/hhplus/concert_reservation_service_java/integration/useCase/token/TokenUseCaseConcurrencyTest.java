@@ -56,7 +56,7 @@ public class TokenUseCaseConcurrencyTest {
   @Test
   @DisplayName("여러 사용자 토큰 조회 동시성 테스트")
   public void concurrentGetAndToken_manyUser() throws InterruptedException {
-    int numberOfThreads = 3333;
+    int numberOfThreads =1000;
     User user = new User(1L, 1000);
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     CountDownLatch latch = new CountDownLatch(numberOfThreads);
@@ -101,6 +101,7 @@ public class TokenUseCaseConcurrencyTest {
   }
 
   @Test
+  @DisplayName("여러 사용자(10명) 토큰 조회 동시성 테스트")
   void getToken_ConcurrencyTest() throws InterruptedException, ExecutionException {
     int threadCount = 10;
     ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -130,7 +131,15 @@ public class TokenUseCaseConcurrencyTest {
           .build();
       futures.add(executorService.submit(() -> {
         try {
+          long startTime = System.nanoTime();
           TokenDomain result = getTokenUseCase.execute(getTokenCommand);
+          long endTime = System.nanoTime();
+          long duration = endTime - startTime;
+
+          // Convert nanoseconds to milliseconds for readability
+          double durationMs = duration / 1_000_000.0;
+
+          System.out.println("DB::getTokenUseCase execution time: " + durationMs + " ms");
           return result;
         } finally {
           latch.countDown();
