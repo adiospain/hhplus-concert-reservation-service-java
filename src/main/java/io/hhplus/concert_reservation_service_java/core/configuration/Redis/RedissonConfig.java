@@ -1,5 +1,6 @@
 package io.hhplus.concert_reservation_service_java.core.configuration.Redis;
 
+import jakarta.annotation.PostConstruct;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -23,7 +24,7 @@ public class RedissonConfig {
     Config config = new Config();
     config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort);
     redisson = Redisson.create(config);
+    redisson.getKeys().flushdb();
     return redisson;
   }
-
 }
