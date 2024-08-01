@@ -40,7 +40,7 @@ class IssueTokenUseCaseIntegrationTest {
   void execute_ShouldReturnTokenDTO_WhenTokenIssuedSuccessfully() {
     // Given
     Long UserId = 1L;
-    String accessKey = UUID.randomUUID().toString();
+    String accessKey = "";
     IssueTokenCommand command = IssueTokenCommand.builder()
         .userId(UserId)
         .accessKey(accessKey)
@@ -52,13 +52,12 @@ class IssueTokenUseCaseIntegrationTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getUserId()).isEqualTo(UserId);
-    assertThat(result.getAccessKey()).isEqualTo(accessKey);
 
     // Verify token is saved in the database
-    Token savedToken = tokenRepository.findByAccessKey(accessKey).orElseThrow();
+    Token savedToken = tokenRepository.findByUserIdAndAccessKey(result.getUserId(), result.getAccessKey()).orElseThrow();
     assertThat(savedToken).isNotNull();
     assertThat(savedToken.getUserId()).isEqualTo(UserId);
-    assertThat(savedToken.getAccessKey()).isEqualTo(accessKey);
+    assertThat(savedToken.getAccessKey()).isNotEqualTo(accessKey);
   }
 
   @Test
