@@ -25,4 +25,10 @@ public class TokenDomain {
     this.expiredAt = token.getExpireAt();
     this.queuePosition = queuePosition;
   }
+  public TokenDomain(Token token) {
+    this.userId = token.getUserId();
+    this.accessKey = token.getAccessKey();
+    this.expiredAt = token.getExpireAt();
+    this.queuePosition = token.getPosition();
+  }
 }
