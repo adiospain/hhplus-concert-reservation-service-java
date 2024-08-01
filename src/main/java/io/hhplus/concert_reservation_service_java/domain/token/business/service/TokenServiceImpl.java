@@ -49,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
   public TokenDomain getToken(long userId, String accessKey) {
     Token token = tokenRepository.findByUserIdAndAccessKey(userId,accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND)); //토큰이 존재하지 않는다면 예외처리
-    return new TokenDomain(token, token.getPosition());
+    return new TokenDomain(token);
   }
 
   @Override
