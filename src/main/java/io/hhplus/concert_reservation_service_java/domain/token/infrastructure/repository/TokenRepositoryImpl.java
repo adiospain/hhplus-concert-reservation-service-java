@@ -78,12 +78,27 @@ public class TokenRepositoryImpl implements TokenRepository {
 
   @Override
   public void deleteAll() {
-
+    tokenRepository.deleteAll();
   }
 
   @Override
   public List<Token> findAll() {
-    return List.of();
+    return tokenRepository.findAll();
+  }
+
+  @Override
+  public List<Token> findActiveTokens(){
+    return tokenRepository.findActiveTokens();
+  }
+
+  @Override
+  public List<Token> findWaitingTokens(){
+    return tokenRepository.findWaitingTokens();
+  }
+
+  @Override
+  public void activateTokens() {
+    tokenRepository.activateTokens();
   }
 
   @Override
