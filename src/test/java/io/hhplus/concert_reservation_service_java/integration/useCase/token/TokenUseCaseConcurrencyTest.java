@@ -82,20 +82,20 @@ public class TokenUseCaseConcurrencyTest {
           .userId(existingToken.getUserId())
           .build();
       futures.add(executorService.submit(() -> {
-        try {
-          long startTime = System.nanoTime();
-          TokenDomain result = getTokenUseCase.execute(getTokenCommand);
-          long endTime = System.nanoTime();
-          long duration = endTime - startTime;
+          try {
+            long startTime = System.nanoTime();
+            TokenDomain result = getTokenUseCase.execute(getTokenCommand);
+            long endTime = System.nanoTime();
+            long duration = endTime - startTime;
 
-          // Convert nanoseconds to milliseconds for readability
-          double durationMs = duration / 1_000_000.0;
+            // Convert nanoseconds to milliseconds for readability
+            double durationMs = duration / 1_000_000.0;
 
-          System.out.println("Redis::getTokenUseCase execution time: " + durationMs + " ms");
-          return result;
-        } finally {
-          latch.countDown();
-        }
+            System.out.println("Redis::getTokenUseCase execution time: " + durationMs + " ms");
+            return result;
+          } finally {
+            latch.countDown();
+          }
       }));
     }
 
@@ -128,15 +128,15 @@ public class TokenUseCaseConcurrencyTest {
     executorService.shutdown();
 
     //데이터 베이스 확인
-    List<Token> allTokens = tokenRepository.findAll();
-    List<Token> activeTokens = tokenRepository.findActiveTokens();
-    List<Token> waitingTokens = tokenRepository.findWaitingTokens();
+      List<Token> allTokens = tokenRepository.findAll();
+      List<Token> activeTokens = tokenRepository.findActiveTokens();
+      List<Token> waitingTokens = tokenRepository.findWaitingTokens();
 
-    int tokensCnt = allTokens.size();
-    int activeCnt = activeTokens.size();
-    int waitingCnt = waitingTokens.size();
+      int tokensCnt = allTokens.size();
+      int activeCnt = activeTokens.size();
+      int waitingCnt = waitingTokens.size();
 
-    assertEquals(threadCount, activeCnt + waitingCnt);
-    assertEquals(threadCount, tokensCnt);
+      assertEquals(threadCount, activeCnt + waitingCnt);
+      assertEquals(threadCount, tokensCnt);
   }
 }
