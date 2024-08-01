@@ -2,6 +2,7 @@ package io.hhplus.concert_reservation_service_java.presentation.scheduler;
 
 
 import io.hhplus.concert_reservation_service_java.domain.token.ActivateNextTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.token.TouchExpiredTokenUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,17 +13,14 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class TokenScheduler {
+  private final TokenService tokenService;
 
-  private final TouchExpiredTokenUseCase touchExpiredTokenUseCase;
-  private final ActivateNextTokenUseCase activateNextTokenUseCase;
 
-  @Scheduled(fixedRate = 30 * 1000)
-  public void touchExpiredToken(){
-    touchExpiredTokenUseCase.execute();
-  }
 
-  @Scheduled(fixedRate = 3 *1000)
-  public void activateNextToken() {
+  @Scheduled(fixedRate = 3 * 1000)
+  public void scheduler() {
     log.info("돈다");
-    activateNextTokenUseCase.execute();}
+    tokenService.touchExpiredTokens();
+    tokenService.activateNextTokens();
+  }
 }

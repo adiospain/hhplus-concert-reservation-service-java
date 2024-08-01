@@ -12,6 +12,6 @@ public class ActivateNextTokenUseCaseImpl implements ActivateNextTokenUseCase {
 
   @Override
   public void execute() {
-    tokenService.activateNextToken();
+    tokenService.activateNextTokens();
   }
 }

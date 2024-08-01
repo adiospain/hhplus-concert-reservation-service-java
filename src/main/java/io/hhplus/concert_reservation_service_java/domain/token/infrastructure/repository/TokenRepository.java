@@ -41,5 +41,8 @@ public interface TokenRepository {
 
   List<Token> findWaitingTokens();
 
+  void touchExpiredTokens();
   void activateTokens();
+
+
 }

@@ -97,6 +97,11 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
+  public void touchExpiredTokens() {
+    tokenRepository.touchExpiredTokens();
+  }
+
+  @Override
   public void activateTokens() {
     tokenRepository.activateTokens();
   }

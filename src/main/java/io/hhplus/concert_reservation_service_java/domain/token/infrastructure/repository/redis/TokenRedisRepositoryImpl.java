@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RMapCache;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSetCache;
 import org.redisson.api.RedissonClient;
@@ -24,7 +23,7 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   private static final String ACTIVE_QUEUE_KEY = "active_queue";
   private static final String TOKEN_KEY_PREFIX = "token:";
   private static final int MAX_ACTIVE_USER = 100;
-  private static final int TOKEN_TTL_MINUTES = 30;
+  private static final int TOKEN_TTL_MINUTES = 1;
 
   @Override
   public Token save(Token token) {
@@ -66,13 +65,20 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   }
 
   @Override
+  public void touchExpiredTokens() {
+    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+    for (String token : activeQueue){
+
+    }
+  }
+
+  @Override
   public void activateTokens(){
     RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
     Collection<String> tokensToActive = waitQueue.pollFirst(MAX_ACTIVE_USER);
     for (String token : tokensToActive){
       activeQueue.add(token, TOKEN_TTL_MINUTES, TimeUnit.MINUTES);
-      waitQueue.remove(token);
     }
   }
 
@@ -95,6 +101,8 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
         .map(token -> Token.create(token.getUserId(), token.getAccessKey(), 0))
         .collect(Collectors.toList());
   }
+
+
 
   private Token parseTokenFromKey(String key) {
     if (!key.startsWith(TOKEN_KEY_PREFIX)) {

@@ -1,10 +1,8 @@
 package io.hhplus.concert_reservation_service_java.domain.token.business.service;
 
-import io.hhplus.concert_reservation_service_java.core.common.annotation.DistributedLock;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
-import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
@@ -95,6 +93,13 @@ public class TokenServiceImpl implements TokenService {
   public Token getTokenByAccessKey(String accessKey) {
     return tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND));
+  }
+
+  @Override
+  public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
+  @Override
+  public void activateNextTokens() {
+    tokenRepository.activateTokens();
   }
 
   @Override

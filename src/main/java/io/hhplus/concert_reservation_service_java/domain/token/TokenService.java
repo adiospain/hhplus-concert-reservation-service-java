@@ -28,4 +28,8 @@ public interface TokenService {
   void activateNextToken();
 
   Token getTokenByAccessKey(String tokenText);
+
+  void touchExpiredTokens();
+
+  void activateNextTokens();
 }

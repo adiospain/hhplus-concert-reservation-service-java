@@ -16,6 +16,7 @@ public interface TokenRedisRepository {
   List<Token> findWaitingTokens();
   List<Token> findActiveTokens();
 
+  void touchExpiredTokens();
   void activateTokens();
 
 
