@@ -46,7 +46,7 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     Double score = waitQueue.getScore(key);
     if (score != null){
       int position = waitQueue.rank(key).intValue();
-      return Optional.of(Token.create(userId, accessKey, position));
+      return Optional.of(Token.create(userId, accessKey, position+1));
     }
     return Optional.empty();
   }
