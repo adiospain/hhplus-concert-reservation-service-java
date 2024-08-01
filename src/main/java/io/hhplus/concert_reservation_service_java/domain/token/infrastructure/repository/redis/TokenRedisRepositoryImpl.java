@@ -31,7 +31,7 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     String key = TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey();
     RScoredSortedSet<String> queue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
     queue.add(System.currentTimeMillis(),key);
-    return token;
+    return Token.create(token.getUserId(), token.getAccessKey(), queue.rank(key)+1);
   }
 
   @Override

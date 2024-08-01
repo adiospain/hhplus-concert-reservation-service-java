@@ -22,28 +22,27 @@ public class TokenServiceImpl implements TokenService {
 
 
   @Override
-  @Transactional
-  public TokenDomain upsertToken(long reserverId, String accessKey) {
+  public TokenDomain upsertToken(long userId, String accessKey) {
+
+
     if (accessKey.isEmpty()){
-      throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
+      Token savedToken = tokenRepository.save(Token.createWaitingToken(userId));
+      return new TokenDomain(savedToken);
     }
-    Token token = tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)
+
+    Token token = tokenRepository.findByUserIdAndAccessKey(userId, accessKey)
         .map(existingToken -> {
-          // 기존 토큰 업데이트
-          if (existingToken.getStatus() == TokenStatus.DONE |
-              existingToken.getStatus() == TokenStatus.DISCONNECTED |
-              existingToken.getStatus() == TokenStatus.EXPIRED)
-          {
-            existingToken.renew();
-          }
+            existingToken.renew(userId);
+          // 업데이트
           return existingToken;
         })
         .orElseGet(() -> {
           // 새 토큰 생성
-          return Token.createWaitingToken(reserverId);
+          return Token.createWaitingToken(userId);
         });
     Token savedToken = tokenRepository.save(token);
-    return new TokenDomain(savedToken, token.getPosition());
+
+    return new TokenDomain(savedToken);
   }
 
   @Override
