@@ -1,10 +1,13 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.redis;
 
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RScoredSortedSet;
@@ -49,13 +52,75 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     return Optional.empty();
   }
 
-  private void activateToken(){
+  @Override
+  public void deleteAll() {
+
+  }
+
+  @Override
+  public List<Token> findAll() {
+    List <Token> allTokens = new ArrayList<>();
+    allTokens.addAll(findWaitingTokens());
+    allTokens.addAll(findActiveTokens());
+    return allTokens;
+  }
+
+  @Override
+  public void activateTokens(){
     RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
     Collection<String> tokensToActive = waitQueue.pollFirst(MAX_ACTIVE_USER);
     for (String token : tokensToActive){
       activeQueue.add(token, TOKEN_TTL_MINUTES, TimeUnit.MINUTES);
       waitQueue.remove(token);
+    }
+  }
+
+  @Override
+  public List<Token> findWaitingTokens() {
+    RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+    return waitQueue.stream()
+        .map(this::parseTokenFromKey)
+        .filter(Objects::nonNull)
+        .map(token -> Token.create(token.getUserId(), token.getAccessKey(), waitQueue.rank(TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey())+1))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Token> findActiveTokens() {
+    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+    return activeQueue.stream()
+        .map(this::parseTokenFromKey)
+        .filter(Objects::nonNull)
+        .map(token -> Token.create(token.getUserId(), token.getAccessKey(), 0))
+        .collect(Collectors.toList());
+  }
+
+  private Token parseTokenFromKey(String key) {
+    if (!key.startsWith(TOKEN_KEY_PREFIX)) {
+      return null;
+    }
+    // 접두사 제거
+    String keyWithoutPrefix = key.substring(TOKEN_KEY_PREFIX.length());
+
+    // userId와 accessKey 분리
+    String[] parts = keyWithoutPrefix.split(":", 2);
+    if (parts.length != 2) {
+      return null; // 키 형식이 올바르지 않음
+    }
+
+    try {
+      long userId = Long.parseLong(parts[0]);
+      String accessKey = parts[1];
+
+      // Token 객체 생성 및 반환
+      return Token.builder()
+          .userId(userId)
+          .accessKey(accessKey)
+          .build();
+    } catch (NumberFormatException e) {
+      // userId를 파싱할 수 없는 경우
+      return null;
     }
   }
 }

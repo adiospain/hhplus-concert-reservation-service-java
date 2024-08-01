@@ -36,4 +36,10 @@ public interface TokenRepository {
   void deleteAll();
 
   List<Token> findAll();
+
+  List<Token> findActiveTokens();
+
+  List<Token> findWaitingTokens();
+
+  void activateTokens();
 }
