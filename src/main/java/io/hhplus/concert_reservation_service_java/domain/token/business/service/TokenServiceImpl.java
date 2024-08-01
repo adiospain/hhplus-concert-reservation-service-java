@@ -98,6 +98,11 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
+  public void activateNextTokens() {
+    tokenRepository.activateTokens();
+  }
+
+  @Override
   public Optional<Token> findMostRecentlyDisconnectedToken() {
     return tokenRepository.findMostRecentlyDisconnectedToken();
   }

@@ -13,16 +13,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TokenScheduler {
 
-  private final TouchExpiredTokenUseCase touchExpiredTokenUseCase;
   private final ActivateNextTokenUseCase activateNextTokenUseCase;
 
-  @Scheduled(fixedRate = 30 * 1000)
-  public void touchExpiredToken(){
-    touchExpiredTokenUseCase.execute();
-  }
 
-  @Scheduled(fixedRate = 3 *1000)
-  public void activateNextToken() {
+  @Scheduled(fixedRate = 3 * 1000)
+  public void activateNextTokens() {
     log.info("돈다");
     activateNextTokenUseCase.execute();}
 }

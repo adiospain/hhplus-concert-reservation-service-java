@@ -28,4 +28,6 @@ public interface TokenService {
   void activateNextToken();
 
   Token getTokenByAccessKey(String tokenText);
+
+  void activateNextTokens();
 }
