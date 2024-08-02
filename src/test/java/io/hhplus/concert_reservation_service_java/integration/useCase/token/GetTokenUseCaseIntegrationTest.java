@@ -46,51 +46,51 @@ class GetTokenUseCaseIntegrationTest {
     token = tokenRepository.save(token);
   }
 
-  @Test
-  @DisplayName("토큰 조회 성공")
-  void execute_ShouldReturnTokenDTO_WhenTokenExists() {
-    // Arrange
-    GetTokenCommand command = GetTokenCommand.builder()
-        .userId(token.getUserId())
-        .accessKey(token.getAccessKey())
-        .build();
+    @Test
+    @DisplayName("토큰 조회 성공")
+    void execute_ShouldReturnTokenDTO_WhenTokenExists() {
+      // Arrange
+      GetTokenCommand command = GetTokenCommand.builder()
+          .userId(token.getUserId())
+          .accessKey(token.getAccessKey())
+          .build();
 
-    // Act
-    TokenDomain result = getTokenUseCase.execute(command);
+      // Act
+      TokenDomain result = getTokenUseCase.execute(command);
 
-    // Assert
-    assertThat(result).isNotNull();
-    assertThat(result.getUserId()).isEqualTo(token.getUserId());
-    assertThat(result.getAccessKey()).isEqualTo(token.getAccessKey());
-  }
+      // Assert
+      assertThat(result).isNotNull();
+      assertThat(result.getUserId()).isEqualTo(token.getUserId());
+      assertThat(result.getAccessKey()).isEqualTo(token.getAccessKey());
+    }
 
-  @Test
-  @DisplayName("존재하지 않는 토큰 조회 시 예외 발생")
-  void execute_ShouldThrowException_WhenTokenDoesNotExist() {
-    // Arrange
-    GetTokenCommand command = GetTokenCommand.builder()
-        .userId(999L)
-        .accessKey("non-existent-access-key")
-        .build();
+    @Test
+    @DisplayName("존재하지 않는 토큰 조회 시 예외 발생")
+    void execute_ShouldThrowException_WhenTokenDoesNotExist() {
+      // Arrange
+      GetTokenCommand command = GetTokenCommand.builder()
+          .userId(999L)
+          .accessKey("non-existent-access-key")
+          .build();
 
-    // Act & Assert
-    assertThatThrownBy(() -> getTokenUseCase.execute(command))
-        .isInstanceOf(CustomException.class)
-        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.TOKEN_NOT_FOUND);
-  }
+      // Act & Assert
+      assertThatThrownBy(() -> getTokenUseCase.execute(command))
+          .isInstanceOf(CustomException.class)
+          .hasFieldOrPropertyWithValue("errorCode", ErrorCode.TOKEN_NOT_FOUND);
+    }
 
-  @Test
-  @DisplayName("잘못된 AccessKey로 토큰 조회 시 예외 발생")
-  void execute_ShouldThrowException_WhenAccessKeyIsInvalid() {
-    // Arrange
-    GetTokenCommand command = GetTokenCommand.builder()
-        .userId(token.getUserId())
-        .accessKey("invalid-access-key")
-        .build();
+    @Test
+    @DisplayName("잘못된 AccessKey로 토큰 조회 시 예외 발생")
+    void execute_ShouldThrowException_WhenAccessKeyIsInvalid() {
+      // Arrange
+      GetTokenCommand command = GetTokenCommand.builder()
+          .userId(token.getUserId())
+          .accessKey("invalid-access-key")
+          .build();
 
-    // Act & Assert
-    assertThatThrownBy(() -> getTokenUseCase.execute(command))
-        .isInstanceOf(CustomException.class)
-        .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_TOKEN);
-  }
+      // Act & Assert
+      assertThatThrownBy(() -> getTokenUseCase.execute(command))
+          .isInstanceOf(CustomException.class)
+          .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_TOKEN);
+    }
 }

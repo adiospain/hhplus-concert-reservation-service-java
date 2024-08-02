@@ -33,26 +33,26 @@ public class TokenRedisServiceTest {
     tokenService = new TokenServiceImpl(tokenRepository);
   }
 
-  @Test
-  @DisplayName("upsertToken::이미 존재하는 토큰 없으면 새로운 토큰 생성")
-  void upsertToken_WhenTokenDoesNotExist_ShouldCreateNewToken() {
-    // Given
-    long reserverId = 1L;
-    String accessKey = "newAccessKey";
+    @Test
+    @DisplayName("upsertToken::이미 존재하는 토큰 없으면 새로운 토큰 생성")
+    void upsertToken_WhenTokenDoesNotExist_ShouldCreateNewToken() {
+      // Given
+      long reserverId = 1L;
+      String accessKey = "newAccessKey";
 
-    Token token = Token.builder()
-        .id(2L)
-        .userId(reserverId)
-        .accessKey(UUID.randomUUID().toString())
-        .status(TokenStatus.WAIT)
-        .expireAt(LocalDateTime.now().plusMinutes(5))
-        .build();
-    // When
-    TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
+      Token token = Token.builder()
+          .id(2L)
+          .userId(reserverId)
+          .accessKey(UUID.randomUUID().toString())
+          .status(TokenStatus.WAIT)
+          .expireAt(LocalDateTime.now().plusMinutes(5))
+          .build();
+      // When
+      TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
 
-    // Then
-    assertNotNull(result);
-    verify(tokenRepository, times(2)).save(any(Token.class));
-    assertEquals(0L, result.getQueuePosition());
-  }
+      // Then
+      assertNotNull(result);
+      verify(tokenRepository, times(2)).save(any(Token.class));
+      assertEquals(0L, result.getQueuePosition());
+    }
 }

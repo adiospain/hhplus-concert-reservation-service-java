@@ -35,77 +35,77 @@ class TokenServiceTest {
     tokenService = new TokenServiceImpl(tokenRepository);
   }
 
-  @Test
-  @DisplayName("upsertToken::이미 존재하는 토큰 있으면 토큰 업데이트")
-  void upsertToken_WhenTokenExists_ShouldUpdateToken() {
-    // Given
-    long reserverId = 1L;
-    String accessKey = "existingAccessKey";
+    @Test
+    @DisplayName("upsertToken::이미 존재하는 토큰 있으면 토큰 업데이트")
+    void upsertToken_WhenTokenExists_ShouldUpdateToken() {
+      // Given
+      long reserverId = 1L;
+      String accessKey = "existingAccessKey";
 
-    Token existingToken = Token.builder()
-        .id(23L)
-        .userId(reserverId)
-        .accessKey(UUID.randomUUID().toString())
-        .status(TokenStatus.WAIT)
-        .expireAt(LocalDateTime.now().plusMinutes(5))
-        .build();
+      Token existingToken = Token.builder()
+          .id(23L)
+          .userId(reserverId)
+          .accessKey(UUID.randomUUID().toString())
+          .status(TokenStatus.WAIT)
+          .expireAt(LocalDateTime.now().plusMinutes(5))
+          .build();
 
-    when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.of(existingToken));
-    when(tokenRepository.save(any(Token.class))).thenReturn(existingToken);
-    when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
+      when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.of(existingToken));
+      when(tokenRepository.save(any(Token.class))).thenReturn(existingToken);
+      when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
 
-    // When
-    TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
+      // When
+      TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
 
-    // Then
-    assertNotNull(result);
-    verify(tokenRepository).save(any(Token.class));
-    verify(tokenRepository, times(1)).save(existingToken);
-    assertEquals(0, result.getQueuePosition());
-  }
+      // Then
+      assertNotNull(result);
+      verify(tokenRepository).save(any(Token.class));
+      verify(tokenRepository, times(1)).save(existingToken);
+      assertEquals(0, result.getQueuePosition());
+    }
 
-  @Test
-  @DisplayName("upsertToken::이미 존재하는 토큰 없으면 새로운 토큰 생성")
-  void upsertToken_WhenTokenDoesNotExist_ShouldCreateNewToken() {
-    // Given
-    long reserverId = 1L;
-    String accessKey = "newAccessKey";
+    @Test
+    @DisplayName("upsertToken::이미 존재하는 토큰 없으면 새로운 토큰 생성")
+    void upsertToken_WhenTokenDoesNotExist_ShouldCreateNewToken() {
+      // Given
+      long reserverId = 1L;
+      String accessKey = "newAccessKey";
 
-    Token token = Token.builder()
-        .id(2L)
-        .userId(reserverId)
-        .accessKey(UUID.randomUUID().toString())
-        .status(TokenStatus.WAIT)
-        .expireAt(LocalDateTime.now().plusMinutes(5))
-        .build();
+      Token token = Token.builder()
+          .id(2L)
+          .userId(reserverId)
+          .accessKey(UUID.randomUUID().toString())
+          .status(TokenStatus.WAIT)
+          .expireAt(LocalDateTime.now().plusMinutes(5))
+          .build();
 
-    tokenRepository.deleteAll();
+      tokenRepository.deleteAll();
 
-    when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.empty());
-    when(tokenRepository.save(any(Token.class))).thenReturn(token);
-    when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.empty());
+      when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.empty());
+      when(tokenRepository.save(any(Token.class))).thenReturn(token);
+      when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.empty());
 
-    // When
-    TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
+      // When
+      TokenDomain result = tokenService.upsertToken(reserverId, accessKey);
 
-    // Then
-    assertNotNull(result);
-    verify(tokenRepository, times(1)).save(any(Token.class));
-    assertEquals(0L, result.getQueuePosition());
-  }
+      // Then
+      assertNotNull(result);
+      verify(tokenRepository, times(1)).save(any(Token.class));
+      assertEquals(0L, result.getQueuePosition());
+    }
 
-  @Test
-  @DisplayName("upsertToken::헤더에 토큰 없으면 새로운 토큰 생성")
-  void upsertToken_WithEmptyAccessKey() {
-    when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    @Test
+    @DisplayName("upsertToken::헤더에 토큰 없으면 새로운 토큰 생성")
+    void upsertToken_WithEmptyAccessKey() {
+      when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    TokenDomain result = tokenService.upsertToken(2L, "");
+      TokenDomain result = tokenService.upsertToken(2L, "");
 
-    assertNotNull(result);
-    assertEquals(2L, result.getUserId());
-    verify(tokenRepository, times(1)).save(any(Token.class));
-    assertEquals(0L, result.getQueuePosition());
-  }
+      assertNotNull(result);
+      assertEquals(2L, result.getUserId());
+      verify(tokenRepository, times(1)).save(any(Token.class));
+      assertEquals(0L, result.getQueuePosition());
+    }
 
 //  @Test
 //  @DisplayName("upsertToken::Turn Active 확인")
@@ -130,41 +130,41 @@ class TokenServiceTest {
 //    verify(tokenRepository, times(2)).save(existingToken);
 //  }
 
-  @Test
-  @DisplayName("getToken::이미 존재하는 토큰 있으면 그 토큰 반환")
-  void getToken_WhenTokenExists_ShouldReturnToken() {
-    // Given
-    long reserverId = 1L;
-    String accessKey = UUID.randomUUID().toString();
-    Token existingToken = Token.builder()
-        .id(23L)
-        .userId(reserverId)
-        .accessKey(accessKey)
-        .status(TokenStatus.WAIT)
-        .expireAt(LocalDateTime.now().plusMinutes(5))
-        .build();
-    when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.of(existingToken));
-    when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
+    @Test
+    @DisplayName("getToken::이미 존재하는 토큰 있으면 그 토큰 반환")
+    void getToken_WhenTokenExists_ShouldReturnToken() {
+      // Given
+      long reserverId = 1L;
+      String accessKey = UUID.randomUUID().toString();
+      Token existingToken = Token.builder()
+          .id(23L)
+          .userId(reserverId)
+          .accessKey(accessKey)
+          .status(TokenStatus.WAIT)
+          .expireAt(LocalDateTime.now().plusMinutes(5))
+          .build();
+      when(tokenRepository.findByUserIdAndAccessKey(reserverId, accessKey)).thenReturn(Optional.of(existingToken));
+      when(tokenRepository.findSmallestActiveTokenId()).thenReturn(Optional.of(1L));
 
-    // When
-    TokenDomain result = tokenService.getToken(reserverId, accessKey);
+      // When
+      TokenDomain result = tokenService.getToken(reserverId, accessKey);
 
-    // Then
-    assertNotNull(result);
-    assertEquals(0, result.getQueuePosition());
-  }
+      // Then
+      assertNotNull(result);
+      assertEquals(0, result.getQueuePosition());
+    }
 
-  @Test
-  @DisplayName("getToken::이미 존재하는 토큰 없으면 예외처리")
-  void getToken_WhenTokenDoesNotExist_ShouldThrowException() {
-    // Given
-    long reserverId = 1L;
-    String accessKey = "nonExistingAccessKey";
-    when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.empty());
+    @Test
+    @DisplayName("getToken::이미 존재하는 토큰 없으면 예외처리")
+    void getToken_WhenTokenDoesNotExist_ShouldThrowException() {
+      // Given
+      long reserverId = 1L;
+      String accessKey = "nonExistingAccessKey";
+      when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.empty());
 
-    // When & Then
-    assertThrows(CustomException.class, () -> tokenService.getToken(reserverId, accessKey));
-  }
+      // When & Then
+      assertThrows(CustomException.class, () -> tokenService.getToken(reserverId, accessKey));
+    }
 
   @Test
   void bulkUpdateExpiredTokens_ShouldReturnUpdatedCount() {
