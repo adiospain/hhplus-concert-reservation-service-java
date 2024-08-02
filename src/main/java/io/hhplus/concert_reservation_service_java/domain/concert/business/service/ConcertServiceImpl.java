@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class ConcertServiceImpl implements ConcertService {
   }
 
   @Override
+  @Cacheable(value="Concert", key="'allConcerts'")
   public List<Concert> getAll() {
     List<Concert> concerts = concertRepository.findAll();
     if (concerts.isEmpty()){
