@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableCaching
+  @EnableCaching
 public class ConcertReservationServiceJavaApplication {
 
   public static void main(String[] args) {
