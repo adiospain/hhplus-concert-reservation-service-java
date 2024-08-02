@@ -19,29 +19,29 @@ public class TokenServiceImpl implements TokenService {
   private final TokenRepository tokenRepository;
 
 
-  @Override
-  public TokenDomain upsertToken(long userId, String accessKey) {
+    @Override
+    public TokenDomain upsertToken(long userId, String accessKey) {
 
 
-    if (accessKey.isEmpty()){
-      Token savedToken = tokenRepository.save(Token.createWaitingToken(userId));
+      if (accessKey.isEmpty()){
+        Token savedToken = tokenRepository.save(Token.createWaitingToken(userId));
+        return new TokenDomain(savedToken);
+      }
+
+      Token token = tokenRepository.findByUserIdAndAccessKey(userId, accessKey)
+          .map(existingToken -> {
+              existingToken.renew(userId);
+            // 업데이트
+            return existingToken;
+          })
+          .orElseGet(() -> {
+            // 새 토큰 생성
+            return Token.createWaitingToken(userId);
+          });
+      Token savedToken = tokenRepository.save(token);
+
       return new TokenDomain(savedToken);
     }
-
-    Token token = tokenRepository.findByUserIdAndAccessKey(userId, accessKey)
-        .map(existingToken -> {
-            existingToken.renew(userId);
-          // 업데이트
-          return existingToken;
-        })
-        .orElseGet(() -> {
-          // 새 토큰 생성
-          return Token.createWaitingToken(userId);
-        });
-    Token savedToken = tokenRepository.save(token);
-
-    return new TokenDomain(savedToken);
-  }
 
   @Override
   public TokenDomain getToken(long userId, String accessKey) {

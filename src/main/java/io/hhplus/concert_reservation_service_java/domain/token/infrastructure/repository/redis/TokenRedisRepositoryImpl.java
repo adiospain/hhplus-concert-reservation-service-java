@@ -25,13 +25,13 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   private static final int MAX_ACTIVE_USER = 100;
   private static final int TOKEN_TTL_MINUTES = 1;
 
-  @Override
-  public Token save(Token token) {
-    String key = TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey();
-    RScoredSortedSet<String> queue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
-    queue.add(System.currentTimeMillis(),key);
-    return Token.create(token.getUserId(), token.getAccessKey(), queue.rank(key)+1);
-  }
+    @Override
+    public Token save(Token token) {
+      String key = TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey();
+      RScoredSortedSet<String> queue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+      queue.add(System.currentTimeMillis(),key);
+      return Token.create(token.getUserId(), token.getAccessKey(), queue.rank(key)+1);
+    }
 
   @Override
   public Optional<Token> getToken(long userId, String accessKey) {
