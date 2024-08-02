@@ -49,11 +49,14 @@ public class ConcertServiceImpl implements ConcertService {
   }
 
   @Override
+  @Cacheable(value = "concertSchedules", key = "#concertId")
+  @DistributedLock(key = "'concertSchedules:'+ #concertId", leaseTime = 30, waitTime = 10)
   public List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId) {
     return concertRepository.findAllConcertSchedulesByConcertId(concertId);
   }
 
   @Override
+
   @DistributedLock(key = "'concertSchedule:'+ #concertScheduleId + ':seat:' + #seatId", leaseTime = 5 * 60L, waitTime = 0L, unlockAfter = false)
   public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
     ConcertScheduleSeat concertScheduleSeat = concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)
