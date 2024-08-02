@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class ConcertRepositoryImpl implements ConcertRepository {
 
   private final ConcertJpaRepository concertRepository;
@@ -25,6 +27,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
   @Override
   public List<Concert> findAll() {
+    log.info("findAll 메서드 실행");
     return concertRepository.findAll();
   }
 
