@@ -38,22 +38,22 @@ public class ConcertServiceImpl implements ConcertService {
   }
 
   @Override
-  @Cacheable(value="Concert", key="'allConcerts'")
-  @DistributedLock(key = "'concerts:'+ 'all'", leaseTime = 30, waitTime = 10)
-  public List<Concert> getAll() {
-    List<Concert> concerts = concertRepository.findAll();
-    if (concerts.isEmpty()){
-      return Collections.emptyList();
+    @Cacheable(value="Concert", key="'allConcerts'")
+    @DistributedLock(key = "'concerts:'+ 'all'", leaseTime = 30, waitTime = 10)
+    public List<Concert> getAll() {
+      List<Concert> concerts = concertRepository.findAll();
+      if (concerts.isEmpty()){
+        return Collections.emptyList();
+      }
+      return concertRepository.findAll();
     }
-    return concertRepository.findAll();
-  }
 
   @Override
-  @Cacheable(value = "concertSchedules", key = "'concert:' + #concertId + ':concertSchedules'")
-  @DistributedLock(key = "'concertSchedules:'+ #concertId", leaseTime = 30, waitTime = 10)
-  public List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId) {
-    return concertRepository.findAllConcertSchedulesByConcertId(concertId);
-  }
+    @Cacheable(value = "concertSchedules", key = "'concert:' + #concertId + ':concertSchedules'")
+    @DistributedLock(key = "'concertSchedules:'+ #concertId", leaseTime = 30, waitTime = 10)
+    public List<ConcertSchedule> getAllConcertSchedulesByConcertId(long concertId) {
+      return concertRepository.findAllConcertSchedulesByConcertId(concertId);
+    }
 
   @Override
 
