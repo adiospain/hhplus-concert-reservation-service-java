@@ -53,90 +53,90 @@ public class TokenUseCaseConcurrencyTest {
   @Autowired
   private TokenRepository tokenRepository;
 
-  @Test
-  @DisplayName("여러 사용자(300명) 토큰 조회 동시성 테스트")
-  void getToken_ConcurrencyTest() throws InterruptedException, ExecutionException {
-    int threadCount = 300;
-    ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-    CountDownLatch latch = new CountDownLatch(threadCount);
-    ConcurrentHashMap<Long, AtomicInteger> queuePositions = new ConcurrentHashMap<>();
+    @Test
+    @DisplayName("여러 사용자(300명) 토큰 조회 동시성 테스트")
+    void getToken_ConcurrencyTest() throws InterruptedException, ExecutionException {
+      int threadCount = 300;
+      ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+      CountDownLatch latch = new CountDownLatch(threadCount);
+      ConcurrentHashMap<Long, AtomicInteger> queuePositions = new ConcurrentHashMap<>();
 
-    long userId = 1L;
-
-
-
-    List<Future<TokenDomain>> futures = new ArrayList<>();
-
-    for (int i = 0; i < threadCount; i++) {
-      String accessKey = "aa"+i;
-      Token existingToken = Token.builder()
-          .id(3L)
-          .userId(userId+i)
-          .accessKey(accessKey)
-          .build();
-      tokenRepository.save(existingToken);
+      long userId = 1L;
 
 
-      GetTokenCommand getTokenCommand = GetTokenCommand.builder()
-          .accessKey(existingToken.getAccessKey())
-          .userId(existingToken.getUserId())
-          .build();
-      futures.add(executorService.submit(() -> {
-        try {
-          long startTime = System.nanoTime();
-          TokenDomain result = getTokenUseCase.execute(getTokenCommand);
-          long endTime = System.nanoTime();
-          long duration = endTime - startTime;
 
-          // Convert nanoseconds to milliseconds for readability
-          double durationMs = duration / 1_000_000.0;
+      List<Future<TokenDomain>> futures = new ArrayList<>();
 
-          System.out.println("Redis::getTokenUseCase execution time: " + durationMs + " ms");
-          return result;
-        } finally {
-          latch.countDown();
-        }
-      }));
-    }
+      for (int i = 0; i < threadCount; i++) {
+        String accessKey = "aa"+i;
+        Token existingToken = Token.builder()
+            .id(3L)
+            .userId(userId+i)
+            .accessKey(accessKey)
+            .build();
+        tokenRepository.save(existingToken);
 
-    latch.await(5, TimeUnit.SECONDS);
-    executorService.shutdown();
 
-    Map<Long, List<TokenDomain>> userTokens = new HashMap<>();
-    AtomicInteger successfulRequests = new AtomicInteger(0);
-    AtomicInteger failedRequests = new AtomicInteger(0);
+        GetTokenCommand getTokenCommand = GetTokenCommand.builder()
+            .accessKey(existingToken.getAccessKey())
+            .userId(existingToken.getUserId())
+            .build();
+        futures.add(executorService.submit(() -> {
+          try {
+            long startTime = System.nanoTime();
+            TokenDomain result = getTokenUseCase.execute(getTokenCommand);
+            long endTime = System.nanoTime();
+            long duration = endTime - startTime;
 
-    for (Future<TokenDomain> future : futures) {
-      try{
-        TokenDomain result = future.get();
-        userTokens.computeIfAbsent(result.getUserId(), k -> new ArrayList<>()).add(result);
-        queuePositions.computeIfAbsent(result.getUserId(), k -> new AtomicInteger()).set((int) result.getQueuePosition());
-        successfulRequests.incrementAndGet();
-      } catch (ExecutionException e){
-        if (e.getCause() instanceof CustomException) {
-          failedRequests.incrementAndGet();
-        } else {
-          throw e; // 다른 예외는 다시 던짐
-        }
-        int a = 0;
+            // Convert nanoseconds to milliseconds for readability
+            double durationMs = duration / 1_000_000.0;
+
+            System.out.println("Redis::getTokenUseCase execution time: " + durationMs + " ms");
+            return result;
+          } finally {
+            latch.countDown();
+          }
+        }));
       }
 
+      latch.await(5, TimeUnit.SECONDS);
+      executorService.shutdown();
+
+      Map<Long, List<TokenDomain>> userTokens = new HashMap<>();
+      AtomicInteger successfulRequests = new AtomicInteger(0);
+      AtomicInteger failedRequests = new AtomicInteger(0);
+
+      for (Future<TokenDomain> future : futures) {
+        try{
+          TokenDomain result = future.get();
+          userTokens.computeIfAbsent(result.getUserId(), k -> new ArrayList<>()).add(result);
+          queuePositions.computeIfAbsent(result.getUserId(), k -> new AtomicInteger()).set((int) result.getQueuePosition());
+          successfulRequests.incrementAndGet();
+        } catch (ExecutionException e){
+          if (e.getCause() instanceof CustomException) {
+            failedRequests.incrementAndGet();
+          } else {
+            throw e; // 다른 예외는 다시 던짐
+          }
+          int a = 0;
+        }
+
+      }
+
+
+      latch.await(5, TimeUnit.SECONDS);
+      executorService.shutdown();
+
+      //데이터 베이스 확인
+      List<Token> allTokens = tokenRepository.findAll();
+      List<Token> activeTokens = tokenRepository.findActiveTokens();
+      List<Token> waitingTokens = tokenRepository.findWaitingTokens();
+
+      int tokensCnt = allTokens.size();
+      int activeCnt = activeTokens.size();
+      int waitingCnt = waitingTokens.size();
+
+      assertEquals(threadCount, activeCnt + waitingCnt);
+      assertEquals(threadCount, tokensCnt);
     }
-
-
-    latch.await(5, TimeUnit.SECONDS);
-    executorService.shutdown();
-
-    //데이터 베이스 확인
-    List<Token> allTokens = tokenRepository.findAll();
-    List<Token> activeTokens = tokenRepository.findActiveTokens();
-    List<Token> waitingTokens = tokenRepository.findWaitingTokens();
-
-    int tokensCnt = allTokens.size();
-    int activeCnt = activeTokens.size();
-    int waitingCnt = waitingTokens.size();
-
-    assertEquals(threadCount, activeCnt + waitingCnt);
-    assertEquals(threadCount, tokensCnt);
-  }
 }
