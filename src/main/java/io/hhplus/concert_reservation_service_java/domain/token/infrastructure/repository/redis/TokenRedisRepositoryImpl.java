@@ -64,23 +64,23 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     return allTokens;
   }
 
-  @Override
-  public void touchExpiredTokens() {
-    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
-    for (String token : activeQueue){
+    @Override
+    public void touchExpiredTokens() {
+      RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+      for (String token : activeQueue){
 
+      }
     }
-  }
 
-  @Override
-  public void activateTokens(){
-    RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
-    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
-    Collection<String> tokensToActive = waitQueue.pollFirst(MAX_ACTIVE_USER);
-    for (String token : tokensToActive){
-      activeQueue.add(token, TOKEN_TTL_MINUTES, TimeUnit.MINUTES);
+    @Override
+    public void activateTokens(){
+      RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+      RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+      Collection<String> tokensToActive = waitQueue.pollFirst(MAX_ACTIVE_USER);
+      for (String token : tokensToActive){
+        activeQueue.add(token, TOKEN_TTL_MINUTES, TimeUnit.MINUTES);
+      }
     }
-  }
 
   @Override
   public List<Token> findWaitingTokens() {

@@ -17,10 +17,10 @@ public class TokenScheduler {
 
 
 
-  @Scheduled(fixedRate = 3 * 1000)
-  public void scheduler() {
-    log.info("돈다");
-    tokenService.touchExpiredTokens();
-    tokenService.activateNextTokens();
-  }
+    @Scheduled(fixedRate = 3 * 1000)
+    public void scheduler() {
+      log.info("돈다");
+      tokenService.touchExpiredTokens();
+      tokenService.activateNextTokens();
+    }
 }

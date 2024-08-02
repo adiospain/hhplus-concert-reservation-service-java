@@ -95,12 +95,10 @@ public class TokenServiceImpl implements TokenService {
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND));
   }
 
-  @Override
-  public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
-  @Override
-  public void activateNextTokens() {
-    tokenRepository.activateTokens();
-  }
+    @Override
+    public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
+    @Override
+    public void activateNextTokens() {tokenRepository.activateTokens();}
 
   @Override
   public Optional<Token> findMostRecentlyDisconnectedToken() {
