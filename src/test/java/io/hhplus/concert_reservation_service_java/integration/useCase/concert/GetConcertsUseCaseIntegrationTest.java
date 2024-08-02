@@ -75,49 +75,49 @@ class GetConcertsUseCaseIntegrationTest {
     double averageNanos = totalNanos / durations.size();
     return Duration.ofNanos((long) averageNanos);
   }
-  @Test
-  @DisplayName("모든 콘서트 여러 번 조회 성공")
-  void execute_WithExistingConcerts_MultipleExecutions() {
-    // Given
-    int numberOfExecutions = 5000;
-    List<Double> executionTimes = new ArrayList<>();
+    @Test
+    @DisplayName("모든 콘서트 여러 번 조회 성공")
+    void execute_WithExistingConcerts_MultipleExecutions() {
+      // Given
+      int numberOfExecutions = 5000;
+      List<Double> executionTimes = new ArrayList<>();
 
-    // When & Then
-    for (int i = 0; i < numberOfExecutions; i++) {
-      Instant start = Instant.now();
+      // When & Then
+      for (int i = 0; i < numberOfExecutions; i++) {
+        Instant start = Instant.now();
 
-      try {
-        List<ConcertDomain> result = getConcertsUseCase.execute();
-        Instant end = Instant.now();
-        Duration duration = Duration.between(start, end);
-        double durationInMillis = duration.toNanos() / 1_000_000.0;
-        executionTimes.add(durationInMillis);
+        try {
+          List<ConcertDomain> result = getConcertsUseCase.execute();
+          Instant end = Instant.now();
+          Duration duration = Duration.between(start, end);
+          double durationInMillis = duration.toNanos() / 1_000_000.0;
+          executionTimes.add(durationInMillis);
 
-        // Then
-        assertThat(result).isNotNull().hasSize(6);
-        assertThat(result).extracting("name").containsExactlyInAnyOrder(
-            "아이유 콘서트",
-            "뉴진스 하우 스윗",
-            "아이브 쇼케이스",
-            "아일릿 유유유유유유유 매그내릭",
-            "트와이스 원스인어마일",
-            "레드벨벳 콘서트"
-        );
-      } catch (Exception e) {
-        int a = 0;
+          // Then
+          assertThat(result).isNotNull().hasSize(6);
+          assertThat(result).extracting("name").containsExactlyInAnyOrder(
+              "아이유 콘서트",
+              "뉴진스 하우 스윗",
+              "아이브 쇼케이스",
+              "아일릿 유유유유유유유 매그내릭",
+              "트와이스 원스인어마일",
+              "레드벨벳 콘서트"
+          );
+        } catch (Exception e) {
+          int a = 0;
+        }
       }
+
+      // 실행 시간 분석
+      double firstExecutionTime = executionTimes.get(0);
+      Duration averageSubsequentTime = calculateAverageTime(executionTimes.subList(1, executionTimes.size()));
+
+      System.out.println("캐싱 없는 첫 실행시간: " + firstExecutionTime + " ms");
+      System.out.printf("캐싱 있는 실행시간의 평균값: %.6f ms%n", averageSubsequentTime.toNanos() / 1_000_000.0);
+
+      // 캐싱을 사용한 실행이 첫 실행보다 빠른가?
+      assertThat(averageSubsequentTime.toNanos() / 1_000_000.0).isLessThan(firstExecutionTime);
     }
-
-    // 실행 시간 분석
-    double firstExecutionTime = executionTimes.get(0);
-    Duration averageSubsequentTime = calculateAverageTime(executionTimes.subList(1, executionTimes.size()));
-
-    System.out.println("캐싱 없는 첫 실행시간: " + firstExecutionTime + " ms");
-    System.out.printf("캐싱 있는 실행시간의 평균값: %.6f ms%n", averageSubsequentTime.toNanos() / 1_000_000.0);
-
-    // 캐싱을 사용한 실행이 첫 실행보다 빠른가?
-    assertThat(averageSubsequentTime.toNanos() / 1_000_000.0).isLessThan(firstExecutionTime);
-  }
 
 
 
