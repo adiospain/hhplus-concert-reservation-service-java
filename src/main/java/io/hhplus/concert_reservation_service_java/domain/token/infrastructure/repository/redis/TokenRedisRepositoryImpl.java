@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RMap;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSetCache;
 import org.redisson.api.RedissonClient;
@@ -31,6 +32,23 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     RScoredSortedSet<String> queue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
     queue.add(System.currentTimeMillis(),key);
     return Token.create(token.getUserId(), token.getAccessKey(), queue.rank(key)+1);
+  }
+
+  @Override
+  public Optional<Token> getToken(String accessKey) {
+    RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+
+    for (long i = 0; i < Long.MAX_VALUE; ++i){
+      String key = TOKEN_KEY_PREFIX + i + ":" + accessKey;
+      if (waitQueue.contains(key)){
+        return Optional.of(Token.create(i, accessKey, waitQueue.rank(key)+1));
+      }
+      if (activeQueue.contains(key)){
+        return Optional.of(Token.create(i, accessKey, 0));
+      }
+    }
+    return Optional.empty();
   }
 
   @Override
@@ -81,6 +99,8 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
       activeQueue.add(token, TOKEN_TTL_MINUTES, TimeUnit.MINUTES);
     }
   }
+
+
 
   @Override
   public List<Token> findWaitingTokens() {

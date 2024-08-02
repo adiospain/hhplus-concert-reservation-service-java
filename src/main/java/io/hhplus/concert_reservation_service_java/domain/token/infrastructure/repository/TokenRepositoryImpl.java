@@ -27,7 +27,7 @@ public class TokenRepositoryImpl implements TokenRepository {
   @Override
   @Transactional(readOnly = true)
   public Optional<Token> findByAccessKey(String accessKey){
-    return null;
+    return tokenRepository.getToken(accessKey);
   }
 
   @Override

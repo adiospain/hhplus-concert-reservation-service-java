@@ -8,6 +8,7 @@ public interface TokenRedisRepository {
 
   Token save(Token token);
 
+  Optional<Token> getToken(String accessKey);
   Optional<Token> getToken(long userId, String accessKey);
 
   void deleteAll();
@@ -18,7 +19,6 @@ public interface TokenRedisRepository {
 
   void touchExpiredTokens();
   void activateTokens();
-
 
 
 
