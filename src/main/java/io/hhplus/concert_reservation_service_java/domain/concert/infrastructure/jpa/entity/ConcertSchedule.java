@@ -1,5 +1,9 @@
 package io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +34,8 @@ public class ConcertSchedule {
   @JoinColumn(name = "concert_id", nullable = false)
   private Concert concert;
 
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   @Column(name = "start_at")
   private LocalDateTime startAt;
 
