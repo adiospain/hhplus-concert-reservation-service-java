@@ -35,8 +35,8 @@ public class TokenInterceptor implements HandlerInterceptor {
     }
 
     try {
-      TokenDomain token = tokenService.getTokenByAccessKey(accessKey);
-      return true;
+      TokenDomain token = tokenService.getToken(accessKey);
+        return true;
     } catch (CustomException e){
       log.error("ERROR :: Token validation failed for request to {}: {}", requestURI, e.getMessage());
         throw new CustomException(ErrorCode.NOT_YET);

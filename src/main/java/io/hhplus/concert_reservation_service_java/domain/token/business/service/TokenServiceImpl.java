@@ -51,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
-  public TokenDomain getTokenByAccessKey(String accessKey) {
+  public TokenDomain getToken(String accessKey) {
     Token token = tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND));
     return new TokenDomain(token);

@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface TokenService {
 
-  TokenDomain upsertToken(long reserverId, String accessKey);
-  TokenDomain getToken(long reserverId, String accessKey);
-
+  TokenDomain upsertToken(long userId, String accessKey);
+  TokenDomain getToken(long userId, String accessKey);
+  TokenDomain getToken(String accessKey);
   void touchExpiredTokens();
   void activateNextTokens();
 
