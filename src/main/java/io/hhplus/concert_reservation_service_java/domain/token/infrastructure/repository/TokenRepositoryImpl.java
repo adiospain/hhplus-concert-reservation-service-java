@@ -20,6 +20,7 @@ public class TokenRepositoryImpl implements TokenRepository {
 
 
   @Override
+  @Transactional(readOnly = true)
   public Optional<Token> findByUserIdAndAccessKey(long userId, String accessKey) {
     return tokenRepository.getToken(userId, accessKey);
   }
@@ -31,7 +32,7 @@ public class TokenRepositoryImpl implements TokenRepository {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public Optional<Token> findByUserId(long userId) {
     return null;
   }
@@ -39,6 +40,11 @@ public class TokenRepositoryImpl implements TokenRepository {
   @Override
   public Token save(Token token) {
     return tokenRepository.save(token);
+  }
+
+  @Override
+  public void delete(Token token){
+    tokenRepository.delete(token);
   }
 
   @Override
