@@ -14,7 +14,7 @@ public interface TokenService {
   void touchExpiredTokens();
   void activateNextTokens();
 
-  Token getTokenByAccessKey(String tokenText);
+  TokenDomain getTokenByAccessKey(String tokenText);
 
 
 }

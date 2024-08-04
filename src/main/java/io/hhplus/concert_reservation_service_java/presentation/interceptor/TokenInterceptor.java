@@ -1,6 +1,7 @@
 package io.hhplus.concert_reservation_service_java.presentation.interceptor;
 
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
@@ -34,7 +35,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     }
 
     try {
-      Token token = tokenService.getTokenByAccessKey(accessKey);
+      TokenDomain token = tokenService.getTokenByAccessKey(accessKey);
       return true;
     } catch (CustomException e){
       log.error("ERROR :: Token validation failed for request to {}: {}", requestURI, e.getMessage());
