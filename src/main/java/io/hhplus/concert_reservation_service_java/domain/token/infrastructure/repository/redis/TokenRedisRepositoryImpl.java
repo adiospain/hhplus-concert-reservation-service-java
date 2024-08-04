@@ -1,6 +1,8 @@
 package io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.redis;
 
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
+import io.hhplus.concert_reservation_service_java.exception.CustomException;
+import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,9 +34,9 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   @Override
   public Token save(Token token) {
     String element = TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey();
-    RScoredSortedSet<String> queue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
-    queue.add(System.currentTimeMillis(), element);
-    return Token.create(token.getUserId(), token.getAccessKey(), queue.rank(element)+1);
+    RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+    waitQueue.add(System.currentTimeMillis(), element);
+    return Token.create(token.getUserId(), token.getAccessKey(), waitQueue.rank(element)+1);
   }
 
   @Override
@@ -43,15 +45,16 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
 
     RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
     Iterator<String> waitIterator = waitQueue.iterator(pattern);
-    while (waitIterator.hasNext()){
+    if (waitIterator.hasNext()){
       String element = waitIterator.next();
+      int position = waitQueue.rank(element)+1;
       Token retrievedToken = parseTokenFromKey(element);
-      return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, waitQueue.rank(element)+1));
+      return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, position));
     }
 
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
     Iterator<String> activeIterator = activeQueue.iterator(pattern);
-    while (activeIterator.hasNext()){
+    if (activeIterator.hasNext()){
       String element = waitIterator.next();
       Token retrievedToken = parseTokenFromKey(element);
       return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, 0));
