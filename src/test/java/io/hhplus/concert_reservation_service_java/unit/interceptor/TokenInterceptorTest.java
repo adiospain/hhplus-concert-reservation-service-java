@@ -70,7 +70,7 @@ class TokenInterceptorTest {
     when(request.getRequestURI()).thenReturn("/api/users/12/token");
     when(request.getMethod()).thenReturn("GET");
     when(request.getHeader("Authorization")).thenReturn("validToken");
-    when(tokenService.getTokenByAccessKey("validToken")).thenReturn(tokenDomain);
+    when(tokenService.getToken("validToken")).thenReturn(tokenDomain);
 
     boolean result = tokenInterceptor.preHandle(request, response, null);
 
@@ -83,7 +83,7 @@ class TokenInterceptorTest {
     when(request.getRequestURI()).thenReturn("/api/users/12/token");
     when(request.getMethod()).thenReturn("GET");
     when(request.getHeader("Authorization")).thenReturn("invalidToken");
-    when(tokenService.getTokenByAccessKey("invalidToken")).thenThrow(new CustomException(ErrorCode.NOT_YET));
+    when(tokenService.getToken("invalidToken")).thenThrow(new CustomException(ErrorCode.NOT_YET));
 
     assertThrows(CustomException.class, () -> tokenInterceptor.preHandle(request, response, null));
   }

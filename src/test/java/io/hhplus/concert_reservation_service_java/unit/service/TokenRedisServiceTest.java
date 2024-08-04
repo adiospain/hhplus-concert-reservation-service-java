@@ -77,9 +77,11 @@ public class TokenRedisServiceTest {
     // When
     TokenDomain upsertResult = tokenService.upsertToken(reserverId, accessKey);
 
-    TokenDomain getResult = tokenService.getTokenByAccessKey(upsertResult.getAccessKey());
+    TokenDomain getResult = tokenService.getToken(upsertResult.getAccessKey());
     // Then
     assertNotNull(getResult);
     assertEquals(1L, getResult.getQueuePosition());
+    assertEquals(reserverId, getResult.getUserId());
+    assertEquals(upsertResult.getAccessKey(), getResult.getAccessKey());
   }
 }

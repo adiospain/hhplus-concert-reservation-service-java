@@ -189,7 +189,7 @@ class TokenServiceTest {
     when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.of(existingToken));
 
     // When
-    TokenDomain result = tokenService.getTokenByAccessKey(accessKey);
+    TokenDomain result = tokenService.getToken(accessKey);
 
     // Then
     assertNotNull(result);
@@ -203,7 +203,7 @@ class TokenServiceTest {
     when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThrows(CustomException.class, () -> tokenService.getTokenByAccessKey(accessKey));
+    assertThrows(CustomException.class, () -> tokenService.getToken(accessKey));
   }
 
 //  @Test
