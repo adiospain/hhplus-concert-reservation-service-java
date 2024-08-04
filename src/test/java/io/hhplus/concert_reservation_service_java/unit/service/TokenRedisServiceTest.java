@@ -21,11 +21,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 public class TokenRedisServiceTest {
 
+  @Autowired
   private TokenRepository tokenRepository;
 
+  @Autowired
   private TokenServiceImpl tokenService;
 
   @BeforeEach
@@ -37,7 +42,7 @@ public class TokenRedisServiceTest {
   @DisplayName("upsertToken::이미 존재하는 토큰 없으면 새로운 토큰 생성")
   void upsertToken_WhenTokenDoesNotExist_ShouldCreateNewToken() {
     // Given
-    long reserverId = 1L;
+    long reserverId = 6L;
     String accessKey = "newAccessKey";
 
     Token token = Token.builder()
@@ -52,7 +57,29 @@ public class TokenRedisServiceTest {
 
     // Then
     assertNotNull(result);
-    verify(tokenRepository, times(2)).save(any(Token.class));
-    assertEquals(0L, result.getQueuePosition());
+    assertEquals(1L, result.getQueuePosition());
+  }
+
+  @Test
+  @DisplayName("getToken::토큰 성공")
+  void getToken() {
+    // Given
+    long reserverId = 1L;
+    String accessKey = "newAccessKey";
+
+    Token token = Token.builder()
+        .id(2L)
+        .userId(reserverId)
+        .accessKey(accessKey)
+        .status(TokenStatus.WAIT)
+        .expireAt(LocalDateTime.now().plusMinutes(5))
+        .build();
+    // When
+    TokenDomain upsertResult = tokenService.upsertToken(reserverId, accessKey);
+
+    TokenDomain getResult = tokenService.getTokenByAccessKey(upsertResult.getAccessKey());
+    // Then
+    assertNotNull(getResult);
+    assertEquals(1L, getResult.getQueuePosition());
   }
 }

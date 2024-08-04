@@ -1,6 +1,7 @@
 package io.hhplus.concert_reservation_service_java.unit.interceptor;
 
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.Token;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
@@ -64,11 +65,12 @@ class TokenInterceptorTest {
   void testPreHandle_ValidToken_ShouldPass() {
 
     Token validToken = Token.createWaitingToken(12L);
+    TokenDomain tokenDomain = new TokenDomain(validToken);
 
     when(request.getRequestURI()).thenReturn("/api/users/12/token");
     when(request.getMethod()).thenReturn("GET");
     when(request.getHeader("Authorization")).thenReturn("validToken");
-    when(tokenService.getTokenByAccessKey("validToken")).thenReturn(validToken);
+    when(tokenService.getTokenByAccessKey("validToken")).thenReturn(tokenDomain);
 
     boolean result = tokenInterceptor.preHandle(request, response, null);
 

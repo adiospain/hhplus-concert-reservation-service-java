@@ -189,7 +189,7 @@ class TokenServiceTest {
     when(tokenRepository.findByAccessKey(accessKey)).thenReturn(Optional.of(existingToken));
 
     // When
-    Token result = tokenService.getTokenByAccessKey(accessKey);
+    TokenDomain result = tokenService.getTokenByAccessKey(accessKey);
 
     // Then
     assertNotNull(result);
