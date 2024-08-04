@@ -1,7 +1,5 @@
 package io.hhplus.concert_reservation_service_java.integration.useCase.token;
 
-
-import io.hhplus.concert_reservation_service_java.domain.token.ActivateNextTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
@@ -40,8 +38,6 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class TokenUseCaseConcurrencyTest {
-  @Autowired
-  private ActivateNextTokenUseCase activateNextTokenUseCase;
 
   @Autowired
   private IssueTokenUseCase issueTokenUseCase;

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.service;
+package io.hhplus.concert_reservation_service_java.unit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
