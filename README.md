@@ -906,7 +906,8 @@ Redis 서버 장애 시 서버의 유지보수, 모니터링, 스케일링 등 �
 
 성능뿐만 아니라 시스템의 안정성, 확장성, 유지보수성 등 다른 중요한 요소들도 함께 고려해야 합니다.  
 </details>
-<details open>
+
+<details>
 <summary style="font-size: 1.5em; font-weight: bold">Caching Strategy</summary>
 
 # 캐싱 전략 및 구현 보고서
@@ -919,12 +920,12 @@ Redis 서버 장애 시 서버의 유지보수, 모니터링, 스케일링 등 �
    - **Query**: `SELECT * FROM concert` [findAll()]
    - 분석 : 정보 변경이 적으며, 조회 빈도가 높음.
    - 캐싱전략 :
-     - 캐시 키 : `allConcerts`
-     - TTL : 10분
-     - 캐시 로직 :
-       - 캐시에서 `concertList` 키로 조회
-       - 캐시 미스 시 DB에서 조회하고, 결과를 캐시에 저장
-       - 스탬피드 현상 방지를 위해 redis 분산락 적용
+      - 캐시 키 : `allConcerts`
+      - TTL : 10분
+      - 캐시 로직 :
+         - 캐시에서 `allConcerts` 키로 조회
+         - 캐시 미스 시 DB에서 조회하고, 결과를 캐시에 저장
+         - 스탬피드 현상 방지를 위해 redis 분산락 적용
 2. 콘서트 예약가능 날짜 조회
    - **Query**: SELECT cs FROM concert_schedule WHERE concert_id = ? [findAllByConcertId()]
    - 분석: 예약 가능 날짜도 변경이 적으며, 조회 빈도가 높음.
@@ -970,7 +971,7 @@ Redis 서버 장애 시 서버의 유지보수, 모니터링, 스케일링 등 �
 향후 추가적인 테스트와 최적화를 통해 서비스의 성능을 더욱 개선할 수 있을 것으로 기대됩니다.
 </details>
 
-<details open>
+<details>
 <summary style="font-size: 1.5em; font-weight: bold">Waiting Queue</summary>
 
 # 대기열 시스템 설계 및 구현 보고서
