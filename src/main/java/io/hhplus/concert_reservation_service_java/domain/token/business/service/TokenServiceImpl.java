@@ -57,7 +57,13 @@ public class TokenServiceImpl implements TokenService {
     return new TokenDomain(token);
   }
 
-    @Override
+  @Override
+  public void expireToken(long userId, String accessKey) {
+    Token token = Token.createToDelete(userId, accessKey);
+    tokenRepository.delete(token);
+  }
+
+  @Override
     public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
     @Override
     public void activateNextTokens() {tokenRepository.activateTokens();}

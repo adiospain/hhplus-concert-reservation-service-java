@@ -11,6 +11,7 @@ public interface TokenRedisRepository {
   Optional<Token> getToken(String accessKey);
   Optional<Token> getToken(long userId, String accessKey);
 
+  void delete(Token token);
   void deleteAll();
 
   List<Token> findAll();

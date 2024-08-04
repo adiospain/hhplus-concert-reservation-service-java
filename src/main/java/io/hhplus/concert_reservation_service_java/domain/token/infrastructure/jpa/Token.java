@@ -44,7 +44,7 @@ public class Token {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
-  private int position;
+  private int position; // 0: activeQueue, 1: waitQueue
 
   @PrePersist
   protected void onCreate() {
@@ -68,12 +68,12 @@ public class Token {
         .build();
   }
 
-  public void  turnActive() {
-    this.status = TokenStatus.ACTIVE;
+  public static Token createToDelete(long userId, String accessKey) {
+      return Token.builder()
+          .userId(userId)
+          .accessKey(accessKey)
+          .build();
   }
-
-
-
 
   public static Token create(long userId, String accessKey, int position) {
     if (position > 0){

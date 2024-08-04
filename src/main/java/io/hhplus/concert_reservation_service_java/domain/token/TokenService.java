@@ -11,10 +11,10 @@ public interface TokenService {
   TokenDomain upsertToken(long userId, String accessKey);
   TokenDomain getToken(long userId, String accessKey);
   TokenDomain getToken(String accessKey);
+  void expireToken(long userId, String accessKey);
+
   void touchExpiredTokens();
   void activateNextTokens();
-
-  TokenDomain getTokenByAccessKey(String tokenText);
 
 
 }

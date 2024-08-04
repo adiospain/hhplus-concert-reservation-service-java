@@ -15,6 +15,8 @@ public interface TokenRepository {
 
   Token save(Token token);
 
+  void delete(Token token);
+
   Optional<Long> findSmallestActiveTokenId();
 
   List<Token> findActiveExpiredTokens(LocalDateTime now);

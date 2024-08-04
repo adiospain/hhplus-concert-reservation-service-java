@@ -81,6 +81,24 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   }
 
   @Override
+  public void delete(Token token) {
+    String element = TOKEN_KEY_PREFIX + token.getUserId() + ":" + token.getAccessKey();
+
+    // Remove from wait queue
+    RScoredSortedSet<String> waitQueue = redissonClient.getScoredSortedSet(WAIT_QUEUE_KEY);
+    boolean removedFromWait = waitQueue.remove(element);
+
+    // Remove from active queue
+    RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
+    boolean removedFromActive = activeQueue.remove(element);
+
+    if (!removedFromActive && !removedFromWait) {
+      throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
+    }
+
+  }
+
+  @Override
   public void deleteAll() {
 
   }
@@ -97,7 +115,7 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
   public void touchExpiredTokens() {
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
     for (String token : activeQueue){
-
+      //별도의 삭제 로직 구현 없이 for-loop 조회만 해도 TTL 만료된 요소 삭제
     }
   }
 
@@ -132,8 +150,6 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
         .map(token -> Token.create(token.getUserId(), token.getAccessKey(), 0))
         .collect(Collectors.toList());
   }
-
-
 
   private Token parseTokenFromKey(String key) {
     if (!key.startsWith(TOKEN_KEY_PREFIX)) {

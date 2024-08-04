@@ -3,6 +3,7 @@ package io.hhplus.concert_reservation_service_java.domain.user.application.useCa
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
@@ -24,6 +25,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   private final UserService userService;
   private final ReservationService reservationService;
   private final PaymentService paymentService;
+  private final TokenService tokenService;
   private final PaymentMapper paymentMapper;
 
   @Override
@@ -34,7 +36,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
       Payment payment = paymentService.createPayment(user.getId(), reservation.getId());
 
       reservationService.saveToPay(reservation);
-
+      tokenService.expireToken(command.getUserId(), command.getAccessKey());
       return paymentMapper.of(payment, reservation, user);
   }
 
