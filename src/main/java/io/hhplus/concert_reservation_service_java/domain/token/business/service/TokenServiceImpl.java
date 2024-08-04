@@ -51,65 +51,14 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
-  @Transactional
-  public int bulkUpdateExpiredTokens() {
-    return tokenRepository.bulkUpdateExpiredTokens(LocalDateTime.now());
-  }
-
-  @Override
-  public int bulkUpdateDisconnectedToken() {
-    return tokenRepository.bulkUpdateDisconnectedToken(LocalDateTime.now());
-  }
-
-  @Override
-  @Transactional (readOnly = true)
-  public List<Token> getExpiredTokens() {
-    return tokenRepository.findExpiredTokens(LocalDateTime.now());
-  }
-
-  @Override
-  @Transactional
-  public void setTokenStatusToDone(long id) {
-    tokenRepository.setTokenStatusToDone(id);
-  }
-
-  @Override
-  public int activateNextToken(long id) {
-    LocalDateTime now = LocalDateTime.now();
-    return tokenRepository.activateNextToken(id, now);
-  }
-
-  @Override
-  @Transactional
-  public void activateNextToken() {
-    tokenRepository.findLastActiveToken()
-        .ifPresent(lastActiveTokenId -> {
-            LocalDateTime now = LocalDateTime.now();
-            tokenRepository.activateNextToken(lastActiveTokenId, now);
-    });
-  }
-
-  @Override
   public Token getTokenByAccessKey(String accessKey) {
     return tokenRepository.findByAccessKey(accessKey)
         .orElseThrow(()->new CustomException(ErrorCode.TOKEN_NOT_FOUND));
   }
 
-  @Override
-  public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
-  @Override
-  public void activateNextTokens() {
-    tokenRepository.activateTokens();
-  }
+    @Override
+    public void touchExpiredTokens() {tokenRepository.touchExpiredTokens();}
+    @Override
+    public void activateNextTokens() {tokenRepository.activateTokens();}
 
-  @Override
-  public Optional<Token> findMostRecentlyDisconnectedToken() {
-    return tokenRepository.findMostRecentlyDisconnectedToken();
-  }
-
-  @Override
-  public void completeTokenAndActivateNextToken(long id) {
-    this.setTokenStatusToDone(id);
-    this.activateNextToken(id);
-  }
 }

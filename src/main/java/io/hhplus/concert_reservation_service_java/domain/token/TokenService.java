@@ -11,25 +11,10 @@ public interface TokenService {
   TokenDomain upsertToken(long reserverId, String accessKey);
   TokenDomain getToken(long reserverId, String accessKey);
 
-  int bulkUpdateExpiredTokens();
-  int bulkUpdateDisconnectedToken();
-
-  List<Token> getExpiredTokens();
-
-  Optional<Token> findMostRecentlyDisconnectedToken();
-
-
-
-
-  void completeTokenAndActivateNextToken(long id);
-    void setTokenStatusToDone(long id);
-    int activateNextToken(long id);
-
-  void activateNextToken();
+  void touchExpiredTokens();
+  void activateNextTokens();
 
   Token getTokenByAccessKey(String tokenText);
 
-  void touchExpiredTokens();
 
-  void activateNextTokens();
 }
