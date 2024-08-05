@@ -1,7 +1,7 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.payment;
 
 
-import io.hhplus.concert_reservation_service_java.domain.user.CreatePaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 
 
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;

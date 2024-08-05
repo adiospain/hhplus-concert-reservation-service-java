@@ -8,7 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jp
 
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.jpa.TokenStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.infrastructure.repository.TokenRepository;
-import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;

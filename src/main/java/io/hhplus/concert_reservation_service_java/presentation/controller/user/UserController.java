@@ -7,7 +7,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.application.port.i
 
 import io.hhplus.concert_reservation_service_java.domain.token.application.port.in.GetTokenCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.GetTokenUseCase;
+import io.hhplus.concert_reservation_service_java.domain.token.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;

@@ -1,7 +1,7 @@
 package io.hhplus.concert_reservation_service_java.integration.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.user.ChargePointUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.CreatePaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
@@ -11,7 +11,6 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 @SpringBootTest
 @Transactional

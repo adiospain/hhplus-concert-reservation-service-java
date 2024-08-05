@@ -2,10 +2,10 @@ package io.hhplus.concert_reservation_service_java.unit.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
-import io.hhplus.concert_reservation_service_java.domain.user.CreateReservationUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreateReservationCommand;
-import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.CreateReservationUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.reservation.application.useCase.CreateReservationUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.ReservationMapper;
 
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
@@ -17,7 +17,6 @@ import io.hhplus.concert_reservation_service_java.domain.seat.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import org.assertj.core.api.AssertionsForClassTypes;
-import org.springframework.dao.DataIntegrityViolationException;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;

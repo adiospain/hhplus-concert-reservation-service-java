@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.integration.useCase.user;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.repository.ConcertRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
-import io.hhplus.concert_reservation_service_java.domain.user.CreateReservationUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreateReservationCommand;
 import io.hhplus.concert_reservation_service_java.domain.reservation.application.model.ReservationDomain;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
@@ -25,9 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.domain.user.application.useCase;
+package io.hhplus.concert_reservation_service_java.domain.reservation.application.useCase;
 
 
 import io.hhplus.concert_reservation_service_java.domain.concert.ConcertService;
@@ -8,7 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreateReservationCommand;
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertScheduleSeat;
-import io.hhplus.concert_reservation_service_java.domain.user.CreateReservationUseCase;
+import io.hhplus.concert_reservation_service_java.domain.reservation.CreateReservationUseCase;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.ReservationMapper;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;

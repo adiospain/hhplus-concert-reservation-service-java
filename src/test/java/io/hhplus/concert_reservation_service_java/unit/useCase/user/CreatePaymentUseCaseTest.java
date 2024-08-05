@@ -6,11 +6,12 @@ import static org.mockito.Mockito.*;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.domain.user.application.useCase.CreatePaymentUseCaseImpl;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.useCase.CreatePaymentUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.PaymentMapper;
-import io.hhplus.concert_reservation_service_java.domain.user.CreatePaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
@@ -33,10 +34,13 @@ class CreatePaymentUseCaseTest {
   private final ReservationService reservationService = Mockito.mock(ReservationService.class);
 
   private final PaymentService paymentService = Mockito.mock(PaymentService.class);
+
+  private final TokenService tokenService = Mockito.mock(TokenService.class);
+
   private final PaymentMapper paymentMapper = Mockito.mock(PaymentMapper.class);
 
   private final CreatePaymentUseCase createPaymentUseCase = new CreatePaymentUseCaseImpl(
-      userService, reservationService, paymentService , paymentMapper);
+      userService, reservationService, paymentService , tokenService, paymentMapper);
 
   private CreatePaymentCommand command;
   private Reservation reservation;
