@@ -33,10 +33,14 @@ public class Payment {
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  public static Payment createFrom(Long userId, Long reservationId) {
+  @Column(name = "reserved_price")
+  private Integer reservedPrice;
+
+  public static Payment createFrom(Long userId, Long reservationId, int reservedPrice) {
     return Payment.builder()
         .userId(userId)
         .reservationId(reservationId)
+        .reservedPrice(reservedPrice)
         .createdAt(LocalDateTime.now())
         .build();
   }

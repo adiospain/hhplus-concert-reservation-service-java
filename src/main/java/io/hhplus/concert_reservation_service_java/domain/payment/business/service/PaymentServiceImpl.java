@@ -1,8 +1,10 @@
 package io.hhplus.concert_reservation_service_java.domain.payment.business.service;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
+import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
@@ -25,8 +27,8 @@ public class PaymentServiceImpl implements PaymentService {
   }
 
   @Override
-  public Payment createPayment(long reserverId, long reservationId) {
-    Payment savedPayment = Payment.createFrom(reserverId, reservationId);
+  public Payment createPayment(long reserverId, Reservation reservation) {
+    Payment savedPayment = Payment.createFrom(reserverId, reservation.getId(), reservation.getReservedPrice());
     paymentRepository.save(savedPayment);
     return savedPayment;
   }

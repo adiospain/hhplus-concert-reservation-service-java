@@ -2,10 +2,10 @@ package io.hhplus.concert_reservation_service_java.domain.payment.application.mo
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
@@ -33,7 +33,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   public PaymentDomain execute(CreatePaymentCommand command) {
       Reservation reservation = reservationService.getReservationToPay(command.getReservationId());
       User user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-      Payment payment = paymentService.createPayment(user.getId(), reservation.getId());
+      Payment payment = paymentService.createPayment(user.getId(), reservation);
 
       reservationService.saveToPay(reservation);
       tokenService.expireToken(command.getUserId(), command.getAccessKey());

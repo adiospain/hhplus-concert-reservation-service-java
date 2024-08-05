@@ -6,6 +6,8 @@ import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,6 +37,21 @@ public class PaymentMapper {
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
         .createdAt(savedPayment.getCreatedAt())
+        .build();
+  }
+  
+  public List<PaymentDomain> from (List<Payment> payments){
+    return payments.stream()
+        .map(this::convertToPaymentDomain)
+        .collect(Collectors.toList());
+  }
+
+  private PaymentDomain convertToPaymentDomain(Payment payment) {
+    return PaymentDomain.builder()
+        .id(payment.getId())
+        .reservationId(payment.getReservationId())
+        .price(payment.getReservedPrice())
+        .createdAt(payment.getCreatedAt())
         .build();
   }
 }
