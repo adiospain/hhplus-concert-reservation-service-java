@@ -9,7 +9,7 @@ public interface PaymentService {
 
   Payment save(Payment payment);
 
-  Payment createPayment(long reserverId, Reservation reservation);
+  Payment createPayment(long reserverId, long concertScheduleId, long seatId, int price);
 
   List<PaymentDomain> getPayment(long userId);
 }

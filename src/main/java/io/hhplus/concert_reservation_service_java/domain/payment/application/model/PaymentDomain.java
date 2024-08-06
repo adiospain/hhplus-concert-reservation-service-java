@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PaymentDomain {
   private long id;
-  private long reservationId;
+  private long concertScheduleId;
+  private long seatId;
   private int price;
   private int pointAfter;
   private LocalDateTime createdAt;

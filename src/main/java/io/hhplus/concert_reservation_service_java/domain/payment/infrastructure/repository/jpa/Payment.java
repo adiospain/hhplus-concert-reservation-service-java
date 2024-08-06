@@ -10,12 +10,15 @@ import jakarta.persistence.Id;
 
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "payment")
 @Builder
+@AllArgsConstructor
 @Getter
 public class Payment {
 
@@ -24,11 +27,14 @@ public class Payment {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "reserver_id", nullable = false)
+  @Column(name = "user_id", nullable = false)
   private Long userId;
 
-  @Column(name = "reservation_id", nullable = false)
-  private Long reservationId;
+  @Column(name = "concert_schedule_id", nullable = false)
+  private Long concertScheduleId;
+
+  @Column(name = "seat_id", nullable = false)
+  private Long seatId;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
@@ -36,16 +42,17 @@ public class Payment {
   @Column(name = "reserved_price")
   private Integer reservedPrice;
 
-  public static Payment createFrom(Long userId, Long reservationId, int reservedPrice) {
-    return Payment.builder()
-        .userId(userId)
-        .reservationId(reservationId)
-        .reservedPrice(reservedPrice)
-        .createdAt(LocalDateTime.now())
-        .build();
+  public Payment() {
+
   }
 
-  public void setIdForTest(long id) {
-    this.id = id;
+  public static Payment createToPay(long userId, long concertScheduleId, long seatId, int pirce) {
+    return Payment.builder()
+        .userId(userId)
+        .concertScheduleId(concertScheduleId)
+        .seatId(seatId)
+        .reservedPrice(pirce)
+        .createdAt(LocalDateTime.now())
+        .build();
   }
 }

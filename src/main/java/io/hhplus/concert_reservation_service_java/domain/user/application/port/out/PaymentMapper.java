@@ -20,7 +20,8 @@ public class PaymentMapper {
 
     return PaymentDomain.builder()
         .id(savedPayment.getId())
-        .reservationId(reservation.getId())
+        .concertScheduleId(savedPayment.getConcertScheduleId())
+        .seatId(savedPayment.getSeatId())
         .price(reservation.getReservedPrice())
         .createdAt(savedPayment.getCreatedAt())
         .build();
@@ -33,7 +34,8 @@ public class PaymentMapper {
 
     return PaymentDomain.builder()
         .id(savedPayment.getId())
-        .reservationId(reservation.getId())
+        .concertScheduleId(savedPayment.getConcertScheduleId())
+        .seatId(savedPayment.getSeatId())
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
         .createdAt(savedPayment.getCreatedAt())
@@ -49,7 +51,8 @@ public class PaymentMapper {
   private PaymentDomain convertToPaymentDomain(Payment payment) {
     return PaymentDomain.builder()
         .id(payment.getId())
-        .reservationId(payment.getReservationId())
+        .concertScheduleId(payment.getConcertScheduleId())
+        .seatId(payment.getSeatId())
         .price(payment.getReservedPrice())
         .createdAt(payment.getCreatedAt())
         .build();
