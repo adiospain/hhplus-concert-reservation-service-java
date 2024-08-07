@@ -40,8 +40,9 @@ public class LoggingFilter implements Filter {
 
       long endTime = System.currentTimeMillis();
       long duration = endTime - startTime;
+      double durationMillis = duration / 1_000_000.0;
 
-      logRequestAndResponse(httpServletRequest, httpServletResponse, duration);
+      logRequestAndResponse(httpServletRequest, httpServletResponse, durationMillis);
       httpServletResponse.copyBodyToResponse();
     }
 
@@ -52,11 +53,11 @@ public class LoggingFilter implements Filter {
     return false;
   }
 
-  private void logRequestAndResponse (ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, long duration){
+  private void logRequestAndResponse (ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, double duration){
       String requestBody = new String(request.getContentAsByteArray());
       String responseBody = new String(response.getContentAsByteArray());
 
-      log.info("API Call - URL: {}, Method: {}, Status: {}, Duration: {}ms, Request: {}, Response: {}",
+      log.info("API Call - URL: {}, Method: {}, Status: {}, Duration: {} ms, Request: {}, Response: {}",
           request.getRequestURI(),
           request.getMethod(),
           response.getStatus(),
