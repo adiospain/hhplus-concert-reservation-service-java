@@ -55,7 +55,7 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
     Iterator<String> activeIterator = activeQueue.iterator(pattern);
     if (activeIterator.hasNext()){
-      String element = waitIterator.next();
+      String element = activeIterator.next();
       Token retrievedToken = parseTokenFromKey(element);
       return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, 0));
     }
