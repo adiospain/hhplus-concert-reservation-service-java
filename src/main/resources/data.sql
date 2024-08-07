@@ -1,24 +1,38 @@
-INSERT INTO reserver (point) VALUES
-                                 (1000),
-                                 (500),
-                                 (2000),
-                                 (750),
-                                 (1500),
-                                 (300),
-                                 (3000),
-                                 (100),
-                                 (2500),
-                                 (800),
-                                 (1200),
-                                 (600),
-                                 (1800),
-                                 (400),
-                                 (2200),
-                                 (900),
-                                 (1600),
-                                 (200),
-                                 (3500),
-                                 (700);
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE concert_schedule;
+TRUNCATE concert_schedule_seat;
+TRUNCATE concert;
+
+
+TRUNCATE payment;
+TRUNCATE reservation;
+TRUNCATE reserver;
+TRUNCATE seat;
+SET FOREIGN_KEY_CHECKS = 1;
+CREATE TEMPORARY TABLE numbers (n INT);
+
+-- Populate the numbers table with values from 1 to 200000
+INSERT INTO numbers (n)
+SELECT a.N + b.N * 10 + c.N * 100 + d.N * 1000 + e.N * 10000
+FROM (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a,
+     (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b,
+     (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c,
+     (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d,
+     (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) e
+WHERE a.N + b.N * 10 + c.N * 100 + d.N * 1000 + e.N * 10000 BETWEEN 1 AND 200000;
+
+-- Insert random points into the reserver table
+INSERT INTO reserver (point)
+SELECT FLOOR(RAND() * 10000) AS point
+FROM numbers;
+
+-- Drop the temporary numbers table
+DROP TEMPORARY TABLE numbers;
 
 INSERT INTO concert (name) VALUES
                                 ('아이유 콘서트'),
