@@ -8,7 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.infrastruct
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
@@ -73,7 +73,8 @@ class CreatePaymentUseCaseIntegrationTest {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getReservationId()).isEqualTo(reservation.getId());
+    assertThat(result.getConcertScheduleId()).isEqualTo(reservation.getConcertScheduleId());
+    assertThat(result.getSeatId()).isEqualTo(reservation.getSeatId());
     assertThat(result.getPrice()).isEqualTo(reservation.getReservedPrice());
 
     // Verify user point is deducted

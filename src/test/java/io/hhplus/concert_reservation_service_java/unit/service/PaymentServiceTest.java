@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,9 +24,21 @@ class PaymentServiceTest {
   @DisplayName("결제 완료")
   void testSave_SuccessfulSave() {
     // Arrange
-    Payment payment = Payment.createFrom(1L, 10L);
-    payment.setIdForTest(2L);
+    long id = 5L;
+    long userId = 2L;
+    long concertScheduleId = 4L;
+    long seatId = 5L;
+    int price = 300;
 
+
+    Payment payment = Payment.builder()
+        .id(5L)
+        .userId(userId)
+        .concertScheduleId(concertScheduleId)
+        .seatId(seatId)
+        .reservedPrice(price)
+        .createdAt(LocalDateTime.now())
+        .build();
     when(paymentRepository.save(payment)).thenReturn(payment);
 
     // Act
@@ -33,9 +46,11 @@ class PaymentServiceTest {
 
     // Assert
     assertNotNull(savedPayment);
-    assertEquals(2L, savedPayment.getId());
-    assertEquals(1L, savedPayment.getUserId());
-    assertEquals(10L, savedPayment.getReservationId());
+    assertEquals(id, savedPayment.getId());
+    assertEquals(userId, savedPayment.getUserId());
+    assertEquals(concertScheduleId, savedPayment.getConcertScheduleId());
+    assertEquals(seatId, savedPayment.getSeatId());
+    assertEquals(price, savedPayment.getReservedPrice());
 
     verify(paymentRepository).save(payment);
   }
@@ -55,22 +70,33 @@ class PaymentServiceTest {
   @DisplayName("결제 생성")
   void testCreatePayment_SuccessfulCreation() {
     // Arrange
-    long reserverId = 100L;
-    long reservationId = 200L;
+    long id = 5L;
+    long userId = 2L;
+    long concertScheduleId = 4L;
+    long seatId = 5L;
+    int price = 300;
 
-    Payment payment = Payment.createFrom(1L, 10L);
-    payment.setIdForTest(2L);
+
+    Payment payment = Payment.builder()
+        .id(5L)
+        .userId(userId)
+        .concertScheduleId(concertScheduleId)
+        .seatId(seatId)
+        .reservedPrice(price)
+        .createdAt(LocalDateTime.now())
+        .build();
 
     when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
 
     // Act
-    Payment createdPayment = service.createPayment(reserverId, reservationId);
+    Payment createdPayment = service.createPayment(userId, concertScheduleId, seatId, price);
 
     // Assert
     assertNotNull(createdPayment);
-    assertEquals(reserverId, createdPayment.getUserId());
-    assertEquals(reservationId, createdPayment.getReservationId());
-
+    assertEquals(userId, createdPayment.getUserId());
+    assertEquals(concertScheduleId, createdPayment.getConcertScheduleId());
+    assertEquals(seatId, createdPayment.getSeatId());
+    assertEquals(price, createdPayment.getReservedPrice());
     verify(paymentRepository).save(any(Payment.class));
   }
 }

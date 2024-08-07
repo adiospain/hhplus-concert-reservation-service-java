@@ -8,7 +8,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.useCase.CreatePaymentUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
@@ -63,12 +63,14 @@ class CreatePaymentUseCaseTest {
     payment = Payment.builder()
         .id(2L)
         .userId(reserver.getId())
-        .reservationId(reservation.getId())
+        .concertScheduleId(5L)
+        .seatId(4L)
         .createdAt(LocalDateTime.now())
         .build();
     paymentDomain = PaymentDomain.builder()
         .id(payment.getId())
-        .reservationId(reservation.getId())
+        .concertScheduleId(5L)
+        .seatId(4L)
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
         .createdAt(payment.getCreatedAt())
@@ -81,7 +83,7 @@ class CreatePaymentUseCaseTest {
     // Given
     when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
     when(userService.usePoint(1L, 5000)).thenReturn(reserver);
-    when(paymentService.createPayment(1L, 3L)).thenReturn(payment);
+    when(paymentService.createPayment(1L, reservation.getConcertScheduleId(), reservation.getSeatId(), reservation.getReservedPrice())).thenReturn(payment);
     when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);
 
     // When
@@ -91,7 +93,7 @@ class CreatePaymentUseCaseTest {
     assertEquals(paymentDomain, result);
     verify(reservationService).getReservationToPay(reservation.getId());
     verify(userService).usePoint(1L, 5000);
-    verify(paymentService).createPayment(command.getUserId(), reservation.getId());
+    verify(paymentService).createPayment(command.getUserId(), reservation.getConcertScheduleId(), reservation.getSeatId(), reservation.getReservedPrice());
     verify(reservationService).saveToPay(reservation);
     verify(paymentMapper).of(payment, reservation, reserver);
   }
@@ -149,7 +151,7 @@ class CreatePaymentUseCaseTest {
     // Given
     when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
     when(userService.usePoint(1L, 5000)).thenThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT));
-    when(paymentService.createPayment(1L, 3L)).thenReturn(payment);
+    when(paymentService.createPayment(1L, reservation.getConcertScheduleId(), reservation.getSeatId(), reservation.getReservedPrice())).thenReturn(payment);
     when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);;
 
     // When & Then
