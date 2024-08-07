@@ -31,7 +31,9 @@ public class ConcertServiceImpl implements ConcertService {
       return concertSchedules;
   }
 
+
   @Override
+  @Cacheable(value="Seats", key = "'concertSchedule:'+ #concertScheduleId")
   public List<Seat> getSeatsByConcertScheduleId(long concertScheduleId) {
     List<Seat> seats = concertRepository.findSeatsByConcertScheduleId(concertScheduleId);
     return seats;
@@ -56,7 +58,6 @@ public class ConcertServiceImpl implements ConcertService {
   }
 
   @Override
-
   @DistributedLock(key = "'concertSchedule:'+ #concertScheduleId + ':seat:' + #seatId", leaseTime = 5 * 60L, waitTime = 0L, unlockAfter = false)
   public ConcertScheduleSeat getConcertScheduleSeat(long concertScheduleId, long seatId) {
     ConcertScheduleSeat concertScheduleSeat = concertRepository.findConcertSceduleSeatByconcertScheduleIdAndseatId(concertScheduleId, seatId)

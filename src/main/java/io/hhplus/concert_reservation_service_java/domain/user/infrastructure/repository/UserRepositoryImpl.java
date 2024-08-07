@@ -3,6 +3,7 @@ package io.hhplus.concert_reservation_service_java.domain.user.infrastructure.re
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserRepository;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserJpaRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,8 +28,15 @@ public class UserRepositoryImpl implements UserRepository {
     return userRepository.findByIdWithPessimisticLock(reserverId);
   }
 
+
+
   @Override
   public User save(User reserver) {
     return userRepository.save(reserver);
+  }
+
+  @Override
+  public void saveAll(List<User> users) {
+    userRepository.saveAll(users);
   }
 }
