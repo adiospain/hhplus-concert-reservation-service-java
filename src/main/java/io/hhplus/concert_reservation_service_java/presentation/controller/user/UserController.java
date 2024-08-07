@@ -44,7 +44,6 @@ public class UserController {
       @RequestHeader(value = "Authorization", required =false) String accessKey,
       @PathVariable long userId){
     IssueTokenCommand command = IssueTokenCommand.builder()
-        .accessKey(accessKey)
         .userId(userId)
         .build();
     TokenDomain token = issueTokenUseCase.execute(command);

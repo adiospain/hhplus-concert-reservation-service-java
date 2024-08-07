@@ -12,6 +12,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
 @Service
@@ -23,7 +24,7 @@ public class TokenServiceImpl implements TokenService {
   public TokenDomain upsertToken(long userId, String accessKey) {
 
 
-    if (accessKey.isEmpty()){
+    if (StringUtils.isEmpty(accessKey)){
       Token savedToken = tokenRepository.save(Token.createWaitingToken(userId));
       return new TokenDomain(savedToken);
     }
