@@ -20,7 +20,7 @@ import lombok.Data;
     name = "concert_schedule_seat",
     uniqueConstraints = @UniqueConstraint(
         name = "UK_concert_schedule_seat",
-        columnNames = {"concert_schedule_id", "seat_id"}
+        columnNames = {"seat_id", "concert_schedule_id"}
     )
 )
 @Data
