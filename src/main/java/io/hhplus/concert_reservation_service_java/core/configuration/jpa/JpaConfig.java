@@ -13,10 +13,10 @@ public class JpaConfig {
   @Bean
   public DataSource dataSource() {
     return DataSourceBuilder.create()
-        .url("jdbc:h2:mem:test")
-        .driverClassName("org.h2.Driver")
-        .username("sa")
-        .password("")
+        .url("jdbc:mysql://localhost:3306/ticketing")
+        .driverClassName("com.mysql.cj.jdbc.Driver")
+        .username("root")
+        .password("root")
         .build();
   }
 
