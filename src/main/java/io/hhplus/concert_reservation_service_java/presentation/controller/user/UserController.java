@@ -1,5 +1,8 @@
 package io.hhplus.concert_reservation_service_java.presentation.controller.user;
 
+import io.hhplus.concert_reservation_service_java.domain.payment.GetPaymentUseCase;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.GetPaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.UsePointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.UsePointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
@@ -13,6 +16,8 @@ import io.hhplus.concert_reservation_service_java.domain.token.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
+import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.GetPaymentAPIRequest;
+import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.GetPaymentAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.UsePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.ChargePointAPIResponse;
@@ -21,6 +26,7 @@ import io.hhplus.concert_reservation_service_java.presentation.controller.user.d
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.GetPointAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.UsePointAPIResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +48,8 @@ public class UserController {
   private final GetPointUseCase getPointUseCase;
   private final ChargePointUseCase chargePointUseCase;
   private final UsePointUseCase usePointUseCase;
+
+  private final GetPaymentUseCase getPaymentUseCase;
 
   @PostMapping("/{userId}/token")
   @Operation(summary = "유저 토큰 발급" , description = "지정된 사용자 ID에 대한 새로운 토큰을 발급합니다. 이 토큰은 대기열 관리 및 서비스 접근 권한 부여에 사용됩니다.")
@@ -110,5 +118,18 @@ public class UserController {
     int point = usePointUseCase.execute(command);
 
     return ResponseEntity.ok(UsePointAPIResponse.from(point));
+  }
+
+  @GetMapping("/{userId}/payments")
+  @Operation(summary = "결제 내역 조회" , description = "결제 내역을 조회 합니다. 예약자 ID를 받아 결제 내역를 반환합니다.")
+  public ResponseEntity<GetPaymentAPIResponse> getPayment(
+      @RequestHeader(value = "Authorization", required =false) String accessKey,
+      @PathVariable long userId) {
+    GetPaymentCommand command = GetPaymentCommand.builder()
+        .userId(userId)
+        .build();
+    List<PaymentDomain> payments = getPaymentUseCase.execute(command);
+
+    return ResponseEntity.ok(GetPaymentAPIResponse.from(payments));
   }
 }

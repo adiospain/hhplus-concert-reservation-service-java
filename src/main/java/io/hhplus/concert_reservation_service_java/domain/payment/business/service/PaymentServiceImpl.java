@@ -35,8 +35,13 @@ public class PaymentServiceImpl implements PaymentService {
 
 
   @Override
-  public List<Payment> getPayment(long userId) {
-    
-    return List.of();
+  public Payment getPayment(long paymentId) {
+    return paymentRepository.findById(paymentId);
+  }
+
+  @Override
+  public List<Payment> getPayments(long userId) {
+    List<Payment> payments = paymentRepository.findByUserId(userId);
+    return payments;
   }
 }

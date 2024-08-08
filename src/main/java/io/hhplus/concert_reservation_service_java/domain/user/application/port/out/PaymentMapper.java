@@ -43,6 +43,9 @@ public class PaymentMapper {
   }
   
   public List<PaymentDomain> from (List<Payment> payments){
+    if (payments == null || payments.isEmpty()){
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
+    }
     return payments.stream()
         .map(this::convertToPaymentDomain)
         .collect(Collectors.toList());
