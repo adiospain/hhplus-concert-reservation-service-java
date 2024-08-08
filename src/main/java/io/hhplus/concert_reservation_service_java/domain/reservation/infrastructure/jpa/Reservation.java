@@ -24,7 +24,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "reservation",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"concert_schedule_id", "seat_id"}))
+    uniqueConstraints = @UniqueConstraint(columnNames = {"seat_id", "concert_schedule_id"}))
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
