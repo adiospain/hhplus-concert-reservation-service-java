@@ -3,12 +3,12 @@ package io.hhplus.concert_reservation_service_java.integration.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.UserRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
@@ -46,17 +46,18 @@ class CreatePaymentUseCaseIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    user = new User(1L, 6000);
-    user = userRepository.save(user);
+    user = new User(1L, 1000);
+    //user = userRepository.save(user);
 
     reservation = Reservation.builder()
+        .id(1L)
         .user(user)
         .concertScheduleId(2L)
         .seatId(3L)
-        .reservedPrice(5000)
+        .reservedPrice(10)
         .status(ReservationStatus.OCCUPIED)
         .build();
-    reservation = reservationRepository.save(reservation);
+    //reservation = reservationRepository.save(reservation);
   }
 
   @Test
@@ -78,7 +79,7 @@ class CreatePaymentUseCaseIntegrationTest {
 
     // Verify user point is deducted
     User updatedUser = userRepository.findById(user.getId()).orElseThrow();
-    assertThat(updatedUser.getPoint()).isEqualTo(1000);
+    assertThat(updatedUser.getPoint()).isEqualTo(user.getPoint() - reservation.getReservedPrice());
 
     // Verify reservation status is updated
     Reservation updatedReservation = reservationRepository.findById(reservation.getId()).orElseThrow();

@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
-import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.useCase.CreatePaymentUseCaseImpl;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.out.PaymentMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
@@ -30,17 +31,18 @@ class CreatePaymentUseCaseTest {
 
 
   private final UserService userService = Mockito.mock(UserService.class);
-
   private final ReservationService reservationService = Mockito.mock(ReservationService.class);
-
   private final PaymentService paymentService = Mockito.mock(PaymentService.class);
-
   private final TokenService tokenService = Mockito.mock(TokenService.class);
+
+  private final PaymentEvent.Publisher eventPublisher = Mockito.mock(PaymentEvent.Publisher.class);
 
   private final PaymentMapper paymentMapper = Mockito.mock(PaymentMapper.class);
 
+
+
   private final CreatePaymentUseCase createPaymentUseCase = new CreatePaymentUseCaseImpl(
-      userService, reservationService, paymentService , tokenService, paymentMapper);
+      userService, reservationService, paymentService , tokenService, eventPublisher, paymentMapper);
 
   private CreatePaymentCommand command;
   private Reservation reservation;
@@ -81,7 +83,7 @@ class CreatePaymentUseCaseTest {
     // Given
     when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
     when(userService.usePoint(1L, 5000)).thenReturn(reserver);
-    when(paymentService.createPayment(1L, 3L)).thenReturn(payment);
+    when(paymentService.createPayment(1L, reservation)).thenReturn(payment);
     when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);
 
     // When
@@ -91,7 +93,7 @@ class CreatePaymentUseCaseTest {
     assertEquals(paymentDomain, result);
     verify(reservationService).getReservationToPay(reservation.getId());
     verify(userService).usePoint(1L, 5000);
-    verify(paymentService).createPayment(command.getUserId(), reservation.getId());
+    verify(paymentService).createPayment(command.getUserId(), reservation);
     verify(reservationService).saveToPay(reservation);
     verify(paymentMapper).of(payment, reservation, reserver);
   }
@@ -149,7 +151,7 @@ class CreatePaymentUseCaseTest {
     // Given
     when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
     when(userService.usePoint(1L, 5000)).thenThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT));
-    when(paymentService.createPayment(1L, 3L)).thenReturn(payment);
+    when(paymentService.createPayment(1L, reservation)).thenReturn(payment);
     when(paymentMapper.of(payment, reservation, reserver)).thenReturn(paymentDomain);;
 
     // When & Then
