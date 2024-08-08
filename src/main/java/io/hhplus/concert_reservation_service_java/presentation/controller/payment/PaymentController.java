@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
   private final CreatePaymentUseCase createPaymentUseCase;
-  private final GetPaymentUseCase getPaymentUseCase;
+
 
   @PostMapping
   @Operation(summary = "결제" , description = "새로운 결제를 생성합니다. 예약자 ID와 예약 ID를 받아 결제를 처리하고 결제 정보를 반환합니다.")
@@ -46,18 +46,7 @@ public class PaymentController {
     return ResponseEntity.ok(CreatePaymentAPIResponse.from(payment));
   }
 
-  @GetMapping
-  @Operation(summary = "결제 내역 조회" , description = "결제 내역을 조회 합니다. 예약자 ID를 받아 결제 내역를 반환합니다.")
-  public ResponseEntity<GetPaymentAPIResponse> getPayment(
-      @RequestHeader(value = "Authorization", required =false) String accessKey,
-      @RequestBody GetPaymentAPIRequest request) {
-    GetPaymentCommand command = GetPaymentCommand.builder()
-        .userId(request.userId())
-        .build();
-    List<PaymentDomain> payments = getPaymentUseCase.execute(command);
 
-    return ResponseEntity.ok(GetPaymentAPIResponse.from(payments));
-  }
 
 //  @DeleteMapping
 //  @Operation(summary = "결제" , description = "결제를 취소합니다. 예약자 ID와 예약 ID를 받아 결제를 처리하고 결제 정보를 반환합니다.")

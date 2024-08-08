@@ -11,5 +11,7 @@ public interface PaymentService {
 
   Payment createPayment(long reserverId, Reservation reservation);
 
-  List<Payment> getPayment(long userId);
+  Payment getPayment(long paymentId);
+
+  List<Payment> getPayments(long userId);
 }

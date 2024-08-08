@@ -20,8 +20,7 @@ public class GetPaymentUseCaseImpl implements GetPaymentUseCase {
   @Override
   @Transactional
   public List<PaymentDomain> execute(GetPaymentCommand command) {
-    List<Payment> payments = paymentService.getPayment(command.getUserId());
-
+    List<Payment> payments = paymentService.getPayments(command.getUserId());
     return paymentMapper.from(payments);
   }
 }
