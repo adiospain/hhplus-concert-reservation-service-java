@@ -9,6 +9,7 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.infrastruct
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +30,10 @@ public class PaymentServiceImpl implements PaymentService {
 
   @Override
   public Payment createPayment(long reserverId, Reservation reservation) {
-    Payment savedPayment = Payment.createFrom(reserverId, reservation.getId(), reservation.getReservedPrice());
+    Payment savedPayment = Payment.createFrom(reserverId, reservation.getId(),
+        reservation.getReservedPrice());
     paymentRepository.save(savedPayment);
     return savedPayment;
-  public Payment createPayment(long reserverId, long concertScheduleId, long seatId, int price) {
-    Payment savedPayment = Payment.createToPay(reserverId, concertScheduleId, seatId, price);
-    return this.save(savedPayment);
   }
 
 

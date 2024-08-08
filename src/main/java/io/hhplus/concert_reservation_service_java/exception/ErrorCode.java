@@ -54,7 +54,7 @@ public enum ErrorCode {
   OBJECT_CANNOT_BE_NULL(INTERNAL_SERVER_ERROR, "객체가 null일 수 없습니다."),
   TIME_PARADOX(INTERNAL_SERVER_ERROR, "업데이트 되는 시간은 현재 시간보다 줄어들 수 없습니다. 업데이트 시간은 현재 생성 시간보다 이후여야 합니다."),
   LOCK_ACQUISITION_FAIL(INTERNAL_SERVER_ERROR, "락 획득에 실패했습니다." ),
-
+  THIRD_PARTY_ISSUE(FAILED_DEPENDENCY, "외부 API에서 오류가 발생했습니다." ),
   UNSPECIFIED_FAIL(INTERNAL_SERVER_ERROR, "정의 되지 않은 에러 입니다.");
   private final HttpStatus httpStatus;
   private final String message;

@@ -6,6 +6,7 @@ import io.hhplus.concert_reservation_service_java.domain.concert.application.por
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.GetConcertDetailUseCase;
 import io.hhplus.concert_reservation_service_java.domain.concert.application.port.out.ConcertMapper;
+import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.Concert;
 import io.hhplus.concert_reservation_service_java.domain.concert.infrastructure.jpa.entity.ConcertSchedule;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
