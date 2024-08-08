@@ -7,34 +7,34 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-@Component
-public class PaymentEvent {
-
   @Component
-  public class Publisher {
-    private final ApplicationEventPublisher applicationEventPublisher;
+  public class PaymentEvent {
 
-    public Publisher(ApplicationEventPublisher applicationEventPublisher) {
-      this.applicationEventPublisher = applicationEventPublisher;
+    @Component
+    public class Publisher {
+      private final ApplicationEventPublisher applicationEventPublisher;
+
+      public Publisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+      }
+
+      public void success (PaymentSuccessEvent event){
+        applicationEventPublisher.publishEvent(event);
+      }
     }
 
-    public void success (PaymentSuccessEvent event){
-      applicationEventPublisher.publishEvent(event);
+    @Component
+    public class Listener {
+      private final DataPlatformSendService sendService;
+
+      public Listener(DataPlatformSendService sendService) {
+        this.sendService = sendService;
+      }
+
+      @Async
+      @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+      public void paymentSuccessHandler(PaymentSuccessEvent event) {
+        sendService.send();
+      }
     }
   }
-
-  @Component
-  public class Listener {
-    private final DataPlatformSendService sendService;
-
-    public Listener(DataPlatformSendService sendService) {
-      this.sendService = sendService;
-    }
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void paymentSuccessHandler(PaymentSuccessEvent event) {
-      sendService.send();
-    }
-  }
-}
