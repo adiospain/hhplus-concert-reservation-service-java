@@ -36,18 +36,18 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
   @Override
   @Transactional
-  public PaymentDomain execute(CreatePaymentCommand command) {
-      Reservation reservation = reservationService.getReservationToPay(command.getReservationId());
-      User user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-      Payment payment = paymentService.createPayment(user.getId(), reservation);
+    public PaymentDomain execute(CreatePaymentCommand command) {
+        Reservation reservation = reservationService.getReservationToPay(command.getReservationId());
+        User user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
+        Payment payment = paymentService.createPayment(user.getId(), reservation);
 
-      reservationService.saveToPay(reservation);
-      tokenService.expireToken(command.getUserId(), command.getAccessKey());
+        reservationService.saveToPay(reservation);
+        tokenService.expireToken(command.getUserId(), command.getAccessKey());
 
-      eventPublisher.success(new PaymentSuccessEvent(payment));
+          eventPublisher.success(new PaymentSuccessEvent(payment));
 
-      return paymentMapper.of(payment, reservation, user);
-  }
+        return paymentMapper.of(payment, reservation, user);
+    }
 
   @Override
   public void usePoint(long id, int price){
