@@ -144,8 +144,8 @@ CRUD 매트릭스를 작성합니다.
 결제 로직과 예약 로직 순으로
 먼저 인덱싱 개선 후 이벤트 주도 설계를 해보도록 합니다.
 
-### 최적화 해보기
-#### 1단계 : 결제 로직
+## 최적화 해보기
+### 1단계 : 결제 로직
 
 ```java
 @Override
@@ -176,56 +176,60 @@ CRUD 매트릭스를 작성합니다.
   }
 ```
 
-##### 인덱싱 개선 :
+#### 인덱싱 개선 :
 1. reservation 테이블 인덱스 최적화 :
     - 복합키 (`seatId` & `concertScheduleId`)로 인덱스 했습니다.
-   2. user/reserver 테이블 인덱스 최적화 :
-       - 유저 포인트가 자주 변경된다면, 인덱스도 그만큼 자주 갱신되어 쓰기 성능이 저하될 수 있습니다.
-       - 인덱스 설정을 하지 않는 것이 바람직하다고 판단됩니다.
+2. user/reserver 테이블 인덱스 최적화 :
+    - 유저 포인트가 자주 변경된다면, 인덱스도 그만큼 자주 갱신되어 쓰기 성능이 저하될 수 있습니다.
+    - 인덱스 설정을 하지 않는 것이 바람직하다고 판단됩니다.
 
-##### 트랜잭션 개선 :
+#### 트랜잭션 개선 :
 트랜잭션 마지막에 외부 API 호출 기능을 추가 한다면, 외부 API의 결과가 내 서비스와 강결합되지 않도록
 도메인간의 책임 분리와 이벤트 기반 로직 처리가 필요합니다.
 
-```java
-@Transactional
-  public PaymentDomain execute(CreatePaymentCommand command) {
-  
-      //1. 예약 정보를 조회 검증한다.
-      Reservation reservation = reservationService.getReservationToPay(command.getReservationId());
+##### 처리 방안 :
+1. 이벤트 발행 및 구독 시스템 구축  
+   `ApplicationEventPublisher`을 활용하여, 이벤트를 발행하고 이를 구독하는 구조를 설계합니다.
+    ```java
+    public class PaymentEvent {
+    
+        @Component
+        public class Publisher {
+          private final ApplicationEventPublisher applicationEventPublisher;
+    
+          public Publisher(ApplicationEventPublisher applicationEventPublisher) {
+            this.applicationEventPublisher = applicationEventPublisher;
+          }
+    
+          public void success (PaymentSuccessEvent event){
+            applicationEventPublisher.publishEvent(event);
+          }
+        }
+    
+        @Component
+        public class Listener {
+          private final DataPlatformClient dataPlatformClient;
+    
+          public Listener(DataPlatformClient dataPlatformClient) {
+            this.dataPlatformClient = dataPlatformClient;
+          }
+    
+          @Async //비동기 처리로 이벤트 핸들러가 독립적으로 동작할 수 있습니다.
+          @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT) // 트랜잭션 커밋 후 처리
+          public void paymentSuccessHandler(PaymentSuccessEvent event) {
+            try{
+              dataPlatformClient.send("PAYMENT_CREATED", event.getPayment());
+            } catch (Exception e) {
+              throw new CustomException(ErrorCode.THIRD_PARTY_ISSUE);
+            }
+          }
+        }
+    }
+    ```
 
-      //2. 유저 조회 검증과 동시에 결제 차감한다.
-      User user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-
-      //3. 결제를 생성한다.
-      Payment payment = paymentService.createPayment(
-          user.getId(),
-          reservation.getConcertScheduleId(), reservation.getSeatId(),
-          reservation.getReservedPrice());
-
-      //4. 좌석의 상태를 결제 완료 상태로 변경한다.
-      reservationService.saveToPay(reservation);
-      
-      //5. 활성화 토큰을 만료 시킨다.
-      tokenService.expireToken(command.getUserId(), command.getAccessKey());
-      
-      //6. 외부 API 호출한다.
-      eventPublisher.publish(new CreatePayment(payment));
-      return paymentMapper.of(payment, reservation, user);
-  }
-```
-
-
-인덱싱 외에 table 카디널리티 개선
-
-Step 16
-결제 or 좌석예약
-
-시간 체크 : 분당 쿼리를 쏠 수 있는 클라이언트
-
-쿼리 DSL 필요하겠구나
-
-예약 -> 결제시 예약 테이블의 생성 시간
-
-
-인메모리 대신 mysql
+## 결론
+이벤트 기반 비동기 처리 방식과 인덱스를 적절히 결합하여 
+시스템의 성능을 향상했습니다.
+인덱스는 데이터 읽기 속도를 높이고, 동시성 문제를 해결하며
+이벤트 기반 시스템으로 트랜잭션이 실패할 때 적절한 보상 트랜잭션을 실행할 수 있어 체계적인 시스템의 안정성과 복원력을 향상시킬 수 있습니다.
+이러한 방식은 특히 대규모 분산 시스템에서 효과가 극대화 됩니다.
