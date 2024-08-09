@@ -12,35 +12,35 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 public class PaymentEvent {
 
-  @Component
-  public class Publisher {
-    private final ApplicationEventPublisher applicationEventPublisher;
+    @Component
+    public class Publisher {
+      private final ApplicationEventPublisher applicationEventPublisher;
 
-    public Publisher(ApplicationEventPublisher applicationEventPublisher) {
-      this.applicationEventPublisher = applicationEventPublisher;
-    }
+      public Publisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+      }
 
-    public void success (PaymentSuccessEvent event){
-      applicationEventPublisher.publishEvent(event);
-    }
-  }
-
-  @Component
-  public class Listener {
-    private final DataPlatformClient dataPlatformClient;
-
-    public Listener(DataPlatformClient dataPlatformClient) {
-      this.dataPlatformClient = dataPlatformClient;
-    }
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void paymentSuccessHandler(PaymentSuccessEvent event) {
-      try{
-        dataPlatformClient.send("PAYMENT_CREATED", event.getPayment());
-      } catch (Exception e) {
-        throw new CustomException(ErrorCode.THIRD_PARTY_ISSUE);
+      public void success (PaymentSuccessEvent event){
+        applicationEventPublisher.publishEvent(event);
       }
     }
-  }
+
+    @Component
+    public class Listener {
+      private final DataPlatformClient dataPlatformClient;
+
+      public Listener(DataPlatformClient dataPlatformClient) {
+        this.dataPlatformClient = dataPlatformClient;
+      }
+
+      @Async
+      @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+      public void paymentSuccessHandler(PaymentSuccessEvent event) {
+        try{
+          dataPlatformClient.send("PAYMENT_CREATED", event.getPayment());
+        } catch (Exception e) {
+          throw new CustomException(ErrorCode.THIRD_PARTY_ISSUE);
+        }
+      }
+    }
 }
