@@ -1,29 +1,23 @@
-CREATE TABLE reserver (
+CREATE TABLE IF NOT EXISTS reserver (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          version BIGINT NOT NULL DEFAULT 0,
-                          point INT,
-                          CONSTRAINT version_check CHECK (version >= 0)
+                          point INT
 );
+
 -- ALTER TABLE reserver ALTER COLUMN version SET DEFAULT 0;
 
-CREATE TABLE IF NOT EXISTS payment (
-                                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                       user_id BIGINT NOT NULL,
-                                       reservation_id BIGINT NOT NULL,
-                                       created_at TIMESTAMP NOT NULL,
-                                       reserved_price INT
-);
+
 
 CREATE TABLE IF NOT EXISTS concert (
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                        name VARCHAR(255)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS concert_schedule (
                                                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                                 concert_id BIGINT NOT NULL,
                                                 start_at TIMESTAMP,
                                                 capacity INTEGER,
+
     FOREIGN KEY (concert_id) REFERENCES concert(id)
     );
 
@@ -43,6 +37,7 @@ CREATE TABLE IF NOT EXISTS concert_schedule_seat (
     FOREIGN KEY (seat_id) REFERENCES seat(id)
     );
 
+
 CREATE TABLE IF NOT EXISTS reservation (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,
       user_id BIGINT,
@@ -53,8 +48,17 @@ CREATE TABLE IF NOT EXISTS reservation (
     paid_at TIMESTAMP,
     reserved_price INTEGER,
     FOREIGN KEY (user_id) REFERENCES reserver(id),
-    UNIQUE (concert_schedule_id, seat_id)
+    UNIQUE (seat_id, concert_schedule_id)
 );
+
+CREATE TABLE IF NOT EXISTS payment (
+                                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        reserver_id BIGINT NOT NULL,
+                                       reservation_id BIGINT NOT NULL,
+                                       created_at TIMESTAMP NOT NULL,
+                                       reserved_price INT
+);
+
 
 CREATE TABLE IF NOT EXISTS token (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
