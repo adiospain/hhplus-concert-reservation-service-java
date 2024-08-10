@@ -131,7 +131,34 @@ CRUD 매트릭스를 작성합니다.
   - 콘서트 목록 / 날짜 / 좌석 조회
       - 콘서트 관련 테이블은 한 번 등록되면 자주 변경되지 않습니다.
       - 인덱스 유지 비용이 상대적으로 낮으므로 **적극적으로 인덱싱**을 적용할 수 있습니다.
+    - 콘서트 날짜 조회
+        - 인덱스 추가 전
+          ```java
+          ticketing> SELECT *
+             FROM concert_schedule
+                 WHERE concert_id = 1
+                   AND start_at between '2025-01-01 00:00:00' and '2025-08-08 00:00:00'
+          [422,412 rows retrieved starting from 1 in 7 s 704 ms (execution: 9 ms, fetching: 7 s 695 ms)]
+          [422,412 rows retrieved starting from 1 in 7 s 905 ms (execution: 8 ms, fetching: 7 s 897 ms)]
+          [422,412 rows retrieved starting from 1 in 7 s 685 ms (execution: 9 ms, fetching: 7 s 676 ms)]
 
+
+        - 인덱스 추가 후
+            ```java
+          ticketing> SELECT *
+             FROM concert_schedule
+                 WHERE concert_id = 1
+                   AND start_at between '2025-01-01 00:00:00' and '2025-08-08 00:00:00'
+        
+          [422,412 rows retrieved starting from 1 in 7 s 770 ms (execution: 4 ms, fetching: 7 s 766 ms)]
+          [422,412 rows retrieved starting from 1 in 7 s 746 ms (execution: 2 ms, fetching: 7 s 744 ms)]
+          [422,412 rows retrieved starting from 1 in 7 s 659 ms (execution: 2 ms, fetching: 7 s 657 ms)]
+        
+          ```
+      인덱스를 추가한 결과, 쿼리의 실행 시간이 약 50%이상 단축되었습니다.  
+    따라서, 쿼리 실행 성능을 개선하기 위해 적절한 인덱스를 추가하는 것이 매우 유용한 전략임을 확인할 수 있습니다.
+  
+    
   - 예약
       - 이미 복합키를 사용하여 조회 성능이 일정 수준 최적화 되어 있습니다.
           - 예약상태에 따른 `status` 필드 인덱스 추가를 검토 합니다.
