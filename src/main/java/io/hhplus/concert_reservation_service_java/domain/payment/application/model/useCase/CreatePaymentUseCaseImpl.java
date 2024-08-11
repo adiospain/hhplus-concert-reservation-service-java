@@ -42,7 +42,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
       Payment payment = paymentService.createPayment(user.getId(), reservation);
 
       reservationService.saveToPay(reservation);
-      tokenService.expireToken(command.getUserId(), command.getAccessKey());
+      //tokenService.expireToken(command.getUserId(), command.getAccessKey());
 
       eventPublisher.success(new PaymentSuccessEvent(payment));
 
