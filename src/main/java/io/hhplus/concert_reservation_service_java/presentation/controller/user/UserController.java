@@ -2,7 +2,7 @@ package io.hhplus.concert_reservation_service_java.presentation.controller.user;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.GetPaymentUseCase;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.GetPaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.GetPaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.UsePointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.UsePointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
@@ -16,7 +16,6 @@ import io.hhplus.concert_reservation_service_java.domain.token.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
-import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.GetPaymentAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.GetPaymentAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.UsePointAPIRequest;

@@ -4,19 +4,13 @@ package io.hhplus.concert_reservation_service_java.presentation.controller.payme
 import io.hhplus.concert_reservation_service_java.domain.payment.CreatePaymentUseCase;
 
 
-import io.hhplus.concert_reservation_service_java.domain.payment.GetPaymentUseCase;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.GetPaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.CreatePaymentAPIRequest;
-import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.req.GetPaymentAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.CreatePaymentAPIResponse;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.GetPaymentAPIResponse;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
