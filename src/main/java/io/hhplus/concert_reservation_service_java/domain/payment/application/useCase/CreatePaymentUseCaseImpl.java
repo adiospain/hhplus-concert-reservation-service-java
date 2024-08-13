@@ -3,8 +3,8 @@ package io.hhplus.concert_reservation_service_java.domain.payment.application.us
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentSuccessEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEventPublisher;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
@@ -29,23 +29,29 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   private final PaymentService paymentService;
   private final TokenService tokenService;
 
-  private final PaymentEvent.Publisher eventPublisher;
+  private final PaymentEventPublisher eventPublisher;
 
   private final PaymentMapper paymentMapper;
 
   @Override
   @Transactional
   public PaymentDomain execute(CreatePaymentCommand command) {
-      Reservation reservation = reservationService.getReservationToPay(command.getReservationId());
-      User user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-      Payment payment = paymentService.createPayment(user.getId(), reservation);
+    Reservation reservation = null;
+    User user = null;
+    Payment payment = null;
+    try {
+      reservation = reservationService.getReservationToPay(command.getReservationId());
+      user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
+      payment = paymentService.createPayment(user.getId(), reservation);
 
       reservationService.saveToPay(reservation);
-      //tokenService.expireToken(command.getUserId(), command.getAccessKey());
-
-      eventPublisher.success(new PaymentSuccessEvent(payment));
-
+      tokenService.expireToken(command.getUserId(), command.getAccessKey());
       return paymentMapper.of(payment, reservation, user);
+    } catch (Exception e){
+      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
+    } finally {
+      eventPublisher.execute(new PaymentEvent(reservation, user, payment));
+    }
   }
 
   @Override
