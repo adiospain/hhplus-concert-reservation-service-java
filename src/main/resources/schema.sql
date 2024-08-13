@@ -59,6 +59,13 @@ CREATE TABLE IF NOT EXISTS payment (
                                        reserved_price INT
 );
 
+CREATE TABLE IF NOT EXISTS payment_outbox (
+                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                message VARCHAR(255) NOT NULL,
+                                completed BOOLEAN NOT NULL,
+                                created_at TIMESTAMP NOT NULL
+);
+
 
 CREATE TABLE IF NOT EXISTS token (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
