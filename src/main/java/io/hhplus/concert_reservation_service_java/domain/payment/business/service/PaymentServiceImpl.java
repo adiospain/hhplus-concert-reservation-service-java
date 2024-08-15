@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
   }
 
   @Override
-  public Payment createPaymentKafka(long userId, long reservationId, int reservedPrice){
+  public Payment createPayment(long userId, long reservationId, int reservedPrice){
     Payment savedPayment = Payment.createFrom(userId, reservationId,
         reservedPrice);
     paymentRepository.save(savedPayment);

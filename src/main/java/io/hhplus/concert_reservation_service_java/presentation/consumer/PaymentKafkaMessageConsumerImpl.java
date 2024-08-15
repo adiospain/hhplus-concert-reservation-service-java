@@ -51,7 +51,7 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
       Long userId = paymentMessage.getUserId();
       Long reservationId = paymentMessage.getReservationId();
       Integer reservedPrice = paymentMessage.getReservedPrice();
-      paymentService.createPaymentKafka(userId, reservationId, reservedPrice);
+      paymentService.createPayment(userId, reservationId, reservedPrice);
     } catch (JsonMappingException e) {
       throw new RuntimeException(e);
     } catch (JsonProcessingException e) {

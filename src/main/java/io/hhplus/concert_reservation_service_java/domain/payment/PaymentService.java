@@ -10,8 +10,7 @@ public interface PaymentService {
   Payment save(Payment payment);
 
   Payment createPayment(long reserverId, Reservation reservation);
-
-  Payment createPaymentKafka(long userId, long reservationId, int reservedPrice);
+  Payment createPayment(long userId, long reservationId, int reservedPrice);
 
   Payment getPayment(long paymentId);
 
