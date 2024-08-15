@@ -9,6 +9,4 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.infrastruct
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 
 public interface Outbox {
-  long getId();
-  String getMessage();
 }

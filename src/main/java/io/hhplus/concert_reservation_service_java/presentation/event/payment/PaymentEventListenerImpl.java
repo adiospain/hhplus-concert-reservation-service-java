@@ -28,8 +28,7 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @TransactionalEventListener(phase = BEFORE_COMMIT)
   public void createOutbox(PaymentEvent event) {
     log.info("createOutbox::");
-    event.createOutboxMessage();
-    paymentOutboxManager.create(event.getPaymentOutbox());
+    paymentOutboxManager.create(event);
   }
 
   @Override

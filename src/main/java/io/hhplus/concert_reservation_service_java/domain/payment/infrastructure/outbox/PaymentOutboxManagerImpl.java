@@ -17,8 +17,9 @@ public class PaymentOutboxManagerImpl implements PaymentOutboxManager{
 
 
   @Override
-  public void create(PaymentOutbox outbox) {
-      paymentOutboxRepository.save(outbox);
+  public PaymentOutbox create(PaymentEvent event) {
+      event.createOutboxMessage();
+      return paymentOutboxRepository.save(event.getPaymentOutbox());
   }
 
   @Override

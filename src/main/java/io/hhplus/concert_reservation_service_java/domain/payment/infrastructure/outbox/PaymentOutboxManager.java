@@ -6,5 +6,5 @@ import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 
 public interface PaymentOutboxManager extends OutboxManager {
-  void create (PaymentOutbox outbox);
+  PaymentOutbox create (PaymentEvent outbox);
 }

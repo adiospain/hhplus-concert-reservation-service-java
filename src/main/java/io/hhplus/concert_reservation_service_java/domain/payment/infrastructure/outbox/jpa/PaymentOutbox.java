@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Table(name = "payment_outbox")
 @Builder
+@Getter
 @NoArgsConstructor // Required for JPA
 @AllArgsConstructor // Used by the builder
 public class PaymentOutbox implements Outbox {
@@ -56,21 +57,5 @@ public class PaymentOutbox implements Outbox {
   @PreUpdate
   protected void onUpdate() {
     updatedAt = LocalDateTime.now();
-  }
-
-
-  @Override
-  public long getId() {
-    return this.id;
-  }
-
-  @Override
-  public String getMessage() {
-    return this.message;
-  }
-
-  @Override
-  public boolean isCompleted() {
-    return this.completed;
   }
 }

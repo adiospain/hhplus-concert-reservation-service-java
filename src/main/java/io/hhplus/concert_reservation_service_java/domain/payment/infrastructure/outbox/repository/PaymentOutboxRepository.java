@@ -4,6 +4,8 @@ import io.hhplus.concert_reservation_service_java.domain.common.outbox.OutboxRep
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 
 public interface PaymentOutboxRepository extends OutboxRepository {
-  void save(PaymentOutbox paymentOutbox);
+
+  PaymentOutbox save(PaymentOutbox paymentOutbox);
+
   void markComplete(long outboxId);
 }
