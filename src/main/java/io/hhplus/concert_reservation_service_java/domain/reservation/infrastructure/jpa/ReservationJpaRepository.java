@@ -14,9 +14,9 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
 
   @Modifying
   @Query("UPDATE Reservation r SET r.status = 'EXPIRED' WHERE r.createdAt < :now")
-  int bulkUpdateExpiredReservations(LocalDateTime now);
+  int bulkUpdateExpiredReservations(@Param("now") LocalDateTime now);
 
   @Modifying
-  @Query("DELETE FROM Reservation r WHERE r.status = :status AND r.createdAt < :expirationTime")
-  void deleteExpiredReservations(LocalDateTime expirationTime);
+  @Query("DELETE FROM Reservation r WHERE r.status = 'EXPIRED' AND r.createdAt < :expirationTime")
+  void deleteExpiredReservations(@Param("expirationTime") LocalDateTime expirationTime);
 }

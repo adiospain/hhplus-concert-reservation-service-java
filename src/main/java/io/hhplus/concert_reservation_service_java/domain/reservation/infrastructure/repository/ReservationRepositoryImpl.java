@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
@@ -34,6 +35,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @Override
+  @Transactional
   public void deleteExpiredReservations(LocalDateTime expirationTime) {
     reservationRepository.deleteExpiredReservations(expirationTime);
   }
