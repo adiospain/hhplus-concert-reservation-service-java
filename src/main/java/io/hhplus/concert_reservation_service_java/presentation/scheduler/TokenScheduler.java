@@ -16,7 +16,7 @@ public class TokenScheduler {
 
   @Scheduled(fixedRate = 3 * 1000)
   public void scheduler() {
-    log.info("돈다");
+    log.info("scheduler::");
     tokenService.touchExpiredTokens();
     tokenService.activateNextTokens();
   }
