@@ -41,7 +41,7 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
       throw new RuntimeException(e);
     }
   }
-  @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "createPayment")
+  @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "CreatePayment")
   public void paidToCreatePayment(String message){
     log.info("paidToCreatePayment:: start - message = {}",
         message);
