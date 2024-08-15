@@ -11,6 +11,8 @@ public interface PaymentService {
 
   Payment createPayment(long reserverId, Reservation reservation);
 
+  Payment createPaymentKafka(long userId, long reservationId, int reservedPrice);
+
   Payment getPayment(long paymentId);
 
   List<Payment> getPayments(long userId);

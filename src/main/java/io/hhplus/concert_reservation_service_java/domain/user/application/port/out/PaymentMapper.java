@@ -13,30 +13,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentMapper {
 
-  public PaymentDomain of(Payment savedPayment, Reservation reservation) {
-    if (savedPayment == null){
-      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-    }
-
+  public PaymentDomain of(Reservation reservation) {
     return PaymentDomain.builder()
-        .id(savedPayment.getId())
         .reservationId(reservation.getId())
         .price(reservation.getReservedPrice())
-        .createdAt(savedPayment.getCreatedAt())
         .build();
   }
 
-  public PaymentDomain of(Payment savedPayment, Reservation reservation, User reserver) {
-    if (savedPayment == null){
-      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-    }
-
+  public PaymentDomain of(Reservation reservation, User reserver) {
     return PaymentDomain.builder()
-        .id(savedPayment.getId())
         .reservationId(reservation.getId())
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
-        .createdAt(savedPayment.getCreatedAt())
         .build();
   }
   
@@ -51,10 +39,8 @@ public class PaymentMapper {
 
   private PaymentDomain convertToPaymentDomain(Payment payment) {
     return PaymentDomain.builder()
-        .id(payment.getId())
         .reservationId(payment.getReservationId())
         .price(payment.getReservedPrice())
-        .createdAt(payment.getCreatedAt())
         .build();
   }
 }

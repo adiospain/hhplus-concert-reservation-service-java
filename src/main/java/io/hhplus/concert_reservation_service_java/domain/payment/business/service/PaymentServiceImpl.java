@@ -1,14 +1,11 @@
 package io.hhplus.concert_reservation_service_java.domain.payment.business.service;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +33,13 @@ public class PaymentServiceImpl implements PaymentService {
     return savedPayment;
   }
 
+  @Override
+  public Payment createPaymentKafka(long userId, long reservationId, int reservedPrice){
+    Payment savedPayment = Payment.createFrom(userId, reservationId,
+        reservedPrice);
+    paymentRepository.save(savedPayment);
+    return savedPayment;
+  }
 
   @Override
   public Payment getPayment(long paymentId) {

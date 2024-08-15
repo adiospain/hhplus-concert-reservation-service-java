@@ -6,6 +6,8 @@ import io.hhplus.concert_reservation_service_java.domain.payment.application.por
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEventPublisher;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
+import io.hhplus.concert_reservation_service_java.domain.reservation.event.ReservationEvent;
+import io.hhplus.concert_reservation_service_java.domain.reservation.event.ReservationEventPublisher;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.core.common.annotation.UseCase;
@@ -30,6 +32,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   private final TokenService tokenService;
 
   private final PaymentEventPublisher eventPublisher;
+  private final ReservationEventPublisher reservationEventPublisher;
 
   private final PaymentMapper paymentMapper;
 
@@ -42,15 +45,16 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     try {
       reservation = reservationService.getReservationToPay(command.getReservationId());
       user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-      payment = paymentService.createPayment(user.getId(), reservation);
-
       reservationService.saveToPay(reservation);
-      tokenService.expireToken(command.getUserId(), command.getAccessKey());
-      return paymentMapper.of(payment, reservation, user);
+
+      //payment = paymentService.createPayment(user.getId(), reservation);
+
+      //tokenService.expireToken(command.getUserId(), command.getAccessKey());
+      eventPublisher.execute(new PaymentEvent(reservation.getId(), reservation.getReservedPrice(), user.getId(), command.getAccessKey()));
+
+      return paymentMapper.of( reservation, user);
     } catch (Exception e){
       throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
-    } finally {
-      eventPublisher.execute(new PaymentEvent(reservation, user, payment));
     }
   }
 

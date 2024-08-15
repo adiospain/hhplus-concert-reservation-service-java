@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 
 
 public record CreatePaymentAPIResponse
-  (long paymentId,
+  (
   int price,
   int pointAfter){
 
   public static CreatePaymentAPIResponse from(PaymentDomain payment) {
-    return new CreatePaymentAPIResponse(payment.getId(), payment.getPrice(), payment.getPointAfter());
+    return new CreatePaymentAPIResponse(payment.getPrice(), payment.getPointAfter());
   }
 }

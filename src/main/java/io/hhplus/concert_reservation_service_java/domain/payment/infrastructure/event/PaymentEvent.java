@@ -17,8 +17,9 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 public class PaymentEvent implements CustomEvent {
   private long reservationId;
+  private int reservedPrice;
   private long userId;
-  private long paymentId;
+  //private long paymentId;
   private String accessKey;
   private String message;
   private PaymentOutbox paymentOutbox;
@@ -27,10 +28,17 @@ public class PaymentEvent implements CustomEvent {
 
 
 
-  public PaymentEvent(Long reservationId, Long userId, Long paymentId, String accessKey) {
+//  public PaymentEvent(Long reservationId, Long userId, Long paymentId, String accessKey) {
+//    this.reservationId = reservationId;
+//    this.userId = userId;
+//    this.paymentId = paymentId;
+//    this.accessKey = accessKey;
+//  }
+
+  public PaymentEvent(Long reservationId, int reservedPrice, Long userId, String accessKey) {
     this.reservationId = reservationId;
+    this.reservedPrice = reservedPrice;
     this.userId = userId;
-    this.paymentId = paymentId;
     this.accessKey = accessKey;
   }
 
@@ -59,18 +67,18 @@ public class PaymentEvent implements CustomEvent {
     try {
       if (includeOutboxId) {
         return objectMapper.writeValueAsString(new Object() {
-          public final Long paymentId = PaymentEvent.this.paymentId;
-          public final Long userId = PaymentEvent.this.userId;
           public final Long reservationId = PaymentEvent.this.reservationId;
+          public final Integer reservedPrice = PaymentEvent.this.reservedPrice;
+          public final Long userId = PaymentEvent.this.userId;
           public final String accessKey = PaymentEvent.this.accessKey;
           public final Long outboxId = PaymentEvent.this.paymentOutbox.getId();
         });
       }
       else {
         return objectMapper.writeValueAsString(new Object() {
-          public final Long paymentId = PaymentEvent.this.paymentId;
-          public final Long userId = PaymentEvent.this.userId;
           public final Long reservationId = PaymentEvent.this.reservationId;
+          public final Integer reservedPrice = PaymentEvent.this.reservedPrice;
+          public final Long userId = PaymentEvent.this.userId;
           public final String accessKey = PaymentEvent.this.accessKey;
         });
       }
