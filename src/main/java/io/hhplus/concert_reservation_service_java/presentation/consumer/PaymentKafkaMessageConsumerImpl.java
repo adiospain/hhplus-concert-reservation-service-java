@@ -27,7 +27,7 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
   private final TokenService tokenService;
 
   @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "PaymentOutbox")
-  public void paidToCreateOutBox(String message){
+  public void paidToMarkOutBox(String message){
     log.info("paid:: start - message = {}",
         message);
     ObjectMapper objectMapper = new ObjectMapper();
