@@ -71,16 +71,7 @@ SELECT
 FROM concert c;
 
 INSERT INTO seat (seat_number) VALUES
-                                   (1), (2), (3), (4), (5), (6), (7), (8), (9), (10),
-                                   (11), (12), (13), (14), (15), (16), (17), (18), (19), (20),
-                                   (21), (22), (23), (24), (25), (26), (27), (28), (29), (30),
-                                   (31), (32), (33), (34), (35), (36), (37), (38), (39), (40),
-                                   (41), (42), (43), (44), (45), (46), (47), (48), (49), (50),
-                                   (51), (52), (53), (54), (55), (56), (57), (58), (59), (60),
-                                   (61), (62), (63), (64), (65), (66), (67), (68), (69), (70),
-                                   (71), (72), (73), (74), (75), (76), (77), (78), (79), (80),
-                                   (81), (82), (83), (84), (85), (86), (87), (88), (89), (90),
-                                   (91), (92), (93), (94), (95), (96), (97), (98), (99), (100);
+                                   (1);
 
 INSERT INTO reservation (
     user_id,
@@ -99,24 +90,42 @@ INSERT INTO reservation (
              NULL,  -- Replace with the actual paid_at datetime or NULL
              10   -- Replace with the actual reserved price
          );
+
+INSERT INTO reservation (
+    user_id,
+    concert_schedule_id,
+    seat_id,
+    status,
+    created_at,
+    paid_at,
+    reserved_price
+) VALUES (
+             1,  -- Replace with the actual user ID
+             2,  -- Replace with the actual concert schedule ID
+             4,  -- Replace with the actual seat ID
+             'OCCUPIED',  -- Replace with the actual reservation status
+             DATE_ADD(NOW(), INTERVAL 9 HOUR),  -- Or replace with a specific datetime if needed
+             NULL,  -- Replace with the actual paid_at datetime or NULL
+             10   -- Replace with the actual reserved price
+         );
 #
-# EXPLAIN INSERT INTO concert_schedule_seat (concert_schedule_id, seat_id, price)
-#     SELECT
-#             cs.id AS concert_schedule_id,
-#             s.id AS seat_id,
-#             2000 AS price
-#         FROM concert_schedule cs
-#                  CROSS JOIN seat s;
+EXPLAIN INSERT INTO concert_schedule_seat (concert_schedule_id, seat_id, price)
+    SELECT
+            cs.id AS concert_schedule_id,
+            s.id AS seat_id,
+            2000 AS price
+        FROM concert_schedule cs
+                 CROSS JOIN seat s;
+
+select * from concert_schedule;
 #
-# select * from concert_schedule;
-#
-# INSERT INTO concert_schedule_seat (concert_schedule_id, seat_id, price)
-# SELECT
-#     cs.id AS concert_schedule_id,
-#     s.id AS seat_id,
-#     2000 AS price
-# FROM concert_schedule cs
-#          CROSS JOIN seat s;
+INSERT INTO concert_schedule_seat (concert_schedule_id, seat_id, price)
+SELECT
+    cs.id AS concert_schedule_id,
+    s.id AS seat_id,
+    2000 AS price
+FROM concert_schedule cs
+         CROSS JOIN seat s;
 
 
 DROP TEMPORARY TABLE IF EXISTS names;

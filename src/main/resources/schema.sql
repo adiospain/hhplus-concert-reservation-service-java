@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS payment_outbox (
                                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                 message VARCHAR(255) NOT NULL,
                                 completed BOOLEAN NOT NULL,
-                                created_at TIMESTAMP NOT NULL
+                                created_at TIMESTAMP NOT NULL,
+                                          updated_at TIMESTAMP
 );
 
 
