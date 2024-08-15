@@ -1,41 +1,51 @@
 package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event;
 
-import io.hhplus.concert_reservation_service_java.domain.common.DataPlatformClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.hhplus.concert_reservation_service_java.domain.common.event.CustomEvent;
-import io.hhplus.concert_reservation_service_java.domain.common.outbox.Outbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
-import io.hhplus.concert_reservation_service_java.exception.CustomException;
-import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
+
+import org.springframework.context.ApplicationEvent;
 
 @Getter
-@AllArgsConstructor
 public class PaymentEvent implements CustomEvent {
-  private Reservation reservation;
-  private User user;
-  private Payment payment;
+  private long reservationId;
+  private long userId;
+  private long paymentId;
+  private String accessKey;
 
   private PaymentOutbox paymentOutbox;
 
-  public PaymentEvent(Reservation reservation, User user, Payment payment) {
-    this.reservation = reservation;
-    this.user = user;
-    this.payment = payment;
-    this.paymentOutbox = new PaymentOutbox(this.toString(), false);
+  public PaymentEvent(Long reservationId, Long userId, Long paymentId, String accessKey) {
+    this.reservationId = reservationId;
+    this.userId = userId;
+    this.paymentId = paymentId;
+    this.accessKey = accessKey;
   }
 
   @Override
-  public Outbox getOutbox() {
-    return this.paymentOutbox;
+  public void createOutboxMessage() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    try {
+      // Create a JSON string with all three objects
+      String message = objectMapper.writeValueAsString(new Object() {
+        public final Long reservationId = PaymentEvent.this.reservationId;
+        public final Long userId = PaymentEvent.this.userId;
+        public final Long paymentId = PaymentEvent.this.paymentId;
+      });
+      this.paymentOutbox = paymentOutbox.builder()
+          .message(message)
+          .build();
+
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
   }
 }
