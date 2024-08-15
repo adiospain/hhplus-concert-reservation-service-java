@@ -8,4 +8,7 @@ public interface PaymentOutboxRepository extends OutboxRepository {
   PaymentOutbox save(PaymentOutbox paymentOutbox);
 
   void markComplete(long outboxId);
+
+  void deleteCompleted();
+
 }

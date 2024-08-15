@@ -22,4 +22,10 @@ public class PaymentOutboxRepositoryImpl implements PaymentOutboxRepository{
   public void markComplete(long outboxId) {
     paymentOutboxRepository.markComplete(outboxId);
   }
+
+  @Override
+  @Transactional
+  public void deleteCompleted() {
+    paymentOutboxRepository.deleteCompleted();
+  }
 }
