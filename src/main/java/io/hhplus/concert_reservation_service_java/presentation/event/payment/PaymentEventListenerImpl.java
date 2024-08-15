@@ -3,11 +3,11 @@ package io.hhplus.concert_reservation_service_java.presentation.event.payment;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 import static org.springframework.transaction.event.TransactionPhase.BEFORE_COMMIT;
 
-import io.hhplus.concert_reservation_service_java.domain.common.event.CustomEvent;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEventListener;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentMessageSender;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.PaymentMessageSender;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
+import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -22,16 +22,28 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   private final PaymentOutboxManager paymentOutboxManager;
   private final PaymentMessageSender paymentMessageSender;
 
+  private final TokenService tokenService;
+
   @Override
   @TransactionalEventListener(phase = BEFORE_COMMIT)
-  public void createOutbox(CustomEvent event) {
-    paymentOutboxManager.create(event.getOutbox());
+  public void createOutbox(PaymentEvent event) {
+    log.info("createOutbox::");
+    event.createOutboxMessage();
+    paymentOutboxManager.create(event.getPaymentOutbox());
+  }
+
+  @Override
+  @Async
+  @TransactionalEventListener(phase = AFTER_COMMIT)
+  public void sendMessage(PaymentEvent event) {
+    log.info("sendMessasge::");
+    paymentMessageSender.send(event.getPaymentOutbox().getMessage());
   }
 
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
-  public void sendMessage(CustomEvent event) {
-    log.info("sendMessasge::");
-    paymentMessageSender.send(event.getOutbox().getMessage());
+  public void expireToken(PaymentEvent event) {
+    log.info("expireToken::");
+    tokenService.expireToken(event.getUserId(), event.getAccessKey());
   }
 }
