@@ -36,7 +36,7 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void sendMessage(PaymentEvent event) {
     log.info("sendMessasge::");
-    paymentMessageSender.send(event.getPaymentOutbox().getMessage());
+    paymentMessageSender.send(event);
   }
 
   @Async
