@@ -11,19 +11,19 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class PaymentOutboxManagerImpl implements PaymentOutboxManager{
+  public class PaymentOutboxManagerImpl implements PaymentOutboxManager{
 
-  private final PaymentOutboxRepository paymentOutboxRepository;
+    private final PaymentOutboxRepository paymentOutboxRepository;
 
 
-  @Override
-  public PaymentOutbox create(PaymentEvent event) {
-      event.createOutboxMessage();
-      return paymentOutboxRepository.save(event.getPaymentOutbox());
-  }
+    @Override
+    public PaymentOutbox create(PaymentEvent event) {
+        event.createOutboxMessage();
+        return paymentOutboxRepository.save(event.getPaymentOutbox());
+    }
 
-  @Override
-  public void markComplete(long outboxId) {
-    paymentOutboxRepository.markComplete(outboxId);
-  }
+    @Override
+    public void markComplete(long outboxId) {
+      paymentOutboxRepository.markComplete(outboxId);
+    }
 }
