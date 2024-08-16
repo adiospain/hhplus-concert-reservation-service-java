@@ -14,15 +14,15 @@ public class PaymentKafkaMessageProducerImpl implements PaymentKafkaMessageProdu
 
   private final KafkaTemplate<String, String> kafkaTemplate;
 
-  @Value("${spring.kafka.topic.payment.name}")
-  private String PAYMENT_TOPIC_NAME;
+    @Value("${spring.kafka.topic.payment.name}")
+    private String PAYMENT_TOPIC_NAME;
 
 
 
-  @Override
-  public void send(String message) {
-    log.info("send:: start - message={}",
-        message);
-    kafkaTemplate.send(PAYMENT_TOPIC_NAME, message);
-  }
+    @Override
+    public void send(String message) {
+      log.info("send:: start - message={}",
+          message);
+      kafkaTemplate.send(PAYMENT_TOPIC_NAME, message);
+    }
 }
