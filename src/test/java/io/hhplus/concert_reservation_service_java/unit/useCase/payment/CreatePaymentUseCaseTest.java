@@ -1,4 +1,4 @@
-package io.hhplus.concert_reservation_service_java.unit.useCase.user;
+package io.hhplus.concert_reservation_service_java.unit.useCase.payment;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,10 +27,10 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 class CreatePaymentUseCaseTest {
-
 
   private final UserService userService = Mockito.mock(UserService.class);
   private final ReservationService reservationService = Mockito.mock(ReservationService.class);
@@ -38,14 +38,13 @@ class CreatePaymentUseCaseTest {
   private final TokenService tokenService = Mockito.mock(TokenService.class);
 
   private final PaymentEventPublisher eventPublisher = Mockito.mock(PaymentEventPublisher.class);
-  private final ReservationEventPublisher reservationEventPublisher = Mockito.mock(ReservationEventPublisher.class);
 
   private final PaymentMapper paymentMapper = Mockito.mock(PaymentMapper.class);
 
 
 
   private final CreatePaymentUseCase createPaymentUseCase = new CreatePaymentUseCaseImpl(
-      userService, reservationService, paymentService , tokenService, eventPublisher,reservationEventPublisher, paymentMapper);
+      userService, reservationService, paymentService , tokenService, eventPublisher, paymentMapper);
 
   private CreatePaymentCommand command;
   private Reservation reservation;
@@ -58,13 +57,18 @@ class CreatePaymentUseCaseTest {
   void setUp() {
     command = CreatePaymentCommand.builder()
         .userId(1L)
-        .reservationId(3L)
+        .reservationId(1L)
         .build();
+
+    reserver = new User(1L, 990);
+    reserver = new User(1L, 990);
     reservation = Reservation.builder()
-        .id(3L)
-        .reservedPrice(5000)
+        .id(1L)
+        .userId(reserver.getId())
+        .concertScheduleId(2L)
+        .seatId(3L)
+        .reservedPrice(10)
         .build();
-    reserver = new User(1L, 6000);
     payment = Payment.builder()
         .id(2L)
         .userId(reserver.getId())
@@ -75,16 +79,16 @@ class CreatePaymentUseCaseTest {
         .reservationId(reservation.getId())
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
-        .build();;
+        .build();
   }
 
   @Test
   @DisplayName("결제 성공")
   void execute_SuccessfulPayment() {
     // Given
-    when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
-    when(userService.usePoint(1L, 5000)).thenReturn(reserver);
-    when(paymentService.createPayment(1L, reservation)).thenReturn(payment);
+    when(reservationService.getReservationToPay(1L)).thenReturn(reservation);
+    when(userService.usePoint(1L, reservation.getReservedPrice())).thenReturn(reserver);
+    when(reservationService.saveToPay(reservation)).thenReturn(reservation);
     when(paymentMapper.of(reservation, reserver)).thenReturn(paymentDomain);
 
     // When
@@ -93,17 +97,24 @@ class CreatePaymentUseCaseTest {
     // Then
     assertEquals(paymentDomain, result);
     verify(reservationService).getReservationToPay(reservation.getId());
-    verify(userService).usePoint(1L, 5000);
-    verify(paymentService).createPayment(command.getUserId(), reservation);
+    verify(userService).usePoint(1L, 10);
     verify(reservationService).saveToPay(reservation);
+
     verify(paymentMapper).of(reservation, reserver);
+
+    ArgumentCaptor<PaymentEvent> eventCaptor = ArgumentCaptor.forClass(PaymentEvent.class);
+    verify(eventPublisher).execute(eventCaptor.capture());
+    PaymentEvent event = eventCaptor.getValue();
+    assertEquals(reservation.getId(), event.getReservationId());
+    assertEquals(reserver.getId(), event.getUserId());
   }
 
   @Test
   @DisplayName("예약을 찾을 수 없음")
   void execute_ReservationNotFound() {
 
-    when(reservationService.getReservationToPay(3L)).thenThrow(new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    when(reservationService.getReservationToPay(1L))
+        .thenThrow(new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
 
     // Act & Assert
@@ -111,16 +122,19 @@ class CreatePaymentUseCaseTest {
         .isInstanceOf(CustomException.class)
         .satisfies(thrown -> {
           CustomException exception = (CustomException) thrown;
+          assertEquals(ErrorCode.RESERVATION_NOT_FOUND, exception.getErrorCode());
         });
 
+    verify(reservationService).getReservationToPay(1L);
     verify(userService, never()).getUserWithLock(reserver.getId());
+    verifyNoMoreInteractions(reservationService, userService, eventPublisher);
   }
 
   @Test
   @DisplayName("유효하지 않은 예약")
   void execute_WhenReservationValidationFails_ShouldThrowException() {
     // Given
-    when(reservationService.getReservationToPay(3L)).thenThrow(new CustomException(ErrorCode.INVALID_RESERVATION_STATUS));
+    when(reservationService.getReservationToPay(1L)).thenThrow(new CustomException(ErrorCode.INVALID_RESERVATION_STATUS));
 
     // When & Then
     assertThatThrownBy(() -> createPaymentUseCase.execute(command))
@@ -135,7 +149,7 @@ class CreatePaymentUseCaseTest {
   @DisplayName("만료된 예약")
   void execute_WhenReservationExpired_ShouldThrowException() {
     // Given
-    when(reservationService.getReservationToPay(3L)).thenThrow(new CustomException(ErrorCode.EXPIRED_RESERVATION));
+    when(reservationService.getReservationToPay(1L)).thenThrow(new CustomException(ErrorCode.EXPIRED_RESERVATION));
 
     // When & Then
     assertThatThrownBy(() -> createPaymentUseCase.execute(command))
@@ -150,8 +164,8 @@ class CreatePaymentUseCaseTest {
   @DisplayName("충분하지 않은 포인트")
   void execute_WhenNotEnoughPoints_ShouldThrowException() {
     // Given
-    when(reservationService.getReservationToPay(3L)).thenReturn(reservation);
-    when(userService.usePoint(1L, 5000)).thenThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT));
+    when(reservationService.getReservationToPay(1L)).thenReturn(reservation);
+    when(userService.usePoint(1L, reservation.getReservedPrice())).thenThrow(new CustomException(ErrorCode.NOT_ENOUGH_POINT));
     when(paymentService.createPayment(1L, reservation)).thenReturn(payment);
     when(paymentMapper.of(reservation, reserver)).thenReturn(paymentDomain);;
 

@@ -51,7 +51,7 @@ class CreatePaymentUseCaseIntegrationTest {
 
     reservation = Reservation.builder()
         .id(1L)
-        .user(user)
+        .userId(user.getId())
         .concertScheduleId(2L)
         .seatId(3L)
         .reservedPrice(10)
