@@ -19,43 +19,39 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsumer {
 
-  private final PaymentOutboxManager paymentOutboxManager;
+    private final PaymentOutboxManager paymentOutboxManager;
+    private final PaymentService paymentService;
 
-  private final MessageSender messageSender;
-
-  private final PaymentService paymentService;
-  private final TokenService tokenService;
-
-  @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "PaymentOutbox")
-  public void paidToMarkOutBox(String message){
-    log.info("paid:: start - message = {}",
-        message);
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-      Long outboxId = paymentMessage.getOutboxId();
-      paymentOutboxManager.markComplete(outboxId);
-    } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+    @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "PaymentOutbox")
+    public void paidToMarkOutBox(String message){
+      log.info("paid:: start - message = {}",
+          message);
+      ObjectMapper objectMapper = new ObjectMapper();
+      try {
+        PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
+        Long outboxId = paymentMessage.getOutboxId();
+        paymentOutboxManager.markComplete(outboxId);
+      } catch (JsonMappingException e) {
+        throw new RuntimeException(e);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
     }
-  }
-  @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "CreatePayment")
-  public void paidToCreatePayment(String message){
-    log.info("paidToCreatePayment:: start - message = {}",
-        message);
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-      Long userId = paymentMessage.getUserId();
-      Long reservationId = paymentMessage.getReservationId();
-      Integer reservedPrice = paymentMessage.getReservedPrice();
-      paymentService.createPayment(userId, reservationId, reservedPrice);
-    } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+    @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "CreatePayment")
+    public void paidToCreatePayment(String message){
+      log.info("paidToCreatePayment:: start - message = {}",
+          message);
+      ObjectMapper objectMapper = new ObjectMapper();
+      try {
+        PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
+        Long userId = paymentMessage.getUserId();
+        Long reservationId = paymentMessage.getReservationId();
+        Integer reservedPrice = paymentMessage.getReservedPrice();
+        paymentService.createPayment(userId, reservationId, reservedPrice);
+      } catch (JsonMappingException e) {
+        throw new RuntimeException(e);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
     }
-  }
 }
