@@ -2,6 +2,7 @@ package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure
 
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutboxJpaRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,5 +28,11 @@ public class PaymentOutboxRepositoryImpl implements PaymentOutboxRepository{
   @Transactional
   public void deleteCompleted() {
     paymentOutboxRepository.deleteCompleted();
+  }
+
+  @Override
+  @Transactional
+  public List<PaymentOutbox> findByCompleted(boolean completed){
+    return paymentOutboxRepository.findByCompleted(completed);
   }
 }

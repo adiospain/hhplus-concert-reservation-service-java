@@ -32,7 +32,6 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
   private final TokenService tokenService;
 
   private final PaymentEventPublisher eventPublisher;
-  private final ReservationEventPublisher reservationEventPublisher;
 
   private final PaymentMapper paymentMapper;
 

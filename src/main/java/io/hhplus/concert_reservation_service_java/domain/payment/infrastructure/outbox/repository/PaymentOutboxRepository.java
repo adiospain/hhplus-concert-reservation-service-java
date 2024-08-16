@@ -2,6 +2,7 @@ package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure
 
 import io.hhplus.concert_reservation_service_java.domain.common.outbox.OutboxRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
+import java.util.List;
 
 public interface PaymentOutboxRepository extends OutboxRepository {
 
@@ -11,4 +12,5 @@ public interface PaymentOutboxRepository extends OutboxRepository {
 
   void deleteCompleted();
 
+  List<PaymentOutbox> findByCompleted(boolean completed);
 }
