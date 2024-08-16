@@ -39,24 +39,24 @@ public class OutboxScheduler {
     paymentOutboxRepository.deleteCompleted();
   }
 
-  @Scheduled(fixedRate = 5 * 1000)
-  public void retryPaymentOutboxEvent() {
-    log.info("retryOutboxEvent::");
-    List<PaymentOutbox> notCompletedOutbox = paymentOutboxRepository.findByCompleted(false);
-    for (PaymentOutbox outbox : notCompletedOutbox){
-      ObjectMapper objectMapper = new ObjectMapper();
-      PaymentKafkaMessage paymentMessage = null;
-      try {
-        paymentMessage = objectMapper.readValue(outbox.getMessage(), PaymentKafkaMessage.class);
-        Reservation reservation = reservationService.getById(paymentMessage.getReservationId());
+    @Scheduled(fixedRate = 5 * 1000)
+    public void retryPaymentOutboxEvent() {
+      log.info("retryOutboxEvent::");
+      List<PaymentOutbox> notCompletedOutbox = paymentOutboxRepository.findByCompleted(false);
+      for (PaymentOutbox outbox : notCompletedOutbox){
+        ObjectMapper objectMapper = new ObjectMapper();
+        PaymentKafkaMessage paymentMessage = null;
+        try {
+          paymentMessage = objectMapper.readValue(outbox.getMessage(), PaymentKafkaMessage.class);
+          Reservation reservation = reservationService.getById(paymentMessage.getReservationId());
 
-        if (reservation.getStatus() == ReservationStatus.PAID){
-          paymentKafkaMessageProducer.send(outbox.getMessage());
+          if (reservation.getStatus() == ReservationStatus.PAID){
+            paymentKafkaMessageProducer.send(outbox.getMessage());
+          }
+          tokenService.expireToken(paymentMessage.getUserId(), paymentMessage.getAccessKey());
+        } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
         }
-        tokenService.expireToken(paymentMessage.getUserId(), paymentMessage.getAccessKey());
-      } catch (JsonProcessingException e) {
-        throw new RuntimeException(e);
       }
     }
-  }
 }
