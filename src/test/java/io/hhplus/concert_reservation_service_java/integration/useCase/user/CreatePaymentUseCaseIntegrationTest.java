@@ -3,7 +3,7 @@ package io.hhplus.concert_reservation_service_java.integration.useCase.user;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.application.model.port.in.CreatePaymentCommand;
+import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.PaymentRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
