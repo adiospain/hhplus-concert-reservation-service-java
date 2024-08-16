@@ -30,32 +30,32 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @NoArgsConstructor // Required for JPA
 @AllArgsConstructor // Used by the builder
-public class PaymentOutbox implements Outbox {
+  public class PaymentOutbox implements Outbox {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-  @Column(name = "message", nullable = false)
-  private String message;
+    @Column(name = "message", nullable = false)
+    private String message;
 
-  @Column(name = "completed", nullable = false)
-  private boolean completed;
+    @Column(name = "completed", nullable = false)
+    private boolean completed;
 
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-  @PrePersist
-  protected void onCreate() {
-    this.completed = false;
-    this.createdAt = LocalDateTime.now();
+    @PrePersist
+    protected void onCreate() {
+      this.completed = false;
+      this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+      updatedAt = LocalDateTime.now();
+    }
   }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
-  }
-}

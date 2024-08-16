@@ -8,5 +8,5 @@ import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 
-public interface Outbox {
-}
+  public interface Outbox {
+  }
