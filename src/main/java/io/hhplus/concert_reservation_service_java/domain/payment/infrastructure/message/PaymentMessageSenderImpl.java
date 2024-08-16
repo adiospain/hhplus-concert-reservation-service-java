@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentMessageSenderImpl implements PaymentMessageSender {
 
-  private final PaymentKafkaMessageProducer paymentKafkaMessageProducer;
+    private final PaymentKafkaMessageProducer paymentKafkaMessageProducer;
 
-  @Override
-  public void send(PaymentEvent event) {
-    event.createKafkaMessage();
-    paymentKafkaMessageProducer.send(event.getMessage());
-  }
+    @Override
+    public void send(PaymentEvent event) {
+      event.createKafkaMessage();
+      paymentKafkaMessageProducer.send(event.getMessage());
+    }
 }
