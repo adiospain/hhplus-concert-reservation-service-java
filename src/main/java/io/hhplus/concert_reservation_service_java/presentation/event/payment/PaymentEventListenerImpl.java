@@ -24,25 +24,25 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
 
   private final TokenService tokenService;
 
-  @Override
-  @TransactionalEventListener(phase = BEFORE_COMMIT)
-  public void createOutbox(PaymentEvent event) {
-    log.info("createOutbox::");
-    paymentOutboxManager.create(event);
-  }
+    @Override
+    @TransactionalEventListener(phase = BEFORE_COMMIT)
+    public void createOutbox(PaymentEvent event) {
+      log.info("createOutbox::");
+      paymentOutboxManager.create(event);
+    }
 
-  @Override
-  @Async
-  @TransactionalEventListener(phase = AFTER_COMMIT)
-  public void sendMessage(PaymentEvent event) {
-    log.info("sendMessasge::");
-    paymentMessageSender.send(event);
-  }
+    @Override
+    @Async
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    public void sendMessage(PaymentEvent event) {
+      log.info("sendMessasge::");
+      paymentMessageSender.send(event);
+    }
 
-  @Async
-  @TransactionalEventListener(phase = AFTER_COMMIT)
-  public void expireToken(PaymentEvent event) {
-    log.info("expireToken::");
-    tokenService.expireToken(event.getUserId(), event.getAccessKey());
-  }
+    @Async
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    public void expireToken(PaymentEvent event) {
+      log.info("expireToken::");
+      tokenService.expireToken(event.getUserId(), event.getAccessKey());
+    }
 }
