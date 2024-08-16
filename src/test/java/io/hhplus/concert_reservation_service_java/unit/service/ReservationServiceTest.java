@@ -69,7 +69,7 @@ class ReservationServiceTest {
     User user = new User(userId, point);
     Reservation reservation = Reservation.builder()
         .id(reservationId)
-        .user(user)
+        .userId(user.getId())
         .status(ReservationStatus.OCCUPIED)
         .createdAt(LocalDateTime.now().minusMinutes(4))
         .build();
@@ -110,7 +110,7 @@ class ReservationServiceTest {
 
     User user = new User(userId, point);
     Reservation reservation = Reservation.builder()
-        .user(user)
+        .userId(user.getId())
         .id(reservationId)
         .status(ReservationStatus.OCCUPIED)
         .createdAt(LocalDateTime.now().minusMinutes(6))
@@ -135,7 +135,7 @@ class ReservationServiceTest {
     User user = new User(differentUserId, 3000);
     Reservation reservation = Reservation.builder()
         .id(reservationId)
-        .user(user)
+        .userId(user.getId())
         .build();
 
     when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));

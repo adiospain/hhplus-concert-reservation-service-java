@@ -52,7 +52,7 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
 
   private Reservation createAndSaveReservation(User user, ConcertScheduleSeat concertScheduleSeat) {
     Reservation savedReservation = Reservation.builder()
-        .user(user)
+        .userId(user.getId())
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .status(ReservationStatus.OCCUPIED)

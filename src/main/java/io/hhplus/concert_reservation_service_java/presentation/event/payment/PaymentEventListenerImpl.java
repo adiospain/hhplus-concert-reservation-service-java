@@ -39,6 +39,7 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
     paymentMessageSender.send(event);
   }
 
+  @Override
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void expireToken(PaymentEvent event) {

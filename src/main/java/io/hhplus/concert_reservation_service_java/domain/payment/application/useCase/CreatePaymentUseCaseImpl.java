@@ -52,8 +52,10 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
       eventPublisher.execute(new PaymentEvent(reservation.getId(), reservation.getReservedPrice(), user.getId(), command.getAccessKey()));
 
       return paymentMapper.of( reservation, user);
+    } catch (CustomException e){
+      throw new CustomException(e.getErrorCode());
     } catch (Exception e){
-      throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
+      throw new RuntimeException();
     }
   }
 

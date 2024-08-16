@@ -35,9 +35,9 @@ public class Reservation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user;
+
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
   @Column(name = "concert_schedule_id", nullable = false)
   private Long concertScheduleId;
