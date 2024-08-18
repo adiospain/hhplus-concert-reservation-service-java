@@ -11,6 +11,7 @@ import io.hhplus.concert_reservation_service_java.domain.reservation.Reservation
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class OutboxScheduler {
     paymentOutboxRepository.deleteCompleted();
   }
 
-    @Scheduled(fixedRate = 5 * 1000)
+    @Scheduled(fixedRate = 3 * 60 * 1000)
     public void retryPaymentOutboxEvent() {
       log.info("retryOutboxEvent::");
       List<PaymentOutbox> notCompletedOutbox = paymentOutboxRepository.findByCompleted(false);
@@ -47,10 +48,11 @@ public class OutboxScheduler {
         ObjectMapper objectMapper = new ObjectMapper();
         PaymentKafkaMessage paymentMessage = null;
         try {
+          LocalDateTime now = LocalDateTime.now();
           paymentMessage = objectMapper.readValue(outbox.getMessage(), PaymentKafkaMessage.class);
           Reservation reservation = reservationService.getById(paymentMessage.getReservationId());
 
-          if (reservation.getStatus() == ReservationStatus.PAID){
+          if (reservation.getStatus() == ReservationStatus.PAID && reservation.getCreatedAt().plusMinutes(5).isBefore(now)){
             paymentKafkaMessageProducer.send(outbox.getMessage());
           }
           tokenService.expireToken(paymentMessage.getUserId(), paymentMessage.getAccessKey());
