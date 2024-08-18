@@ -1,6 +1,5 @@
 package io.hhplus.concert_reservation_service_java.presentation.consumer;
 
-import com.esotericsoftware.kryo.util.ObjectMap;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,21 +25,17 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
   private final PaymentService paymentService;
   private final TokenService tokenService;
 
+  @Override
   @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "PaymentOutbox")
   public void paidToMarkOutBox(String message){
     log.info("paid:: start - message = {}",
         message);
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-      Long outboxId = paymentMessage.getOutboxId();
-      paymentOutboxManager.markComplete(outboxId);
-    } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+
+    paymentOutboxManager.markComplete(message);
+
   }
+
+  @Override
   @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "CreatePayment")
   public void paidToCreatePayment(String message){
     log.info("paidToCreatePayment:: start - message = {}",

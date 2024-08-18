@@ -11,6 +11,5 @@ public class PaymentKafkaMessage implements KafkaMessage {
   private Long reservationId;
   private Integer reservedPrice;
   private Long userId;
-  private Long outboxId;
   private String accessKey;
 }
