@@ -13,7 +13,7 @@ public interface PaymentOutboxJpaRepository extends JpaRepository<PaymentOutbox,
 
   @Modifying
   @Query("UPDATE PaymentOutbox p SET p.completed = true WHERE p.id = :id")
-  int markComplete(@Param("id") long id);
+  int markComplete(@Param("id") String id);
 
   @Modifying
   @Query("DELETE FROM PaymentOutbox p WHERE p.completed = true")

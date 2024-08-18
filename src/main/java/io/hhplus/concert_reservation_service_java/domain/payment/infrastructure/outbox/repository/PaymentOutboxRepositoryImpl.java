@@ -20,7 +20,7 @@ public class PaymentOutboxRepositoryImpl implements PaymentOutboxRepository{
 
   @Override
   @Transactional
-  public void markComplete(long outboxId) {
+  public void markComplete(String outboxId) {
     paymentOutboxRepository.markComplete(outboxId);
   }
 
