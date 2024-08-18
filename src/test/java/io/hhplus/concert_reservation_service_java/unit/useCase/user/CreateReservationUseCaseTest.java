@@ -73,7 +73,7 @@ class CreateReservationUseCaseTest {
 
     Reservation reservation = Reservation.builder()
         .id(1L)
-        .user(reserver)
+        .userId(reserver.getId())
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .status(ReservationStatus.OCCUPIED)
@@ -132,7 +132,7 @@ class CreateReservationUseCaseTest {
 
     Reservation reservation = Reservation.builder()
         .id(1L)
-        .user(user)
+        .userId(user.getId())
         .concertScheduleId(concertScheduleSeat.getConcertSchedule().getId())
         .seatId(concertScheduleSeat.getSeat().getId())
         .status(ReservationStatus.OCCUPIED)

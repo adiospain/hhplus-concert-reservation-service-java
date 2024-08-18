@@ -2,8 +2,10 @@ package io.hhplus.concert_reservation_service_java.unit.useCase.payment.message.
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -15,10 +17,12 @@ import io.hhplus.concert_reservation_service_java.domain.common.message.MessageS
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessage;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.presentation.consumer.PaymentKafkaMessageConsumer;
 import io.hhplus.concert_reservation_service_java.presentation.consumer.PaymentKafkaMessageConsumerImpl;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -53,6 +57,7 @@ public class PaymnetKafkaMessageIntegrationTest {
   @Autowired
   private KafkaTemplate<String, String> kafkaTemplate;
 
+  @Autowired
   private EmbeddedKafkaBroker embeddedKafkaBroker;
 
   private final PaymentOutboxManager paymentOutboxManager = Mockito.mock(PaymentOutboxManager.class);
@@ -72,7 +77,6 @@ public class PaymnetKafkaMessageIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.openMocks(this);
     Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaBroker);
     consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     ConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(consumerProps, new StringDeserializer(), new StringDeserializer());
@@ -94,7 +98,7 @@ public class PaymnetKafkaMessageIntegrationTest {
   @DisplayName("paidToMarkOutBox 성공")
   public void testPaidToMarkOutBox_Success() throws Exception {
     // Arrange
-    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null,\"outboxId\":11}";
+    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null";
     ObjectMapper objectMapper = new ObjectMapper();
     PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
 
@@ -102,7 +106,7 @@ public class PaymnetKafkaMessageIntegrationTest {
     paymentKafkaMessageConsumer.paidToMarkOutBox(message);
 
     // Assert
-    verify(paymentOutboxManager, times(1)).markComplete(paymentMessage.getOutboxId());
+    verify(paymentOutboxManager, times(1)).markComplete(PaymentOutbox.getUUID(message));
   }
 
   @Test
@@ -117,7 +121,29 @@ public class PaymnetKafkaMessageIntegrationTest {
         .hasCauseInstanceOf(JsonProcessingException.class);
 
     // Verify that markComplete was never called due to the exception
-    verify(paymentOutboxManager, never()).markComplete(anyLong());
+    verify(paymentOutboxManager, never()).markComplete(anyString());
+  }
+
+
+
+  @Test
+  @DisplayName("paidToMarkOutBox 실패 - markComplete 호출 시 예외 발생")
+  public void testPaidToMarkOutBox_Failure_MarkCompleteException() throws Exception {
+    // Arrange
+    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null";
+    ObjectMapper objectMapper = new ObjectMapper();
+    PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
+
+    doThrow(new RuntimeException("Failed to mark complete"))
+        .when(paymentOutboxManager).markComplete(PaymentOutbox.getUUID(message));
+
+    // Act & Assert
+    assertThatThrownBy(() -> paymentKafkaMessageConsumer.paidToMarkOutBox(message))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Failed to mark complete");
+
+    // Verify that markComplete was called once, but it threw an exception
+    verify(paymentOutboxManager, times(1)).markComplete(PaymentOutbox.getUUID(message));
   }
 
   @Test
@@ -138,33 +164,12 @@ public class PaymnetKafkaMessageIntegrationTest {
     verify(paymentService, times(1)).createPayment(
         paymentMessage.getUserId(),
         paymentMessage.getReservationId(),
-        paymentMessage.getReservedPrice()
-    );
+        paymentMessage.getReservedPrice());
   }
 
   @Test
-  @DisplayName("paidToMarkOutBox 실패 - markComplete 호출 시 예외 발생")
-  public void testPaidToMarkOutBox_Failure_MarkCompleteException() throws Exception {
-    // Arrange
-    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null,\"outboxId\":11}";
-    ObjectMapper objectMapper = new ObjectMapper();
-    PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-
-    doThrow(new RuntimeException("Failed to mark complete"))
-        .when(paymentOutboxManager).markComplete(paymentMessage.getOutboxId());
-
-    // Act & Assert
-    assertThatThrownBy(() -> paymentKafkaMessageConsumer.paidToMarkOutBox(message))
-        .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("Failed to mark complete");
-
-    // Verify that markComplete was called once, but it threw an exception
-    verify(paymentOutboxManager, times(1)).markComplete(paymentMessage.getOutboxId());
-  }
-
-  @Test
-  @DisplayName("createPayment 실패 - JSON 처리 오류")
-  public void createPayment_Failure_JsonProcessingException() throws Exception {
+  @DisplayName("paidToCreatePayment 실패 - JSON 처리 오류")
+  public void testPaidToCreatePayment_Failure_JsonProcessingException() throws Exception {
     // Arrange
     String malformedMessage = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1"; // Missing closing brace
 
@@ -184,7 +189,7 @@ public class PaymnetKafkaMessageIntegrationTest {
 
   @Test
   @DisplayName("createPayment 실패 - createPayment 호출 시 예외 발생")
-  public void createPayment_Failure_CreatePaymentException() throws Exception {
+  public void testPaidToCreatePayment_Failure_CreatePaymentException() throws Exception {
     // Arrange
     String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null,\"outboxId\":11}";
     ObjectMapper objectMapper = new ObjectMapper();

@@ -97,7 +97,7 @@ class CreateReservationUseCaseIntegrationTest {
     assertThat(result.getId()).isNotNull();
     assertThat(result.getCreatedAt()).isNotNull();
     Reservation savedReservation = reservationRepository.findById(result.getId()).orElseThrow();
-    assertThat(savedReservation.getUser().getId()).isEqualTo(user.getId());
+    assertThat(savedReservation.getUserId()).isEqualTo(user.getId());
     assertThat(savedReservation.getConcertScheduleId()).isEqualTo(concertSchedule.getId());
     assertThat(savedReservation.getSeatId()).isEqualTo(seat.getId());
     assertThat(savedReservation.getStatus()).isEqualTo(ReservationStatus.OCCUPIED);
@@ -153,7 +153,7 @@ class CreateReservationUseCaseIntegrationTest {
   void 이미_예약된_좌석_예외() {
     // Given
     Reservation existingReservation = Reservation.builder()
-        .user(user)
+        .userId(user.getId())
         .concertScheduleId(2L)
         .seatId(seat.getId())
         .status(ReservationStatus.OCCUPIED)

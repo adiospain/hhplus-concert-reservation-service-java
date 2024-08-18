@@ -13,6 +13,7 @@ import io.hhplus.concert_reservation_service_java.domain.common.message.MessageS
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessage;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
+import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.presentation.consumer.PaymentKafkaMessageConsumer;
 import io.hhplus.concert_reservation_service_java.presentation.consumer.PaymentKafkaMessageConsumerImpl;
@@ -73,7 +74,7 @@ public class PaymentKafkaMessageConsumerTest {
 
     paymentKafkaMessageConsumer.paidToMarkOutBox(message);
     PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-    verify(paymentOutboxManager, times(1)).markComplete(paymentMessage.getOutboxId());
+    verify(paymentOutboxManager, times(1)).markComplete(PaymentOutbox.getUUID(message));
   }
 
   @Test
@@ -88,18 +89,18 @@ public class PaymentKafkaMessageConsumerTest {
         .hasCauseInstanceOf(JsonProcessingException.class);
 
     // Verify that markComplete was never called due to the exception
-    verify(paymentOutboxManager, never()).markComplete(anyLong());
+    verify(paymentOutboxManager, never()).markComplete(PaymentOutbox.getUUID(malformedMessage));
   }
 
   @Test
   @DisplayName("paidToMarkOutBox 실패 - markComplete 호출 시 예외 발생")
   public void testPaidToMarkOutBox_Failure_MarkCompleteException() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
-    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null,\"outboxId\":11}";
+    String message = "{\"reservationId\":1,\"reservedPrice\":10,\"userId\":1,\"accessKey\":null}";
     PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
 
     doThrow(new RuntimeException("Failed to mark complete"))
-        .when(paymentOutboxManager).markComplete(paymentMessage.getOutboxId());
+        .when(paymentOutboxManager).markComplete(PaymentOutbox.getUUID(message));
 
     // Act & Assert
     assertThatThrownBy(() -> paymentKafkaMessageConsumer.paidToMarkOutBox(message))
@@ -107,7 +108,7 @@ public class PaymentKafkaMessageConsumerTest {
         .hasMessageContaining("Failed to mark complete");
 
     // Verify that markComplete was called once, but it threw an exception
-    verify(paymentOutboxManager, times(1)).markComplete(paymentMessage.getOutboxId());
+    verify(paymentOutboxManager, times(1)).markComplete(PaymentOutbox.getUUID(message));
   }
 
   @Test

@@ -33,7 +33,9 @@ public class PaymnetOutboxManagerTest {
 
     paymentEvent = new PaymentEvent(1L, 10, 1L, accesskey);
     paymentEvent.createOutboxMessage();
-    paymentOutbox = paymentEvent.getPaymentOutbox();
+    paymentOutbox = PaymentOutbox.builder()
+        .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
+        .build();
   }
 
   @Test
@@ -44,7 +46,7 @@ public class PaymnetOutboxManagerTest {
 
     PaymentOutbox result = paymentOutboxManager.create(paymentEvent);
 
-    verify(paymentOutboxRepository).save(paymentEvent.getPaymentOutbox());
+    verify(paymentOutboxRepository).save(paymentOutbox);
     assertEquals(paymentOutbox, result);
   }
 
@@ -58,14 +60,14 @@ public class PaymnetOutboxManagerTest {
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Failed to save outbox");
 
-    verify(paymentOutboxRepository).save(paymentEvent.getPaymentOutbox());
+    verify(paymentOutboxRepository).save(paymentOutbox);
   }
 
 
   @Test
   @DisplayName("아웃박스 완료 마크 성공")
   void markComplete_Success() {
-    long outboxId = 1L;
+    String outboxId = "UUID";
     paymentOutboxManager.markComplete(outboxId);
     verify(paymentOutboxRepository).markComplete(outboxId);
   }
@@ -74,7 +76,7 @@ public class PaymnetOutboxManagerTest {
   @DisplayName("아웃박스 완료 마크 실패")
   void markComplete_Failure() {
 
-    long outboxId = 1L;
+    String outboxId = "UUID";
     doThrow(new RuntimeException("아웃박스 완료 마크 실패"))
         .when(paymentOutboxRepository).markComplete(outboxId);
 

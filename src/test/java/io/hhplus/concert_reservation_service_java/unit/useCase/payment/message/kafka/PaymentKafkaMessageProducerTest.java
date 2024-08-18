@@ -45,7 +45,9 @@ public class PaymentKafkaMessageProducerTest {
 
     paymentEvent = new PaymentEvent(1L, 10, 1L, accesskey);
     paymentEvent.createOutboxMessage();
-    paymentOutbox = paymentEvent.getPaymentOutbox();
+    paymentOutbox = PaymentOutbox.builder()
+        .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
+        .build();
     message = paymentOutbox.getMessage();
   }
 

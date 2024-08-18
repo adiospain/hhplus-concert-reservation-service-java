@@ -71,7 +71,9 @@ public class SchedulerTest {
   void retryPaymentOutboxEvent_Success() throws JsonProcessingException {
     // Arrange
     paymentEvent.createOutboxMessage();
-    PaymentOutbox outbox = paymentEvent.getPaymentOutbox();
+    PaymentOutbox  outbox = PaymentOutbox.builder()
+        .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
+        .build();
 
     List<PaymentOutbox> outboxList = Arrays.asList(outbox);
 
@@ -89,7 +91,9 @@ public class SchedulerTest {
   void retryPaymentOutboxEvent_Failure_JsonProcessingException() throws JsonProcessingException {
     // Arrange
     paymentEvent.createOutboxMessage();
-    PaymentOutbox outbox = paymentEvent.getPaymentOutbox();
+    PaymentOutbox outbox = PaymentOutbox.builder()
+        .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
+        .build();
 
     List<PaymentOutbox> outboxList = Arrays.asList(outbox);
 
