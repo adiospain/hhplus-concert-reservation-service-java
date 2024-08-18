@@ -9,6 +9,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
 import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,7 +23,6 @@ public class PaymentEvent implements CustomEvent {
   //private long paymentId;
   private String accessKey;
   private String message;
-  private PaymentOutbox paymentOutbox;
 
 
 
@@ -44,44 +44,30 @@ public class PaymentEvent implements CustomEvent {
 
   @Override
   public void createOutboxMessage() {
-    String message = createMessageJson(false);
+    String message = createMessageJson();
     if (message != null) {
       this.message = message;
-      this.paymentOutbox = PaymentOutbox.builder()
-          .message(this.message)
-          .build();
     }
   }
 
   @Override
   public void createKafkaMessage() {
-    String message = createMessageJson(true);
+    String message = createMessageJson();
     if (message != null) {
       this.message = message;
     }
   }
 
-  private String createMessageJson(boolean includeOutboxId) {
+  private String createMessageJson() {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     try {
-      if (includeOutboxId) {
-        return objectMapper.writeValueAsString(new Object() {
-          public final Long reservationId = PaymentEvent.this.reservationId;
-          public final Integer reservedPrice = PaymentEvent.this.reservedPrice;
-          public final Long userId = PaymentEvent.this.userId;
-          public final String accessKey = PaymentEvent.this.accessKey;
-          public final Long outboxId = PaymentEvent.this.paymentOutbox.getId();
-        });
-      }
-      else {
         return objectMapper.writeValueAsString(new Object() {
           public final Long reservationId = PaymentEvent.this.reservationId;
           public final Integer reservedPrice = PaymentEvent.this.reservedPrice;
           public final Long userId = PaymentEvent.this.userId;
           public final String accessKey = PaymentEvent.this.accessKey;
         });
-      }
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       return null;
