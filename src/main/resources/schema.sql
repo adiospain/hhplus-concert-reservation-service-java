@@ -60,13 +60,14 @@ CREATE TABLE IF NOT EXISTS payment (
 );
 
 CREATE TABLE IF NOT EXISTS payment_outbox (
-                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                              id CHAR(36) PRIMARY KEY NOT NULL,
                                 message VARCHAR(255) NOT NULL,
                                 completed BOOLEAN NOT NULL,
                                 created_at TIMESTAMP NOT NULL,
                                           updated_at TIMESTAMP
 );
 
+ALTER TABLE payment_outbox CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS token (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,

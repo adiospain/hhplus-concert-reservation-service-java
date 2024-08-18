@@ -17,6 +17,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +35,8 @@ import lombok.RequiredArgsConstructor;
 public class PaymentOutbox implements Outbox {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  @Column (name = "id", updatable = false, nullable = false)
+  private String id;
 
   @Column(name = "message", nullable = false)
   private String message;
@@ -50,8 +52,16 @@ public class PaymentOutbox implements Outbox {
 
   @PrePersist
   protected void onCreate() {
+    this.id = getUUID(this.message);
     this.completed = false;
     this.createdAt = LocalDateTime.now();
+  }
+
+  public static String getUUID(String message) {
+    int hash = Objects.hash(message);
+    long mostSignificantBits = ((long) hash << 32) | (hash & 0xFFFFFFFFL);
+    long leastSignificantBits = ~mostSignificantBits;
+    return new UUID (mostSignificantBits, leastSignificantBits).toString();
   }
 
   @PreUpdate
