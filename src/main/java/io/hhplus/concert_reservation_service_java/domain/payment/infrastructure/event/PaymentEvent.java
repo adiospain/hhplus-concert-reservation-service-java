@@ -24,30 +24,11 @@ public class PaymentEvent implements CustomEvent {
   private String accessKey;
   private String message;
 
-
-
-
-
-//  public PaymentEvent(Long reservationId, Long userId, Long paymentId, String accessKey) {
-//    this.reservationId = reservationId;
-//    this.userId = userId;
-//    this.paymentId = paymentId;
-//    this.accessKey = accessKey;
-//  }
-
   public PaymentEvent(Long reservationId, int reservedPrice, Long userId, String accessKey) {
     this.reservationId = reservationId;
     this.reservedPrice = reservedPrice;
     this.userId = userId;
     this.accessKey = accessKey;
-  }
-
-  @Override
-  public void createOutboxMessage() {
-    String message = createMessageJson();
-    if (message != null) {
-      this.message = message;
-    }
   }
 
   @Override
