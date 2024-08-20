@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEventPublisher;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEventPublisher;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
-import io.hhplus.concert_reservation_service_java.domain.reservation.event.ReservationEventPublisher;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;

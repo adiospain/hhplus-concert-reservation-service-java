@@ -5,29 +5,16 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessageProducer;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessageProducerImpl;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessageProducer;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessageProducerImpl;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import java.util.UUID;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
-import java.util.Map;
 
 public class PaymentKafkaMessageProducerTest {
 
@@ -44,7 +31,7 @@ public class PaymentKafkaMessageProducerTest {
     String accesskey = UUID.randomUUID().toString();
 
     paymentEvent = new PaymentEvent(1L, 10, 1L, accesskey);
-    paymentEvent.createOutboxMessage();
+    paymentEvent.createKafkaMessage();
     paymentOutbox = PaymentOutbox.builder()
         .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
         .build();

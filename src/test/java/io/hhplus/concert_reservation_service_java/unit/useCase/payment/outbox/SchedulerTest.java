@@ -3,10 +3,9 @@ package io.hhplus.concert_reservation_service_java.unit.useCase.payment.outbox;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
-import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.CreatePaymentCommand;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessage;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessageProducer;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessage;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessageProducer;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.repository.PaymentOutboxRepository;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
@@ -70,7 +69,7 @@ public class SchedulerTest {
   @DisplayName("아웃박스 이벤트 발행 재시도 성공")
   void retryPaymentOutboxEvent_Success() throws JsonProcessingException {
     // Arrange
-    paymentEvent.createOutboxMessage();
+    paymentEvent.createKafkaMessage();
     PaymentOutbox  outbox = PaymentOutbox.builder()
         .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
         .build();
@@ -90,7 +89,7 @@ public class SchedulerTest {
   @DisplayName("아웃박스 이벤트 발행 재시도 실패 - JSON 처리 오류")
   void retryPaymentOutboxEvent_Failure_JsonProcessingException() throws JsonProcessingException {
     // Arrange
-    paymentEvent.createOutboxMessage();
+    paymentEvent.createKafkaMessage();
     PaymentOutbox outbox = PaymentOutbox.builder()
         .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
         .build();

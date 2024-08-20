@@ -1,11 +1,9 @@
 package io.hhplus.concert_reservation_service_java.unit.useCase.payment.message;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.PaymentMessageSender;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.PaymentMessageSenderImpl;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessageProducer;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManagerImpl;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.PaymentMessageSender;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.PaymentMessageSenderImpl;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessageProducer;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +29,7 @@ public class PaymentMessageSenderTest {
     String accesskey = UUID.randomUUID().toString();
 
     paymentEvent = new PaymentEvent(1L, 10, 1L, accesskey);
-    paymentEvent.createOutboxMessage();
+    paymentEvent.createKafkaMessage();
     paymentOutbox = PaymentOutbox.builder()
         .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
         .build();

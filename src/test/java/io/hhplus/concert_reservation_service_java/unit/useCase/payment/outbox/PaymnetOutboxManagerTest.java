@@ -1,6 +1,6 @@
 package io.hhplus.concert_reservation_service_java.unit.useCase.payment.outbox;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManagerImpl;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
@@ -32,7 +32,7 @@ public class PaymnetOutboxManagerTest {
     String accesskey = UUID.randomUUID().toString();
 
     paymentEvent = new PaymentEvent(1L, 10, 1L, accesskey);
-    paymentEvent.createOutboxMessage();
+    paymentEvent.createKafkaMessage();
     paymentOutbox = PaymentOutbox.builder()
         .message(PaymentOutbox.getUUID(paymentEvent.getMessage()))
         .build();
