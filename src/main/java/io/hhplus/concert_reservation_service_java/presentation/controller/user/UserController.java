@@ -4,6 +4,7 @@ import io.hhplus.concert_reservation_service_java.domain.payment.GetPaymentUseCa
 import io.hhplus.concert_reservation_service_java.domain.payment.application.model.PaymentDomain;
 import io.hhplus.concert_reservation_service_java.domain.payment.application.port.in.GetPaymentCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.UsePointUseCase;
+import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.CreateUserCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.UsePointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.ChargePointCommand;
 import io.hhplus.concert_reservation_service_java.domain.user.application.port.in.GetPointCommand;
@@ -16,10 +17,12 @@ import io.hhplus.concert_reservation_service_java.domain.token.GetTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.IssueTokenUseCase;
 import io.hhplus.concert_reservation_service_java.domain.user.GetPointUseCase;
 import io.hhplus.concert_reservation_service_java.domain.token.application.model.TokenDomain;
+import io.hhplus.concert_reservation_service_java.domain.user.CreateUserUseCase;
 import io.hhplus.concert_reservation_service_java.presentation.controller.payment.dto.res.GetPaymentAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.ChargePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.req.UsePointAPIRequest;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.ChargePointAPIResponse;
+import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.CreateUserAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.GetTokenAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.IssueTokenAPIResponse;
 import io.hhplus.concert_reservation_service_java.presentation.controller.user.dto.res.GetPointAPIResponse;
@@ -27,6 +30,7 @@ import io.hhplus.concert_reservation_service_java.presentation.controller.user.d
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,6 +45,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
+
+  private final CreateUserUseCase createUserUseCase;
 
   private final IssueTokenUseCase issueTokenUseCase;
   private final GetTokenUseCase getTokenUseCase;
@@ -130,5 +136,18 @@ public class UserController {
     List<PaymentDomain> payments = getPaymentUseCase.execute(command);
 
     return ResponseEntity.ok(GetPaymentAPIResponse.from(payments));
+  }
+
+  @PostMapping
+  @Operation(summary = "유저 생성" , description = "새로운 유저를 생성합니다.")
+  public ResponseEntity<CreateUserAPIResponse> createUser(
+      @RequestHeader(value = "Authorization", required =false) String accessKey) {
+    CreateUserCommand command = CreateUserCommand.builder()
+        .userId(0)
+        .build();
+
+    long createdUserId = createUserUseCase.execute(command);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(CreateUserAPIResponse.from(createdUserId));
   }
 }

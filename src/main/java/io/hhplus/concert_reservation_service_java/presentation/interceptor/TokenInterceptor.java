@@ -22,9 +22,13 @@ public class TokenInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws CustomException {
     String requestURI = request.getRequestURI();
-
     //토큰 발급 시에는 헤더에 토큰 없어도 허용
     if (requestURI.matches("/api/users/\\d+/token") && "POST".equalsIgnoreCase(request.getMethod())){
+      return true;
+    }
+
+    // 부하테스트 : 유저 생성시에 토큰 없어도 허용
+    if (requestURI.matches("/api/users") && "POST".equalsIgnoreCase(request.getMethod())){
       return true;
     }
 
