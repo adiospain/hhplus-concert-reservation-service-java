@@ -3,12 +3,11 @@ package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.repository.PaymentOutboxRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Component

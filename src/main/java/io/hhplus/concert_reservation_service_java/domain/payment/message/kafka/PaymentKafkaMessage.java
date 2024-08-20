@@ -1,7 +1,6 @@
-package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka;
+package io.hhplus.concert_reservation_service_java.domain.payment.message.kafka;
 
 import io.hhplus.concert_reservation_service_java.domain.common.message.KafkaMessage;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
 import lombok.Getter;
 import lombok.Setter;
 

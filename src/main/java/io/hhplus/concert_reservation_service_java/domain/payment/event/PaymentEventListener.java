@@ -1,8 +1,7 @@
-package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event;
+package io.hhplus.concert_reservation_service_java.domain.payment.event;
 
 
 import io.hhplus.concert_reservation_service_java.domain.common.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 public interface PaymentEventListener extends EventListener {
 

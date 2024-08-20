@@ -1,19 +1,10 @@
-package io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event;
+package io.hhplus.concert_reservation_service_java.domain.payment.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.hhplus.concert_reservation_service_java.domain.common.event.CustomEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.repository.jpa.Payment;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
-import io.hhplus.concert_reservation_service_java.domain.user.infrastructure.jpa.User;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import org.springframework.context.ApplicationEvent;
 
 @Getter
 public class PaymentEvent implements CustomEvent {

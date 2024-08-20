@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.concert_reservation_service_java.domain.common.message.MessageSender;
 import io.hhplus.concert_reservation_service_java.domain.payment.PaymentService;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessage;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessage;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;

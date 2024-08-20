@@ -3,9 +3,9 @@ package io.hhplus.concert_reservation_service_java.presentation.event.payment;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 import static org.springframework.transaction.event.TransactionPhase.BEFORE_COMMIT;
 
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEvent;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.event.PaymentEventListener;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.PaymentMessageSender;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEvent;
+import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEventListener;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.PaymentMessageSender;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,6 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void expireToken(PaymentEvent event) {
     log.info("expireToken::");
-    tokenService.expireToken(event.getUserId(), event.getAccessKey());
+    //tokenService.expireToken(event.getUserId(), event.getAccessKey());
   }
 }

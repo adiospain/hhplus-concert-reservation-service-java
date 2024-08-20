@@ -2,9 +2,8 @@ package io.hhplus.concert_reservation_service_java.presentation.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.PaymentMessageSender;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessage;
-import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.message.kafka.PaymentKafkaMessageProducer;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessage;
+import io.hhplus.concert_reservation_service_java.domain.payment.message.kafka.PaymentKafkaMessageProducer;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.jpa.PaymentOutbox;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.repository.PaymentOutboxRepository;
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
@@ -16,7 +15,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
