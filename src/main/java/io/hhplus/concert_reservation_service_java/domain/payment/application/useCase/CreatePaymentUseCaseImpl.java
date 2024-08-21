@@ -41,15 +41,17 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     Payment payment = null;
     try {
       reservation = reservationService.getReservationToPay(command.getReservationId());
-      user = userService.usePoint(command.getUserId(), reservation.getReservedPrice());
-      reservationService.saveToPay(reservation);
+      user = userService.getUserWithLock(command.getUserId());
 
-      //payment = paymentService.createPayment(user.getId(), reservation);
+      payment = paymentService.createPayment(user.getId(), reservation);
+      //userService.usePoint(user.getId(), reservation.getReservedPrice());
+      //reservationService.saveToPay(reservation);
+
 
       //tokenService.expireToken(command.getUserId(), command.getAccessKey());
       eventPublisher.execute(new PaymentEvent(reservation.getId(), reservation.getReservedPrice(), user.getId(), command.getAccessKey()));
 
-      return paymentMapper.of( reservation, user);
+      return paymentMapper.of(payment, reservation, user);
     } catch (CustomException e){
       throw new CustomException(e.getErrorCode());
     } catch (Exception e){

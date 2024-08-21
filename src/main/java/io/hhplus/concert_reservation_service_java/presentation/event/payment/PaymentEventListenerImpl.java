@@ -7,7 +7,9 @@ import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEv
 import io.hhplus.concert_reservation_service_java.domain.payment.event.PaymentEventListener;
 import io.hhplus.concert_reservation_service_java.domain.payment.message.PaymentMessageSender;
 import io.hhplus.concert_reservation_service_java.domain.payment.infrastructure.outbox.PaymentOutboxManager;
+import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.token.TokenService;
+import io.hhplus.concert_reservation_service_java.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -22,6 +24,8 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   private final PaymentOutboxManager paymentOutboxManager;
   private final PaymentMessageSender paymentMessageSender;
 
+  private final UserService userService;
+  private final ReservationService reservationService;
   private final TokenService tokenService;
 
   @Override
@@ -45,5 +49,19 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   public void expireToken(PaymentEvent event) {
     log.info("expireToken::");
     //tokenService.expireToken(event.getUserId(), event.getAccessKey());
+  }
+
+  @Async
+  @TransactionalEventListener(phase = AFTER_COMMIT)
+  public void usePoint(PaymentEvent event){
+    log.info("usePoint::");
+    userService.usePoint(event.getUserId(), event.getReservedPrice());
+  }
+
+  @Async
+  @TransactionalEventListener(phase = AFTER_COMMIT)
+  public void paidReservation(PaymentEvent event){
+    log.info("paidReservation::");
+    reservationService.saveToPay(event.getReservationId());
   }
 }

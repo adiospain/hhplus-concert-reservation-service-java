@@ -2,13 +2,11 @@ package io.hhplus.concert_reservation_service_java.domain.reservation.business.s
 
 import io.hhplus.concert_reservation_service_java.domain.reservation.ReservationService;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.Reservation;
-import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.jpa.ReservationStatus;
 import io.hhplus.concert_reservation_service_java.domain.reservation.infrastructure.repository.ReservationRepository;
 import io.hhplus.concert_reservation_service_java.exception.CustomException;
 import io.hhplus.concert_reservation_service_java.exception.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,6 +35,13 @@ public class ReservationServiceImpl implements ReservationService {
     Reservation reservation = this.getById(reservationId);
     reservation.validatePayment();
     return reservation;
+  }
+
+  @Override
+  public Reservation saveToPay(long reservationId) {
+    Reservation reservation = this.getById(reservationId);
+    reservation.completeReservation();
+    return reservationRepository.save(reservation);
   }
 
   @Override

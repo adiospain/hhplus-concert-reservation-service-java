@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PaymentDomain {
+  private long id;
   private long reservationId;
   private int price;
   private int pointAfter;
+  private LocalDateTime createdAt;
 }

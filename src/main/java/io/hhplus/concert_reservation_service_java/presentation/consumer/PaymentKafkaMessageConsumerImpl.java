@@ -34,23 +34,4 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
     paymentOutboxManager.markComplete(message);
 
   }
-
-  @Override
-  @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "CreatePayment")
-  public void paidToCreatePayment(String message){
-    log.info("paidToCreatePayment:: start - message = {}",
-        message);
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      PaymentKafkaMessage paymentMessage = objectMapper.readValue(message, PaymentKafkaMessage.class);
-      Long userId = paymentMessage.getUserId();
-      Long reservationId = paymentMessage.getReservationId();
-      Integer reservedPrice = paymentMessage.getReservedPrice();
-      paymentService.createPayment(userId, reservationId, reservedPrice);
-    } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-  }
 }

@@ -11,6 +11,8 @@ public interface ReservationService {
 
   Reservation getById(long reservationId);
 
+  Reservation saveToPay(long reservationId);
+
   Reservation saveToPay(Reservation reservation);
   Reservation getReservationToPay(long reservationId);
 

@@ -13,21 +13,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentMapper {
 
-  public PaymentDomain of(Reservation reservation) {
+  public PaymentDomain of(Payment savedPayment, Reservation reservation) {
+    if (savedPayment == null){
+      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+    }
+
     return PaymentDomain.builder()
+        .id(savedPayment.getId())
         .reservationId(reservation.getId())
         .price(reservation.getReservedPrice())
+        .createdAt(savedPayment.getCreatedAt())
         .build();
   }
 
-  public PaymentDomain of(Reservation reservation, User reserver) {
+  public PaymentDomain of(Payment savedPayment, Reservation reservation, User reserver) {
+    if (savedPayment == null){
+      throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+    }
+
     return PaymentDomain.builder()
+        .id(savedPayment.getId())
         .reservationId(reservation.getId())
         .price(reservation.getReservedPrice())
         .pointAfter(reserver.getPoint())
+        .createdAt(savedPayment.getCreatedAt())
         .build();
   }
-  
+
   public List<PaymentDomain> from (List<Payment> payments){
     if (payments == null || payments.isEmpty()){
       throw new CustomException(ErrorCode.UNSPECIFIED_FAIL);
@@ -39,8 +51,10 @@ public class PaymentMapper {
 
   private PaymentDomain convertToPaymentDomain(Payment payment) {
     return PaymentDomain.builder()
+        .id(payment.getId())
         .reservationId(payment.getReservationId())
         .price(payment.getReservedPrice())
+        .createdAt(payment.getCreatedAt())
         .build();
   }
 }
