@@ -30,7 +30,7 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
 
   @Override
   public ReservationDomain execute(CreateReservationCommand command) {
-    long startTime = System.nanoTime();
+    //long startTime = System.nanoTime();
     try {
       User user = userService.getUserWithLock(command.getUserId());
       ConcertScheduleSeat concertScheduleSeat = concertService.getConcertScheduleSeat(command.getConcertScheduleId(), command.getSeatId());
@@ -42,11 +42,11 @@ public class CreateReservationUseCaseImpl implements CreateReservationUseCase {
     catch (CustomException e) {
         throw new CustomException(e.getErrorCode());
     } finally {
-      long endTime = System.nanoTime();
-      long durationNanos = endTime - startTime;
-      double durationMillis = durationNanos / 1_000_000.0;
-      log.info("execute::userId={}, concertScheduleId={}, seatId={}, Total Duration: {} ms",
-          command.getUserId(), command.getConcertScheduleId(), command.getSeatId(), durationMillis);
+//      long endTime = System.nanoTime();
+//      long durationNanos = endTime - startTime;
+//      double durationMillis = durationNanos / 1_000_000.0;
+//      log.info("execute::userId={}, concertScheduleId={}, seatId={}, Total Duration: {} ms",
+//          command.getUserId(), command.getConcertScheduleId(), command.getSeatId(), durationMillis);
     }
   }
 

@@ -27,7 +27,6 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
   @Override
   public List<Concert> findAll() {
-    log.info("findAll 메서드 실행");
     return concertRepository.findAll();
   }
 

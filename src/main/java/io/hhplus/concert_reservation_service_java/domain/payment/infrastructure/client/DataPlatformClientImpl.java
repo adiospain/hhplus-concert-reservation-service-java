@@ -12,7 +12,7 @@ public class DataPlatformClientImpl implements DataPlatformClient {
 
   @Override
   public boolean send(String key, Payment payment) {
-    log.info("key: {}::성공적으로 예약 정보를 전송했습니다. 결제 id: {}",key,payment);
+    //log.info("key: {}::성공적으로 예약 정보를 전송했습니다. 결제 id: {}",key,payment);
     return true;
   }
 }

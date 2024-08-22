@@ -21,8 +21,8 @@ public class PaymentKafkaMessageProducerImpl implements PaymentKafkaMessageProdu
 
   @Override
   public void send(String message) {
-    log.info("send:: start - message={}",
-        message);
+//    log.info("send:: start - message={}",
+//        message);
     kafkaTemplate.send(PAYMENT_TOPIC_NAME, message);
   }
 }

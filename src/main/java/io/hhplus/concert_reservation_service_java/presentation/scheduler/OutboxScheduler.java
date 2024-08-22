@@ -34,13 +34,13 @@ public class OutboxScheduler {
 
   @Scheduled(fixedRate = 3 * 1000)
   public void scheduler() {
-    log.info("scheduler::");
+    //log.info("scheduler::");
     paymentOutboxRepository.deleteCompleted();
   }
 
     @Scheduled(fixedRate = 3 * 60 * 1000)
     public void retryPaymentOutboxEvent() {
-      log.info("retryOutboxEvent::");
+      //log.info("retryOutboxEvent::");
       List<PaymentOutbox> notCompletedOutbox = paymentOutboxRepository.findByCompleted(false);
       for (PaymentOutbox outbox : notCompletedOutbox){
         ObjectMapper objectMapper = new ObjectMapper();

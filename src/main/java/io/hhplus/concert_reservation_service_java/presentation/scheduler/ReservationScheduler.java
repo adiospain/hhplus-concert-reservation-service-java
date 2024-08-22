@@ -14,7 +14,7 @@ public class ReservationScheduler {
 
   @Scheduled(fixedRate = 5 * 1000)
   public void touchExpiredReservation() {
-    log.info("touchExpiredReservation::");
+    //log.info("touchExpiredReservation::");
     touchExpiredReservationUseCase.execute();
   }
 }

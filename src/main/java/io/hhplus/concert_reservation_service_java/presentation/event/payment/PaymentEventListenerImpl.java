@@ -31,7 +31,7 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @Override
   @TransactionalEventListener(phase = BEFORE_COMMIT)
   public void createOutbox(PaymentEvent event) {
-    log.info("createOutbox::");
+//    log.info("createOutbox::");
     paymentOutboxManager.create(event);
   }
 
@@ -39,7 +39,7 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void sendMessage(PaymentEvent event) {
-    log.info("sendMessasge::");
+    //log.info("sendMessasge::");
     paymentMessageSender.send(event);
   }
 
@@ -47,21 +47,21 @@ public class PaymentEventListenerImpl implements PaymentEventListener {
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void expireToken(PaymentEvent event) {
-    log.info("expireToken::");
+    //log.info("expireToken::");
     //tokenService.expireToken(event.getUserId(), event.getAccessKey());
   }
 
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void usePoint(PaymentEvent event){
-    log.info("usePoint::");
+    //log.info("usePoint::");
     userService.usePoint(event.getUserId(), event.getReservedPrice());
   }
 
   @Async
   @TransactionalEventListener(phase = AFTER_COMMIT)
   public void paidReservation(PaymentEvent event){
-    log.info("paidReservation::");
+    //log.info("paidReservation::");
     reservationService.saveToPay(event.getReservationId());
   }
 }

@@ -28,8 +28,8 @@ public class PaymentKafkaMessageConsumerImpl implements PaymentKafkaMessageConsu
   @Override
   @KafkaListener(topics = "${spring.kafka.topic.payment.name}", groupId = "PaymentOutbox")
   public void paidToMarkOutBox(String message){
-    log.info("paid:: start - message = {}",
-        message);
+//    log.info("paid:: start - message = {}",
+//        message);
 
     paymentOutboxManager.markComplete(message);
 
