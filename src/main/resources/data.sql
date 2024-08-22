@@ -51,12 +51,23 @@ SELECT
     10000 AS capacity
 FROM concert c;
 
-# INSERT INTO seat (seat_number) VALUES
-#                                    (1), (2), (3), (4), (5), (6), (7), (8), (9), (10),
-#                                    (11), (12), (13), (14), (15), (16), (17), (18), (19), (20),
-#                                    (21), (22), (23), (24), (25), (26), (27), (28), (29), (30),
-#                                    (31), (32), (33), (34), (35), (36), (37), (38), (39), (40),
-#                                    (41), (42), (43), (44), (45), (46), (47), (48), (49), (50);
+# INSERT INTO seat (seat_number)
+# SELECT number
+# FROM (
+#          SELECT @row := @row + 1 AS number
+#          FROM (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+#                SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t1,
+#               (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+#                SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t2,
+#               (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+#                SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t3,
+#               (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL
+#                SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t4,
+#               (SELECT 0 UNION ALL SELECT 1) t5,
+#               (SELECT @row := 0) r
+#      ) numbers
+# WHERE number <= 100;
+
 
 # INSERT INTO reservation (
 #     user_id,
