@@ -95,9 +95,9 @@
     - 목적 : 부하 감소 시 시스템의 회복 능력 평가
 
 ## 관찰 지표
-- 응답 시간 (평균, P(50), P(95), P(99))
-- 초당 처리 요청 수 (RPS)
-- 오류율
+- 응답 시간 (평균, P50, P95, P99)
+- 초당 처리 요청 수 (TPS)
+- 실패율
 - 시스템 리소스 사용률 (CPU, 메모리)
 
 ## 테스트 설정
@@ -189,6 +189,10 @@ export function token_scenario() {
 
 
 ##### 테스트 결과
+![20240823_003230](https://github.com/user-attachments/assets/adb6280c-7cc4-4c98-9131-3cc0e3f7f88f)
+![20240823_003248](https://github.com/user-attachments/assets/62e38227-70d2-4345-a9dc-57018399495d)
+![20240823_010435](https://github.com/user-attachments/assets/00c1fc38-07a0-4828-a387-0e42d0e07abc)
+
 
 1. 테스트 규모
     - 총 요청 수 : 240,208
@@ -198,14 +202,15 @@ export function token_scenario() {
     - HTTP 요청 실패율: 0.02% (54건 실패)
 3. 응답 시간
     - avg : 1.19초
-    - p50 : 271.2 ms
-    - p95 : 4.92 s
-    - p99 : 5.39 s
+    - P50 : 271.2 ms
+    - P95 : 4.92 s
+    - P99 : 5.39 s
     - 최대 응답 시간 : 59.99초
 
 ##### 테스트 분석
 1. 고려 사항
     - 1분의 최대 응답시간으로 타임아웃이 발생하여 성능 저하 발생
     - 대부분의 시간이 네트워크 지연보다는 서버 측 처리 병목 현상일 가능성 높음
+    - `Tomcat Current Connections` 지표를 확인하여 스트레스테스트 구간에서 톰캣 최대 연결 수 도달
 2. 개선 사항
     - `server.tomcat.accept-count` 대신 `server.tomcat.max-connections` 증가
