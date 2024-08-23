@@ -9,15 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RMap;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSetCache;
 import org.redisson.api.RedissonClient;
-import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -47,9 +44,12 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
     Iterator<String> waitIterator = waitQueue.iterator(pattern);
     if (waitIterator.hasNext()){
       String element = waitIterator.next();
-      int position = waitQueue.rank(element)+1;
-      Token retrievedToken = parseTokenFromKey(element);
-      return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, position));
+      try {
+        int position = waitQueue.rank(element) + 1;
+        Token retrievedToken = parseTokenFromKey(element);
+        return Optional.of(Token.create(retrievedToken.getUserId(), accessKey, position));
+      } catch (NullPointerException ignored){
+      }
     }
 
     RSetCache<String> activeQueue = redissonClient.getSetCache(ACTIVE_QUEUE_KEY);
@@ -74,8 +74,12 @@ public class TokenRedisRepositoryImpl implements TokenRedisRepository {
 
     Double score = waitQueue.getScore(element);
     if (score != null){
-      int position = waitQueue.rank(element);
-      return Optional.of(Token.create(userId, accessKey, position+1));
+      try {
+        int position = waitQueue.rank(element);
+        return Optional.of(Token.create(userId, accessKey, position+1));
+      } catch (NullPointerException e){
+        return Optional.of(Token.create(userId, accessKey, 0));
+      }
     }
     return Optional.empty();
   }
