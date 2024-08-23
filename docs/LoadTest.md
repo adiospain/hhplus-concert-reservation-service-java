@@ -1,11 +1,13 @@
 # 부하테스트
 
-대용량 트래픽에서는 가장 큰 병목현상이 발생하는 곳은 DB connection이 발생할 때 입니다.
+## 배경
+대용량 트래픽 환경에서 시스템 성능의 주요 병목점은 주로 데이터베이스 연결(DB connection)에서 발생합니다. 이는 시스템의 전반적인 성능과 확장성에 중대한 영향을 미칩니다. 
+또한, 웹 애플리케이션 서버(예: Tomcat)의 스레드 관리도 중요한 요소입니다.
 
-하나의 트랜잭션이 너무 길다면, 한 작업이 DB Connection 스레드를 을 오래 붙들고 있게됩니다.
+## 문제점
+긴 트랜잭션 시간은 DB 연결 자원의 비효율적 사용을 초래합니다. 단일 작업이 DB 연결을 장시간 점유하면, 다른 요청들의 대기 시간이 증가하고 전체 시스템 처리량이 감소하게 됩니다.
+Tomcat의 스레드 풀은 동시에 처리할 수 있는 요청의 수를 제한합니다. 스레드 수가 부족하면 요청 처리가 지연되고, 과도하게 많으면 시스템 리소스를 낭비하게 되고 동시성 문제를 초래할 수 있습니다.
 
-
-토큰 처리 부하테스트
 
 ## 테스트 목적
 - 시스템의 최대 처리 용량 확인
@@ -232,8 +234,8 @@ export function token_scenario() {
         - 기기 2에서 이전 토큰으로 대기열에 재진입합니다.
     - 해결
         - 그레이스 기간 설정 : 새 토큰 발급 후 짧은 시간 동안 이전 토큰도 유효하게 처리합니다.
-  
-[사진1]
+
+  ![사진1](https://github.com/user-attachments/assets/809346a0-28e1-4303-98fb-68f5cb069de6)
 - 최대 연결 수를 늘려도 연결 수가 2002개를 넘어가지 않으며 유의미하게 연결 수가 증가하지 않는데
 이를 해결하기 위해 `server.tomcat.accept-count`와 `server.tomcat.threads.max`를 함께 조정하고 최적의 값을 찾아야 합니다.
 
@@ -247,7 +249,8 @@ server.tomcat.accept-count=3000
 
 4. 2차 개선 후
 
-    [사진2]
+    ![사진2](https://github.com/user-attachments/assets/e67a4b2c-ddbd-40b1-9815-a46511eba28d)
+
 
     |         | 요청 처리량  | TPS        | 평균 응답시간 | P50 응답시간  | P95 응답시간 | P99 응답시간 | 최대 응답시간 | 실패율   |
     | ------- | ------- |------------| ------- | --------- | -------- | -------- | ------- | ----- |
@@ -311,7 +314,8 @@ export function concert_retrieve_scenario() {
 ```
 
 ##### 테스트 결과
-[사진3]
+![사진3](https://github.com/user-attachments/assets/6df6d469-1583-484e-a227-c5a64658e0b6)
+
 
 1. 테스트 규모
     - 총 요청 수 : 424,468
@@ -332,7 +336,8 @@ export function concert_retrieve_scenario() {
     - 401, 404 오류의 원인을 분석하고 적절한 처리 방안을 마련해야 합니다.
 2. 개선 사항
 
-[이슈1]  
+![이슈1](https://github.com/user-attachments/assets/850dc73a-47b7-43a5-8683-91f3169458bc)
+
 
     - 문제상황
        - 401, 404 오류  
@@ -343,7 +348,9 @@ export function concert_retrieve_scenario() {
       - try-catch 블록 도입 : rank 조회 시 발생할 수 있는 `NullPointerException`을 포착하여 처리합니다.
        - Null Rank 처리 로직 변경 : rank가 null인 경우, 해당 토큰을 activeToken으로 간주하여 순번이 0인 Token 객체를 반환합니다.
    
-[이슈2]  
+
+![이슈2](https://github.com/user-attachments/assets/06ece123-e8d2-434b-aa75-b179d01a2fd2)
+
 
     - 문제상황
       - HikariCP 커넥션 풀
@@ -351,8 +358,10 @@ export function concert_retrieve_scenario() {
     - 해결
       - 커넥션 최대 풀 크기 증가 : 서버 리소스를 고려하여 `spring.datasource.hikari.maximum-pool-size`를 조절합니다.
 
-[이슈3]
-[사진7]
+![이슈3](https://github.com/user-attachments/assets/cdd89c9a-8ca1-48cb-bdc7-2f6c7bb6feb2)
+
+![사진7](https://github.com/user-attachments/assets/73e0e6e6-9360-4f9a-9436-adaa9ac33581)
+
 
     - 문제상황
         - HikariCP 커넥션 풀
@@ -416,9 +425,11 @@ function concertRetrieve(token){
 }
 ```
 ##### 테스트 결과
-[사진8]
-[사진9]
-[사진10]
+
+![사진8](https://github.com/user-attachments/assets/61ae6349-b87c-4dc5-868e-aa1ac7221800)
+![사진9](https://github.com/user-attachments/assets/1666a059-fa51-4008-b533-2de03da901c3)
+![사진10](https://github.com/user-attachments/assets/06e09782-51c9-4de2-a4d3-d0af4982fb9a)
+
 1. 테스트 규모
     - 총 요청 수 : 47,516
     - TPS : 467.95 / s
@@ -506,9 +517,9 @@ export function concertScheduleSeat_retrieve_scenario() {
 ```
 
 ##### 테스트 결과
-[사진11]
-[사진12]
-[사진13]
+![사진11](https://github.com/user-attachments/assets/c4a73e68-6584-454d-bbd4-fa6758764323)
+![사진12](https://github.com/user-attachments/assets/3426be19-2607-4968-8e60-1cebcedf2ca2)
+![사진13](https://github.com/user-attachments/assets/4336e886-3f56-4a56-8864-21ba14202ecf)
 1. 테스트 규모
     - 총 요청 수 : 51,846
     - TPS : 102.30 / s
@@ -598,9 +609,11 @@ export function reservation_scenario() {
 ```
 
 ##### 테스트 결과
-[사진14]
-[사진15]
-[사진16]
+
+![사진14](https://github.com/user-attachments/assets/5fabb48c-ac2e-4c81-a89f-0aa2a1d74df8)
+![사진15](https://github.com/user-attachments/assets/26bb9151-15c6-4922-9d18-5eec56eb1fc2)
+![사진16](https://github.com/user-attachments/assets/de3271b5-b8c6-4265-9354-9034f0efe8a0)
+
 1. 테스트 규모
     - 총 요청 수 : 52,302
     - TPS : 103.46 / s
@@ -625,9 +638,10 @@ export function reservation_scenario() {
     - 토큰 활성화 빈도를 낮추거나 활성화 토큰의 개수를 줄여 부하를 단계적으로 완화해야 합니다.
 
 #### 포인트 조회 / 충전
-[사진17]
-[사진18]
-[사진19]
+![사진17](https://github.com/user-attachments/assets/eb4c6acd-4bb5-4ad8-bdb3-c416b14336dc)
+![사진18](https://github.com/user-attachments/assets/cac2e03d-105e-424f-8b60-bdd851590a82)
+![사진19](https://github.com/user-attachments/assets/30cc2b70-0b6b-435a-bf04-ba2d4b3a8bff)
+
 1. 테스트 규모
     - 총 요청 수 : 161,114
     - TPS : 321.40 / s
@@ -731,9 +745,10 @@ export function payment_scenario() {
 ```
 
 ##### 테스트 결과
-[사진20]
-[사진21]
-[사진22]
+![사진20](https://github.com/user-attachments/assets/967a3c53-9927-4649-b64c-62294ff7e794)
+![사진21](https://github.com/user-attachments/assets/c958d38c-e90b-4a3c-90d1-c53b6c43a1af)
+![사진22](https://github.com/user-attachments/assets/685d1890-4ea3-4bce-8879-f75b3ed83a00)
+
 1. 테스트 규모
     - 총 요청 수 :  66,298
     - TPS : 132.06 / s
