@@ -260,3 +260,180 @@ server.tomcat.accept-count=3000
     - **1차 개선 후 분석한 문제상황에 대해 재검토가 필요합니다.**
 
 #### 콘서트 조회
+```java
+function concertRetrieve(token){
+
+  const tokenUrl = `${API_BASE_URL}/api/concerts`;
+
+  const tokenParams = {
+    headers: {
+      'accept': '*/*',
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
+  };
+  const concertRetrieveResponse = http.get(tokenUrl, tokenParams, 2147483647);
+
+  check(concertRetrieveResponse, {
+    'checkToken status is 200': (r) => r.status === 200,
+  });
+
+  if (concertRetrieveResponse.status === 401) {
+    status401Counter.add(1);
+  } else if (concertRetrieveResponse.status === 404) {
+    status404Counter.add(1);
+  } else if (concertRetrieveResponse.status === 500) {
+    status500Counter.add(1);
+  } else if (concertRetrieveResponse.status !== 200) {
+    otherStatusCounter.add(1);
+  }
+
+  const responseBody = JSON.parse(concertRetrieveResponse.body);
+  return responseBody.concerts;
+}
+
+export function concert_retrieve_scenario() {
+
+  // userId를 1부터 100000 사이에서 랜덤으로 생성
+  let userId = randomIntBetween(1, 100000);
+
+  const token = issueToken(userId);
+
+  while (true){
+    let order = checkToken(userId, token);
+    if (order === 0) {
+      concertRetrieve(token);
+      break;
+    }
+    sleep(1);
+  }
+}
+```
+
+##### 테스트 결과
+[사진3]
+
+1. 테스트 규모
+    - 총 요청 수 : 424,468
+    - TPS : 884.29 요청/초
+2. 성공률
+    - 2.99%의 체크 통과
+    - HTTP 요청 실패율: 97.00% (411,739건 실패)
+3. 응답 시간
+    - avg : 2.45초
+    - P50 : 271.2 ms
+    - P95 : 9.83 s
+    - P99 : 15.64 s
+    - 최대 응답 시간 : 1분 14초
+   
+##### 테스트 분석
+1. 고려 사항
+    - 500 오류의 원인을 파악하고 해결해야 합니다. 
+    - 401, 404 오류의 원인을 분석하고 적절한 처리 방안을 마련해야 합니다.
+2. 개선 사항
+
+[이슈1]  
+
+    - 문제상황
+       - 401, 404 오류  
+          - `wait_queue`에서 요소를 조회하는 순간 `TokenScheduler`에서 `active_queue`로 요소를 이동시켜 rank 조회 시 null이 반환되는 경우가 발생합니다.
+          - null에 대해 intValue() 메소드를 호출하여 `NullPointerException` 발생하며 서버가 죽습니다.
+
+    - 해결
+      - try-catch 블록 도입 : rank 조회 시 발생할 수 있는 `NullPointerException`을 포착하여 처리합니다.
+       - Null Rank 처리 로직 변경 : rank가 null인 경우, 해당 토큰을 activeToken으로 간주하여 순번이 0인 Token 객체를 반환합니다.
+   
+[이슈2]  
+
+    - 문제상황
+      - HikariCP 커넥션 풀
+        - 모든 커넥션이 사용 중이고 적시에 커넥션이 반환되지 않습니다.
+    - 해결
+      - 커넥션 최대 풀 크기 증가 : 서버 리소스를 고려하여 `spring.datasource.hikari.maximum-pool-size`를 조절합니다.
+
+[이슈3]
+[사진7]
+
+    - 문제상황
+        - HikariCP 커넥션 풀
+            - 최대 커넥션 풀 크기를 20으로 설정해도 적시에 사용가능한 커넥션이 없어 타임아웃이 발생합니다.
+        - 해결
+            - 커넥션 타임아웃 증가 : 서버 리소스를 고려하여 `spring.datasource.hikari.connection-timeout`를 조절합니다.
+
+#### 콘서트 날짜 조회
+```java
+export function concertSchedule_retrieve_scenario() {
+
+  // userId를 1부터 100000 사이에서 랜덤으로 생성
+  let userId = randomIntBetween(1, 100000);
+
+  const token = issueToken(userId);
+
+
+  while (true){
+    let order = checkToken(userId, token);
+    if (order === 0) {
+      break;
+    }
+    if (order < 0){
+      break;
+    }
+    sleep(1);
+  }
+  concertRetrieve(token);
+  sleep(randomIntBetween(1, 5)); //선택시간
+  concertScheduleRetrieve(token);
+}
+
+function concertRetrieve(token){
+
+  const tokenUrl = `${API_BASE_URL}/api/concerts`;
+
+  const tokenParams = {
+      headers: {
+    'accept': '*/*',
+        'Authorization': token,
+        'Content-Type': 'application/json',
+  },
+  };
+  const concertRetrieveResponse = http.get(tokenUrl, tokenParams, 2147483647);
+
+  check(concertRetrieveResponse, {
+      'concertRetrieve status is 200': (r) => r.status === 200,
+  });
+
+  if (concertRetrieveResponse.status === 401) {
+    status401Counter.add(1);
+  } else if (concertRetrieveResponse.status === 404) {
+    status404Counter.add(1);
+  } else if (concertRetrieveResponse.status === 500) {
+    status500Counter.add(1);
+  } else if (concertRetrieveResponse.status !== 200) {
+    otherStatusCounter.add(1);
+  }
+
+  const responseBody = JSON.parse(concertRetrieveResponse.body);
+}
+```
+##### 테스트 결과
+[사진8]
+[사진9]
+[사진10]
+1. 테스트 규모
+    - 총 요청 수 : 47,516
+    - TPS : 467.95 / s
+2. API 별 성공률
+   - issueToken: 99.99% (9,412 성공 / 1 실패)
+   - checkToken: 99.75% (21,535 성공 / 54 실패)
+   - getConcerts: 99.52% (8,518 성공 / 41 실패)
+   - getAvailableConcertSchedules: 99.98% (8,051 성공 / 2 실패)
+3. 응답 시간
+    - avg : 9.42 s
+    - P50 : 7.31 s
+    - P95 : 24.83 s
+    - P99 : 28.73 s
+    - 최대 응답 시간 : 1분 14초
+
+##### 테스트 분석
+  1. 고려사항
+     - 평군 응답 시간이 다소 높아 개선이 필요합니다.
