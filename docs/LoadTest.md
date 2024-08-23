@@ -437,3 +437,321 @@ function concertRetrieve(token){
 ##### 테스트 분석
   1. 고려사항
      - 평군 응답 시간이 다소 높아 개선이 필요합니다.
+
+#### 콘서트 좌석 조회
+콘서트 -> 콘서트 날짜 -> 콘서트 좌석 조회, 총 3번의 API의 호출로
+성능 저하를 우려하여 `server.tomcat.threads.max`의 값을 500으로 설정합니다.
+```java
+function concertScheduleSeatRetrieve(token){
+
+  const concertId = 1;
+  const concertScheduleId = concertId;
+  const url = `${API_BASE_URL}/api/concerts/` + concertId + `/schedules/` + concertScheduleId + `/seats/available`;
+
+  const params = {
+    headers: {
+      'accept': '*/*',
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
+  };
+  const response = http.get(url, params, 2147483647);
+
+  check(response, {
+    'concertScheduleSeatRetrieve status is 200': (r) => r.status === 200,
+  });
+
+  if (response.status === 401) {
+    status401Counter.add(1);
+    return -1;
+  } else if (response.status === 404) {
+    status404Counter.add(1);
+    return -2;
+  } else if (response.status === 500) {
+    status500Counter.add(1);
+    return -3;
+  } else if (response.status !== 200) {
+    otherStatusCounter.add(1);
+    return -4;
+  }
+
+  const responseBody = JSON.parse(response.body);
+  return 0;
+}
+
+export function concertScheduleSeat_retrieve_scenario() {
+
+  // userId를 1부터 100000 사이에서 랜덤으로 생성
+  let userId = randomIntBetween(1, 100000);
+
+  const token = issueToken(userId);
+
+
+  while (true){
+    let order = checkToken(userId, token);
+    if (order === 0) {
+      break;
+    }
+    if (order < 0){
+      break;
+    }
+    sleep(1);
+  }
+  concertRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleSeatRetrieve(token);
+}
+```
+
+##### 테스트 결과
+[사진11]
+[사진12]
+[사진13]
+1. 테스트 규모
+    - 총 요청 수 : 51,846
+    - TPS : 102.30 / s
+2. API 별 성공률
+    - issueToken: 100% 성공
+    - checkToken: 99.79% 성공 (19,243 성공 / 41 실패)
+    - concertRetrieve: 98.89% 성공 (8,314 성공 / 93 실패)
+    - concertScheduleRetrieve: 100% 성공
+    - concertScheduleSeatRetrieve: 100% 성공
+3. 응답 시간
+    - avg : 8.69 s
+    - P50 : 6.36 s
+    - P95 : 23.62 s
+    - P99 : 30.09 s
+
+##### 테스트 분석
+1. 고려사항
+    - 전반적인 응답 시간이 이전 테스트보다 약간 개선되었습니다.
+
+#### 예약
+```java
+function reservation(userId, concertScheduleId,  seatId, token){
+
+
+  const reservationUrl = `${API_BASE_URL}/api/reservations`;
+  const reservationPayload = JSON.stringify({
+    userId: userId,
+    concertScheduleId: concertScheduleId,
+    seatId: seatId
+  });
+  const reservationParams = { headers: { 'Content-Type': 'application/json', 'Authorization': token } };
+  const response = http.post(reservationUrl, reservationPayload, reservationParams);
+  check(response, {
+    'reservation status is 200': (r) => r.status === 200,
+  });
+
+  if (response.status === 401) {
+    status401Counter.add(1);
+    return -1;
+  } else if (response.status === 404) {
+    status404Counter.add(1);
+    return -2;
+  } else if (response.status === 500) {
+    const responseBody = JSON.parse(response.body);
+    if (responseBody.code === 'LOCK_ACQUISITION_FAIL'){
+      lockFailCounter.add(1);
+    }
+    else{
+      status500Counter.add(1);
+    }
+    return -3;
+  } else if (response.status !== 200) {
+    otherStatusCounter.add(1);
+    return -4;
+  }
+}
+
+export function reservation_scenario() {
+
+  // userId를 1부터 100000 사이에서 랜덤으로 생성
+  let userId = randomIntBetween(1, 100000);
+
+  const token = issueToken(userId);
+
+
+  while (true){
+    let order = checkToken(userId, token);
+    if (order === 0) {
+      break;
+    }
+    if (order < 0){
+      break;
+    }
+    sleep(1);
+  }
+  concertRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleSeatRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  reservation(userId,
+      randomIntBetween(1, 5), // 동시에 같은 좌석 조회하는 상황 연출하기 위한 범위 축소
+      randomIntBetween(1,100),
+      token);
+}
+```
+
+##### 테스트 결과
+[사진14]
+[사진15]
+[사진16]
+1. 테스트 규모
+    - 총 요청 수 : 52,302
+    - TPS : 103.46 / s
+2. API 별 성공률
+    - issueToken: 99% (8,147 성공, 4 실패)
+    - checkToken: 99% (14,606 성공, 30 실패)
+    - concertRetrieve: 98% (7,859 성공, 93 실패)
+    - concertScheduleRetrieve: 99% (7,596 성공, 4 실패)
+    - concertScheduleSeatRetrieve: 99% (7,159 성공, 4 실패)
+    - reservation: 7% (500 성공, 6,300 실패)
+3. 응답 시간
+    - avg : 8.57 s
+    - P50 : 5.79 s
+    - P95 : 25.33 s
+    - P99 : 29.25 s
+
+##### 테스트 분석
+1. 고려사항
+    - `reservations` 엔드포인트의 실패 횟수는 동시에 하나의 좌석을 예약할 때 발생하는 실패 요청입니다.
+        `lock_fail` 값에 나타납니다.
+    - 95%의 요청이 25.33초 이내에 처리되고 있어, 많은 사용자가 긴 대기 시간을 경험할 것으로 예상됩니다.
+    - 토큰 활성화 빈도를 낮추거나 활성화 토큰의 개수를 줄여 부하를 단계적으로 완화해야 합니다.
+
+#### 포인트 조회 / 충전
+[사진17]
+[사진18]
+[사진19]
+1. 테스트 규모
+    - 총 요청 수 : 161,114
+    - TPS : 321.40 / s
+2. API 별 성공률
+    - issueToken: 100% (모든 요청 성공)
+    - checkToken: 99% (117,665 성공, 38 실패)
+    - pointRetrieve: 99% (14,380 성공, 2 실패)
+    - pointCharge: 100% (모든 요청 성공)
+3. 응답 시간
+    - avg : 2.26 s
+    - P50 : 149.42ms
+    - P95 : 14.4 s
+    - P99 :  18.49 s
+    - 최대 응답 시간: 23.93 s
+
+##### 테스트 분석
+1. 고려사항
+    - HTTP 404 오류(40건)만 발생하고 있어, 서버 내부 오류는 없는 것으로 보입니다.
+    - 404 오류의 원인을 파악하여 추가적인 개선이 가능합니다.
+    - 토큰 활성화 빈도를 낮추거나 활성화 토큰의 개수를 줄여 부하를 단계적으로 완화해야 합니다.
+
+#### 결제
+
+콘서트 -> 콘서트 날짜 -> 콘서트 좌석 조회 -> 예약 -> 결제, 총 6번의 API의 호출로
+성능 저하를 우려하여 `server.tomcat.threads.max`의 값을 600으로 설정합니다.
+`spring.datasource.hikari.maximum-pool-size`의 값을 30으로 설정합니다.
+```java
+
+function payment(token, userId, reservationId){
+  const url = `${API_BASE_URL}/api/payments`;
+  const payload = JSON.stringify({
+    userId: userId,
+    reservationId: reservationId
+  });
+  const params = { headers: { 'Content-Type': 'application/json', 'Authorization': token } };
+  const response = http.post(url, payload, params);
+  check(response, {
+    'payment status is 200': (r) => r.status === 200,
+  });
+
+  if (response.status === 401) {
+    status401Counter.add(1);
+    return -1;
+  } else if (response.status === 404) {
+    status404Counter.add(1);
+    return -2;
+  } else if (response.status === 500) {
+    const responseBody = JSON.parse(response.body);
+    if (responseBody.code === 'LOCK_ACQUISITION_FAIL'){
+      lockFailCounter.add(1);
+    }
+    else{
+      status500Counter.add(1);
+    }
+    return -3;
+  } else if (response.status !== 200) {
+    otherStatusCounter.add(1);
+    return -4;
+  }
+}
+
+export function payment_scenario() {
+
+  // userId를 1부터 100000 사이에서 랜덤으로 생성
+  let userId = randomIntBetween(1, 100000);
+
+  const token = issueToken(userId);
+
+
+  while (true){
+    let order = checkToken(userId, token);
+    if (order === 0) {
+      break;
+    }
+    if (order < 0){
+      break;
+    }
+    sleep(1);
+  }
+  concertRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  concertScheduleSeatRetrieve(token);
+  sleep(randomIntBetween(1, 2)); //선택시간
+  const reservationId = reservation(userId,
+      randomIntBetween(1, 99999),
+      randomIntBetween(1,100),
+      token);
+  if (Math.random() < 0.5){ // 충전 할 수도 있고 안할 수도 있음
+    pointRetrieve(token, userId);
+    sleep(1); //선택시간
+    pointCharge(token, userId, randomIntBetween(1,100000));
+  }
+  sleep(1);
+  if (reservationId !== null){
+    payment(token, userId, reservationId);
+  }
+}
+```
+
+##### 테스트 결과
+[사진20]
+[사진21]
+[사진22]
+1. 테스트 규모
+    - 총 요청 수 :  66,298
+    - TPS : 132.06 / s
+2. API 별 성공률
+    - issueToken: 100% (모든 요청 성공)
+    - checkToken: 99% (16,983 성공, 45 실패)
+    - concertRetrieve: 98% (7,383 성공, 92 실패)
+    - concertScheduleRetrieve: 100% (모든 요청 성공)
+    - concertScheduleSeatRetrieve: concertScheduleSeatRet
+    - reservation: 99% (6889 성공, 4 실패 중 3 락 획득 실패)
+    - payment : 99% (6393 성공, 4 실패)
+3. 응답 시간
+    - avg : 6.63 s
+    - P50 : 4.18 s
+    - P95 : 19.72 s
+    - P99 : 24.23 s
+    - 최대 응답 시간: 37.11 s
+
+##### 테스트 분석
+1. 고려사항
+    - 404 오류(49건)의 원인을 파악하고, 클라이언트 요청과 서버의 라우팅을 재검토해야 합니다.
+    - 500 오류(93건)의 원인을 파악하고 해결해야 합니다.
