@@ -654,6 +654,7 @@ export function reservation_scenario() {
 콘서트 -> 콘서트 날짜 -> 콘서트 좌석 조회 -> 예약 -> 결제, 총 6번의 API의 호출로
 성능 저하를 우려하여 `server.tomcat.threads.max`의 값을 600으로 설정합니다.
 `spring.datasource.hikari.maximum-pool-size`의 값을 30으로 설정합니다.
+
 ```java
 
 function payment(token, userId, reservationId){
